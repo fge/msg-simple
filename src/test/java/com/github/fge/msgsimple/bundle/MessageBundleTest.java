@@ -21,8 +21,8 @@ public final class MessageBundleTest
     {
         source1 = mock(MessageSource.class);
         source2 = mock(MessageSource.class);
-        bundle = new MessageBundle.Builder().addSource(source1)
-            .addSource(source2).build();
+        bundle = new MessageBundle.Builder().appendSource(source1)
+            .appendSource(source2).build();
     }
 
     @Test
@@ -53,7 +53,7 @@ public final class MessageBundleTest
     public void cannotAddNullMessageSource()
     {
         try {
-            new MessageBundle.Builder().addSource(null);
+            new MessageBundle.Builder().appendSource(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "cannot add null message source");

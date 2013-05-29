@@ -53,7 +53,7 @@ public final class MessageBundle
             sources.addAll(bundle.sources);
         }
 
-        public Builder addSource(final MessageSource source)
+        public Builder appendSource(final MessageSource source)
         {
             if (source == null)
                 throw new NullPointerException("cannot add null message source");

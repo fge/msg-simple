@@ -2,9 +2,12 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.source.MessageSource;
 
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 
+@ThreadSafe
 public final class MessageBundle
 {
     private final List<MessageSource> sources;
@@ -27,6 +30,7 @@ public final class MessageBundle
         return key;
     }
 
+    @NotThreadSafe
     public static final class Builder
     {
         private final List<MessageSource> sources
@@ -45,6 +49,11 @@ public final class MessageBundle
         {
             sources.add(source);
             return this;
+        }
+
+        public MessageBundle build()
+        {
+            return new MessageBundle(this);
         }
     }
 }

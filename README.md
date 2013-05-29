@@ -9,7 +9,21 @@ text.</p>
 class="font-family: monospace;">ResourceBundle</span> for getting messages from
 properties files and ultimately, various other resources.</p>
 
-<p>This project is just getting started. Therefore, nothing really useful at this moment ;)</p>
+<h2>Versions</h2>
+
+<p>The current version is <b>0.1</b>.</p>
+
+<p>No javadoc yet. However, the API is easy enough. See below for code samples.</p>
+
+<h2>Maven artifact</h2>
+
+```xml
+<dependency>
+    <groupId>com.github.fge</groupId>
+    <artifactId>msg-simple</artifactId>
+    <version>your-version-here</version>
+</dependency>
+```
 
 <h2>Features and roadmap</h2>
 

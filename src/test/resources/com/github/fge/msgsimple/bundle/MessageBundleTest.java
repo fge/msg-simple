@@ -14,19 +14,20 @@ public final class MessageBundleTest
 
     private MessageSource source1;
     private MessageSource source2;
+    private MessageBundle bundle;
 
     @BeforeMethod
     public void init()
     {
         source1 = mock(MessageSource.class);
         source2 = mock(MessageSource.class);
+        bundle = new MessageBundle.Builder().addSource(source1)
+            .addSource(source2).build();
     }
 
     @Test
-    public void emptyBundleReturnsKeysAsMessages()
+    public void keyIsReturnedWhenNotDefinedInAnySource()
     {
-        final MessageBundle bundle = new MessageBundle.Builder().build();
-
         assertEquals(bundle.getKey(KEY1), KEY1);
         assertEquals(bundle.getKey(KEY2), KEY2);
     }
@@ -38,9 +39,6 @@ public final class MessageBundleTest
         final String msg2 = "bar";
         when(source1.getMessage(KEY1)).thenReturn(msg1);
         when(source2.getMessage(KEY2)).thenReturn(msg2);
-
-        final MessageBundle bundle = new MessageBundle.Builder()
-            .addSource(source1).addSource(source2).build();
 
         assertEquals(bundle.getKey(KEY1), msg1);
         verify(source1).getMessage(KEY1);

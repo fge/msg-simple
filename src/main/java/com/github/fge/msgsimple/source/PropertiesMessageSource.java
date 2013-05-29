@@ -22,8 +22,15 @@ public final class PropertiesMessageSource
     public static MessageSource fromResource(final String resourcePath)
         throws IOException
     {
+        if (resourcePath == null)
+            throw new NullPointerException("resource path is null");
+
         final InputStream in
             = PropertiesMessageSource.class.getResourceAsStream(resourcePath);
+
+        if (in == null)
+            throw new IOException("resource \"" + resourcePath
+                + "\" not found");
 
         return fromInputStream(in);
     }
@@ -31,21 +38,33 @@ public final class PropertiesMessageSource
     public static MessageSource fromFile(final File file)
         throws IOException
     {
+        if (file == null)
+            throw new NullPointerException("file is null");
+
         return fromInputStream(new FileInputStream(file));
     }
 
     public static MessageSource fromPath(final String path)
         throws IOException
     {
+        if (path == null)
+            throw new NullPointerException("file path is null");
+
         return fromFile(new File(path));
     }
 
+    // NOTE: CLOSES THE INPUT STREAM!
+    // Don't forget to mention in javadoc
     public static MessageSource fromInputStream(final InputStream in)
         throws IOException
     {
+        if (in == null)
+            throw new NullPointerException("input stream is null");
+
         final Reader reader = new InputStreamReader(in, UTF8);
         try {
             final Properties properties = new Properties();
+            // This method is available only since 1.6+
             properties.load(reader);
             return new PropertiesMessageSource(properties);
         } finally {

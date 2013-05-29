@@ -33,6 +33,11 @@ public final class MessageBundle
         return key;
     }
 
+    public Builder copy()
+    {
+        return new Builder(this);
+    }
+
     @NotThreadSafe
     public static final class Builder
     {
@@ -43,7 +48,7 @@ public final class MessageBundle
         {
         }
 
-        public Builder(final MessageBundle bundle)
+        private Builder(final MessageBundle bundle)
         {
             sources.addAll(bundle.sources);
         }

@@ -74,7 +74,7 @@ final MessageBundle bundle = builder.build();
 
 <p>For instance, here is how you would append another message source to the bundle created above:
 
-```
+```java
 MessageBundle.Builder newBuilder = bundle.copy();
 
 newBuilder = newBuilder.append(source4);

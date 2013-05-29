@@ -5,7 +5,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 public final class MessageBundleTest
 {
@@ -47,5 +47,27 @@ public final class MessageBundleTest
         assertEquals(bundle.getKey(KEY2), msg2);
         verify(source1).getMessage(KEY2);
         verify(source2).getMessage(KEY2);
+    }
+
+    @Test
+    public void cannotAddNullMessageSource()
+    {
+        try {
+            new MessageBundle.Builder().addSource(null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "cannot add null message source");
+        }
+    }
+
+    @Test
+    public void cannotQueryNullKey()
+    {
+        try {
+            bundle.getKey(null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "cannot query null key");
+        }
     }
 }

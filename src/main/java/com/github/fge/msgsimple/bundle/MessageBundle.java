@@ -19,6 +19,9 @@ public final class MessageBundle
 
     public String getKey(final String key)
     {
+        if (key == null)
+            throw new NullPointerException("cannot query null key");
+
         String ret;
 
         for (final MessageSource source: sources) {
@@ -47,6 +50,8 @@ public final class MessageBundle
 
         public Builder addSource(final MessageSource source)
         {
+            if (source == null)
+                throw new NullPointerException("cannot add null message source");
             sources.add(source);
             return this;
         }

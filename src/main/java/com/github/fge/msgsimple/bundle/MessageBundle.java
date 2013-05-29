@@ -56,8 +56,18 @@ public final class MessageBundle
         public Builder appendSource(final MessageSource source)
         {
             if (source == null)
-                throw new NullPointerException("cannot add null message source");
+                throw new NullPointerException("cannot append " +
+                    "null message source");
             sources.add(source);
+            return this;
+        }
+
+        public Builder prependSource(final MessageSource source)
+        {
+            if (source == null)
+                throw new NullPointerException("cannot prepend " +
+                    "null message source");
+            sources.add(0, source);
             return this;
         }
 

@@ -50,14 +50,38 @@ public final class MessageBundleTest
     }
 
     @Test
-    public void cannotAddNullMessageSource()
+    public void cannotAppendNullMessageSource()
     {
         try {
             new MessageBundle.Builder().appendSource(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot add null message source");
+            assertEquals(e.getMessage(), "cannot append null message source");
         }
+    }
+
+    @Test
+    public void cannotPrependNullMessageSource()
+    {
+        try {
+            new MessageBundle.Builder().prependSource(null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "cannot prepend null message source");
+        }
+    }
+
+    @Test
+    public void prependingSourceWorksAsExpected()
+    {
+        final String value = "meh";
+        final MessageSource source = mock(MessageSource.class);
+        when(source.getMessage(KEY1)).thenReturn(value);
+
+        final MessageBundle bundle2 = bundle.copy().prependSource(source)
+            .build();
+
+        assertEquals(bundle2.getKey(KEY1), value);
     }
 
     @Test

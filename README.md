@@ -76,7 +76,7 @@ MessageBundle.Builder builder = new MessageBundle.Builder();
 // Append two sources
 builder = builder.appendSource(source1).appendSource(source2);
 // Prepend another one
-builder = builder.prepend(source3);
+builder = builder.prependSource(source3);
 
 // Finally, build the bundle
 final MessageBundle bundle = builder.build();
@@ -91,7 +91,7 @@ final MessageBundle bundle = builder.build();
 ```java
 MessageBundle.Builder newBuilder = bundle.copy();
 
-newBuilder = newBuilder.append(source4);
+newBuilder = newBuilder.appendSource(source4);
 
 final MessageBundle newBundle = newBuilder.build();
 ```

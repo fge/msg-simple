@@ -22,6 +22,9 @@ public final class MapMessageSource
 
     private static void checkMap(final Map<String, String> map)
     {
+        if (map == null)
+            throw new NullPointerException("null map is not allowed");
+
         for (final Map.Entry<String, String> entry: map.entrySet()) {
             if (entry.getKey() == null)
                 throw new NullPointerException("null keys not allowed in map");

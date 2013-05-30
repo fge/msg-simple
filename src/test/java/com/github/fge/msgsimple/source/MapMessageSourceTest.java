@@ -24,6 +24,17 @@ public final class MapMessageSourceTest
     }
 
     @Test
+    public void nullMapIsNotAllowed()
+    {
+        try {
+            new MapMessageSource(null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "null map is not allowed");
+        }
+    }
+
+    @Test
     public void nullKeysAreNotAllowedInMap()
     {
         final Map<String, String> map = new HashMap<String, String>();

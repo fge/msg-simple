@@ -4,14 +4,38 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public final class LocaleUtils
 {
+    private static final Pattern UNDERSCORE = Pattern.compile("_");
     private LocaleUtils()
     {
     }
 
-    private static Collection<Locale> getApplicable(final Locale target)
+    public static Locale parse(final String input)
+    {
+        if (input == null)
+            throw new NullPointerException("input cannot be null");
+
+        if (input.isEmpty())
+            return Locale.ROOT;
+
+        final String[] elements = UNDERSCORE.split(input);
+
+        switch (elements.length) {
+            case 1:
+                return new Locale(elements[0]);
+            case 2:
+                return new Locale(elements[0], elements[1]);
+            case 3:
+                return new Locale(elements[0], elements[1], elements[2]);
+            default:
+                throw new IllegalArgumentException("malformed input " + input);
+        }
+    }
+
+    public static Collection<Locale> getApplicable(final Locale target)
     {
         final String language = target.getLanguage();
         final String country = target.getCountry();

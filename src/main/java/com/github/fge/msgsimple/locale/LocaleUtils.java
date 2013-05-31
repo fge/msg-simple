@@ -23,6 +23,13 @@ public final class LocaleUtils
 
         final String[] elements = UNDERSCORE.split(input);
 
+        final int len = elements.length;
+
+        if (len == 0)
+            return Locale.ROOT;
+        if (elements[0].isEmpty())
+            return Locale.ROOT;
+
         switch (elements.length) {
             case 1:
                 return new Locale(elements[0]);

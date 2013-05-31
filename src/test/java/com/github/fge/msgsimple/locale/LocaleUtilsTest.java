@@ -4,6 +4,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -80,5 +81,25 @@ public final class LocaleUtilsTest
         assertEquals(locale.getLanguage(), language);
         assertEquals(locale.getCountry(), country);
         assertEquals(locale.getVariant(), variant);
+    }
+
+    @DataProvider
+    public Iterator<Object[]> parsedAsLocaleROOT()
+    {
+        return Arrays.asList(
+            new Object[] { "_a" },
+            new Object[] { "_" },
+            new Object[] { "_a_"},
+            new Object[] { "__b" },
+            new Object[] { "_a_b" },
+            new Object[] { "__" }
+        ).iterator();
+    }
+
+    @Test(dataProvider = "parsedAsLocaleROOT")
+    public void localeStringsWithEmptyLanguageAreParsedAsLocaleROOT(
+        final String input)
+    {
+        assertEquals(LocaleUtils.parse(input), Locale.ROOT);
     }
 }

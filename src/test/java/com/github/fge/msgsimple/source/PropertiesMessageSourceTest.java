@@ -67,16 +67,4 @@ public final class PropertiesMessageSourceTest
             assertEquals(e.getMessage(), "file path is null");
         }
     }
-
-    @Test
-    public void cannotLoadFromNullInputStream()
-        throws IOException
-    {
-        try {
-            PropertiesMessageSource.fromInputStream(null);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "input stream is null");
-        }
-    }
 }

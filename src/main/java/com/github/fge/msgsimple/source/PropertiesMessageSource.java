@@ -32,7 +32,11 @@ public final class PropertiesMessageSource
             throw new IOException("resource \"" + resourcePath
                 + "\" not found");
 
-        return fromInputStream(in);
+        try {
+            return fromInputStream(in);
+        } finally {
+            closeQuietly(in);
+        }
     }
 
     public static MessageSource fromFile(final File file)
@@ -41,7 +45,13 @@ public final class PropertiesMessageSource
         if (file == null)
             throw new NullPointerException("file is null");
 
-        return fromInputStream(new FileInputStream(file));
+        final FileInputStream in = new FileInputStream(file);
+
+        try {
+            return fromInputStream(in);
+        } finally {
+            closeQuietly(in);
+        }
     }
 
     public static MessageSource fromPath(final String path)
@@ -53,9 +63,7 @@ public final class PropertiesMessageSource
         return fromFile(new File(path));
     }
 
-    // NOTE: CLOSES THE INPUT STREAM!
-    // Don't forget to mention in javadoc
-    public static MessageSource fromInputStream(final InputStream in)
+    private static MessageSource fromInputStream(final InputStream in)
         throws IOException
     {
         if (in == null)
@@ -69,7 +77,6 @@ public final class PropertiesMessageSource
             return new PropertiesMessageSource(properties);
         } finally {
             closeQuietly(reader);
-            closeQuietly(in);
         }
     }
 

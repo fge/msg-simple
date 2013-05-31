@@ -44,6 +44,7 @@
                 <configuration>
                     <links>
                         <link>http://docs.oracle.com/javase/6/docs/api</link>
+                        <link>http://jsr-305.googlecode.com/svn/trunk/javadoc</link>
                     </links>
                 </configuration>
                 <executions>

@@ -58,7 +58,7 @@ public abstract class CachedI18NMessageBundle
         try {
             source = tryAndLookup(locale);
             sources.putIfAbsent(locale, source);
-            return Arrays.asList(source);
+            return Arrays.asList(sources.get(locale));
         } catch (IOException ignored) {
             lookupFailures.add(locale);
             return Collections.emptyList();

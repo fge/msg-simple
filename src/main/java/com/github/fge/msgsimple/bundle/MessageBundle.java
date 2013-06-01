@@ -23,6 +23,11 @@ import java.util.ResourceBundle;
  *     <li>build the final bundle using {@link
  *     MessageBundle.Builder#build()}.</li>
  * </ul>
+ *
+ * <p>You can also reuse an existing bundle and modify it to suit your needs,
+ * using the {@link #modify()} method. Note that this will return a builder;
+ * once you {@link MessageBundle.Builder#build()} it again, this will be a
+ * <b>new</b> bundle, the original one will be left intact.</p>
  */
 @ThreadSafe
 public final class MessageBundle
@@ -73,6 +78,7 @@ public final class MessageBundle
      * Return a modifable version of this bundle
      *
      * @return a {@link Builder} with this bundle's message sources
+     * @since 0.2
      */
     public Builder modify()
     {
@@ -83,7 +89,7 @@ public final class MessageBundle
      * Return a modifable version of this bundle
      *
      * @return a {@link Builder} with this bundle's message sources
-     * @deprecated use {@link #modify()} instead
+     * @deprecated use {@link #modify()} instead. Will be gone in 0.3.
      */
     @Deprecated
     public Builder copy()
@@ -95,6 +101,7 @@ public final class MessageBundle
      * Create a new, empty bundle builder
      *
      * @return a {@link Builder}
+     * @since 0.2
      */
     public static Builder newBundle()
     {
@@ -110,7 +117,7 @@ public final class MessageBundle
         /**
          * Constructor
          *
-         * @deprecated use {@link #newBundle()} instead
+         * @deprecated use {@link #newBundle()} instead. Will be gone in 0.3.
          */
         @Deprecated
         public Builder()
@@ -126,6 +133,7 @@ public final class MessageBundle
          * Append one message source to the already registered sources
          *
          * @param source the source to append
+         * @throws NullPointerException source is null
          * @return this
          */
         public Builder appendSource(final MessageSource source)
@@ -141,6 +149,7 @@ public final class MessageBundle
          * Prepend one message source to the already registered soruces
          *
          * @param source the source to prepend
+         * @throws NullPointerException source is null
          * @return this
          */
         public Builder prependSource(final MessageSource source)

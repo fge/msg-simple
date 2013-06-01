@@ -28,8 +28,7 @@ public final class StaticI18NBundleTest
     @Test
     public void emptyListIsReturnedForLocalesWithoutSources()
     {
-        final List<MessageSource> list
-            = builder.build().getSources(ROOT);
+        final List<MessageSource> list = builder.build().getSources(ROOT);
 
         assertNotNull(list);
         assertTrue(list.isEmpty());

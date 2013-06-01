@@ -52,22 +52,26 @@ public abstract class I18NMessageBundle
     @NotThreadSafe
     public abstract static class Builder
     {
-        public final void appendSource(final Locale locale,
+        public final Builder appendSource(final Locale locale,
             final MessageSource source)
         {
             if (locale == null)
                 throw new NullPointerException("locale is null");
             if (source == null)
                 throw new NullPointerException("message source is null");
+            doAppendSource(locale, source);
+            return this;
         }
 
-        public final void prependSource(final Locale locale,
+        public final Builder prependSource(final Locale locale,
             final MessageSource source)
         {
             if (locale == null)
                 throw new NullPointerException("locale is null");
             if (source == null)
                 throw new NullPointerException("message source is null");
+            doPrependSource(locale, source);
+            return this;
         }
 
         protected abstract void doAppendSource(final Locale locale,

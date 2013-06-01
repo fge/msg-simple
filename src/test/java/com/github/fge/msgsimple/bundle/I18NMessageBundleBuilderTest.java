@@ -6,10 +6,10 @@ import org.testng.annotations.Test;
 
 import java.util.Locale;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
-public final class I18NBundleBuilderTest
+public final class I18NMessageBundleBuilderTest
 {
     private I18NMessageBundle.Builder builder;
 
@@ -64,5 +64,19 @@ public final class I18NBundleBuilderTest
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "message source is null");
         }
+    }
+
+    @Test
+    public void whenParamsAreOKDoAppendIsCalled()
+    {
+        builder.appendSource(Locale.ROOT, source);
+        verify(builder, only()).doAppendSource(Locale.ROOT, source);
+    }
+
+    @Test
+    public void whenParamsAreOkDoPrependIsCalled()
+    {
+        builder.appendSource(Locale.ROOT, source);
+        verify(builder, only()).doPrependSource(Locale.ROOT, source);
     }
 }

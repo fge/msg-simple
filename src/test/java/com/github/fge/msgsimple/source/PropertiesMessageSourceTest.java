@@ -18,7 +18,7 @@ public final class PropertiesMessageSourceTest
         final MessageSource source
             = PropertiesMessageSource.fromResource("/t.properties");
 
-        assertEquals(source.getMessage(KEY), VALUE);
+        assertEquals(source.getKey(KEY), VALUE);
     }
 
     @Test

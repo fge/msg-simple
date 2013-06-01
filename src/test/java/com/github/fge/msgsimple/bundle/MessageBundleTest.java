@@ -37,16 +37,16 @@ public final class MessageBundleTest
     {
         final String msg1 = "foo";
         final String msg2 = "bar";
-        when(source1.getMessage(KEY1)).thenReturn(msg1);
-        when(source2.getMessage(KEY2)).thenReturn(msg2);
+        when(source1.getKey(KEY1)).thenReturn(msg1);
+        when(source2.getKey(KEY2)).thenReturn(msg2);
 
         assertEquals(bundle.getKey(KEY1), msg1);
-        verify(source1).getMessage(KEY1);
-        verify(source2, never()).getMessage(KEY1);
+        verify(source1).getKey(KEY1);
+        verify(source2, never()).getKey(KEY1);
 
         assertEquals(bundle.getKey(KEY2), msg2);
-        verify(source1).getMessage(KEY2);
-        verify(source2).getMessage(KEY2);
+        verify(source1).getKey(KEY2);
+        verify(source2).getKey(KEY2);
     }
 
     @Test
@@ -76,7 +76,7 @@ public final class MessageBundleTest
     {
         final String value = "meh";
         final MessageSource source = mock(MessageSource.class);
-        when(source.getMessage(KEY1)).thenReturn(value);
+        when(source.getKey(KEY1)).thenReturn(value);
 
         final MessageBundle bundle2 = bundle.copy().prependSource(source)
             .build();

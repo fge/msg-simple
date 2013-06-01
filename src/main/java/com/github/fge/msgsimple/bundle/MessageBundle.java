@@ -60,7 +60,7 @@ public final class MessageBundle
         String ret;
 
         for (final MessageSource source: sources) {
-            ret = source.getMessage(key);
+            ret = source.getKey(key);
             if (ret != null)
                 return ret;
         }

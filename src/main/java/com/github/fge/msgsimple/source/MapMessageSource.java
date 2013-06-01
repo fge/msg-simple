@@ -15,7 +15,7 @@ public final class MapMessageSource
     }
 
     @Override
-    public String getMessage(final String key)
+    public String getKey(final String key)
     {
         return messages.get(key);
     }

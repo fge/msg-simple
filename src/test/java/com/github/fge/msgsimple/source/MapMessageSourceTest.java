@@ -20,7 +20,7 @@ public final class MapMessageSourceTest
 
         final MessageSource source = new MapMessageSource(map);
 
-        assertEquals(source.getMessage(key), value);
+        assertEquals(source.getKey(key), value);
     }
 
     @Test

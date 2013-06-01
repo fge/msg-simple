@@ -23,17 +23,14 @@ public abstract class I18NMessageBundle
         if (locale == null)
             throw new NullPointerException("null locales are not allowed");
 
-        Iterable<MessageSource> sources;
         String ret;
 
-        for (final Locale candidate: LocaleUtils.getApplicable(locale)) {
-            sources = getSources(candidate);
-            for (final MessageSource source: sources) {
+        for (final Locale candidate: LocaleUtils.getApplicable(locale))
+            for (final MessageSource source: getSources(candidate)) {
                 ret = source.getKey(key);
                 if (ret != null)
                     return ret;
             }
-        }
 
         // No source found which has the key... Return the key itself.
         return key;

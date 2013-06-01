@@ -49,6 +49,7 @@ public final class MessageBundle
      * @param key the key to return
      * @return the first matching message for that key; the key itself if no
      * source has a matching entry for this key
+     * @throws NullPointerException key is null
      * @see MessageSource
      * @see MessageBundle.Builder
      */

@@ -56,6 +56,8 @@ public final class StaticI18NBundle
         {
             if (locale == null)
                 throw new NullPointerException("locale is null");
+            if (source == null)
+                throw new NullPointerException("message source is null");
         }
 
         public void prependSource(final Locale locale,
@@ -63,7 +65,10 @@ public final class StaticI18NBundle
         {
             if (locale == null)
                 throw new NullPointerException("locale is null");
+            if (source == null)
+                throw new NullPointerException("message source is null");
         }
+
         I18NMessageBundle build()
         {
             return new StaticI18NBundle(this);

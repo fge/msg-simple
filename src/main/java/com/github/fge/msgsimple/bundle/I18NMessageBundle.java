@@ -28,9 +28,8 @@ public abstract class I18NMessageBundle
             }
         }
 
-        // No source found at all... Should not happen!
-        throw new IllegalStateException("no message source found! " +
-            "How did we get there at all?");
+        // No source found which has the key... Return the key itself.
+        return key;
     }
 
     public final String getKey(final String key, final String locale)

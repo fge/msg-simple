@@ -79,6 +79,10 @@ public final class I18NMessageBundleTest
         message = DEFAULT_MESSAGE;
         list.add(new Object[] { locale, message });
 
+        locale = LocaleUtils.parseLocale("ja_JP_JP");
+        message = DEFAULT_MESSAGE;
+        list.add(new Object[] { locale, message });
+
         locale = Locale.ROOT;
         message = DEFAULT_MESSAGE;
         list.add(new Object[] { locale, message });
@@ -91,5 +95,28 @@ public final class I18NMessageBundleTest
         final String message)
     {
         assertEquals(bundle.getKey(KEY, locale), message);
+    }
+
+    @Test
+    public void whenKeyIsNotFoundInMatchingLocaleFurtherSourcesAreTried()
+    {
+        final String key2 = "key2";
+        final String value2 = "value2";
+        when(rootSource.getKey(key2)).thenReturn(value2);
+
+        /*
+         * We have a source for en_US, but it does not have the key
+         */
+        assertEquals(bundle.getKey(key2, EN_US), value2);
+    }
+
+    @Test
+    public void whenNoSourceMatchesKeyItselfIsReturned()
+    {
+        final String key3 = "key3";
+
+        assertEquals(bundle.getKey(key3, Locale.ROOT), key3);
+        assertEquals(bundle.getKey(key3, FR), key3);
+        assertEquals(bundle.getKey(key3, EN_US), key3);
     }
 }

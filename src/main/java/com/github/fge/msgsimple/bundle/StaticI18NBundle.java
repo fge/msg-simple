@@ -15,6 +15,14 @@ public final class StaticI18NBundle
     private final Map<Locale, List<MessageSource>> sources
         = new HashMap<Locale, List<MessageSource>>();
 
+    private StaticI18NBundle(final Builder builder)
+    {
+        for (final Map.Entry<Locale, List<MessageSource>> entry:
+            builder.sources.entrySet())
+            sources.put(entry.getKey(),
+                new ArrayList<MessageSource>(entry.getValue()));
+    }
+
     @Override
     protected Iterable<MessageSource> getSources(final Locale locale)
     {
@@ -22,7 +30,7 @@ public final class StaticI18NBundle
     }
 
     @NotThreadSafe
-    public static class Builder
+    public static final class Builder
     {
         private final Map<Locale, List<MessageSource>> sources
             = new HashMap<Locale, List<MessageSource>>();
@@ -41,6 +49,11 @@ public final class StaticI18NBundle
             }
 
             return ret;
+        }
+
+        I18NMessageBundle build()
+        {
+            return new StaticI18NBundle(this);
         }
     }
 }

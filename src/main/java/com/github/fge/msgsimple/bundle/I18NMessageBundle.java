@@ -9,6 +9,11 @@ public abstract class I18NMessageBundle
 {
     protected abstract Iterable<MessageSource> getSources(final Locale locale);
 
+    public static StaticI18NBundle.Builder newStaticBundle()
+    {
+        return new StaticI18NBundle.Builder();
+    }
+
     public final String getKey(final String key, final Locale locale)
     {
         if (key == null)

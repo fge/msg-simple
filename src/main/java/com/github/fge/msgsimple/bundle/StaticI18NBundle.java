@@ -24,7 +24,7 @@ public final class StaticI18NBundle
     }
 
     @Override
-    protected Iterable<MessageSource> getSources(final Locale locale)
+    protected List<MessageSource> getSources(final Locale locale)
     {
         return sources.get(locale);
     }

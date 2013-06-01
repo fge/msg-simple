@@ -3,11 +3,12 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
 
+import java.util.List;
 import java.util.Locale;
 
 public abstract class I18NMessageBundle
 {
-    protected abstract Iterable<MessageSource> getSources(final Locale locale);
+    protected abstract List<MessageSource> getSources(final Locale locale);
 
     public static StaticI18NBundle.Builder newStaticBundle()
     {

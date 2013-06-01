@@ -51,9 +51,23 @@ public final class StaticI18NBundle
             return ret;
         }
 
+        public void appendSource(final Locale locale,
+            final MessageSource source)
+        {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
+        }
+
+        public void prependSource(final Locale locale,
+            final MessageSource source)
+        {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
+        }
         I18NMessageBundle build()
         {
             return new StaticI18NBundle(this);
         }
+
     }
 }

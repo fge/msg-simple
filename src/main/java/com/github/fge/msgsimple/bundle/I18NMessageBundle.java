@@ -1,12 +1,13 @@
 package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.locale.LocaleUtils;
+import com.github.fge.msgsimple.source.MessageSource;
 
 import java.util.Locale;
 
 public abstract class I18NMessageBundle
 {
-    protected abstract MessageBundle getBundle(final Locale locale);
+    protected abstract Iterable<MessageSource> getSources(final Locale locale);
 
     public final String getKey(final String key, final Locale locale)
     {
@@ -15,16 +16,20 @@ public abstract class I18NMessageBundle
         if (locale == null)
             throw new NullPointerException("null locales are not allowed");
 
-        MessageBundle bundle;
+        Iterable<MessageSource> sources;
+        String ret;
 
         for (final Locale candidate: LocaleUtils.getApplicable(locale)) {
-            bundle = getBundle(candidate);
-            if (bundle != null)
-                return bundle.getKey(key);
+            sources = getSources(candidate);
+            for (final MessageSource source: sources) {
+                ret = source.getKey(key);
+                if (ret != null)
+                    return ret;
+            }
         }
 
-        // No bundle found at all... Should not happen!
-        throw new IllegalStateException("no bundle found! " +
+        // No source found at all... Should not happen!
+        throw new IllegalStateException("no message source found! " +
             "How did we get there at all?");
     }
 

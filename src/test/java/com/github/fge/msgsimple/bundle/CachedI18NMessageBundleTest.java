@@ -3,11 +3,14 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,8 +22,17 @@ public final class CachedI18NMessageBundleTest
     private static final Locale FR = LocaleUtils.parseLocale("fr");
     private static final Locale EN_US = LocaleUtils.parseLocale("en_US");
 
+    private static final String KEY = "key";
+    private static final String ROOT_VALUE = "root";
+    private static final String FR_VALUE = "aparté";
+
     private static final MessageSource ROOT_SOURCE = mock(MessageSource.class);
     private static final MessageSource FR_SOURCE = mock(MessageSource.class);
+
+    static {
+        when(ROOT_SOURCE.getKey(KEY)).thenReturn(ROOT_VALUE);
+        when(FR_SOURCE.getKey(KEY)).thenReturn(FR_VALUE);
+    }
 
     private CachedI18NMessageBundle bundle;
 
@@ -56,6 +68,47 @@ public final class CachedI18NMessageBundleTest
         assertEquals(l1, expected);
         assertEquals(l2, expected);
         verify(bundle).tryAndLookup(EN_US);
+    }
+
+    @DataProvider
+    public Iterator<Object[]> lookups()
+    {
+        final List<Object[]> list = new ArrayList<Object[]>();
+
+        Locale locale;
+        String value;
+
+        locale = FR;
+        value = FR_VALUE;
+        list.add(new Object[] { locale, value });
+
+        locale = LocaleUtils.parseLocale("fr_FR");
+        value = FR_VALUE;
+        list.add(new Object[] { locale, value });
+
+        locale = EN_US;
+        value = ROOT_VALUE;
+        list.add(new Object[] { locale, value });
+
+        locale = LocaleUtils.parseLocale("ja_JP_JP");
+        value = ROOT_VALUE;
+        list.add(new Object[] { locale, value });
+
+        locale = Locale.ROOT;
+        value = ROOT_VALUE;
+        list.add(new Object[] { locale, value });
+
+        return list.iterator();
+    }
+
+    /*
+     * This is quite a large thread pool size and invocation count, but this is
+     * entirely on purpose.
+     */
+    @Test(threadPoolSize = 50, invocationCount = 10, dataProvider = "lookups")
+    public void existingKeyLookupWorksOK(final Locale locale, final String ret)
+    {
+        assertEquals(bundle.getKey(KEY, locale), ret);
     }
 
     /*

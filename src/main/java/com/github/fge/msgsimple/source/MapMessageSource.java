@@ -3,6 +3,14 @@ package com.github.fge.msgsimple.source;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A {@link Map}-based message source
+ *
+ * <p>This is quite a simple source. All you have to provide is a {@link Map}
+ * with message keys as keys and messages as values.</p>
+ *
+ * <p>Note that null keys or values are not allowed.</p>
+ */
 public final class MapMessageSource
     implements MessageSource
 {

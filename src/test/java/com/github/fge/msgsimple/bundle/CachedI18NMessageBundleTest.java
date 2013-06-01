@@ -2,14 +2,17 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
-import org.mockito.InOrder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 public final class CachedI18NMessageBundleTest
 {
@@ -31,24 +34,28 @@ public final class CachedI18NMessageBundleTest
     public void whenCalledSequentiallySuccessfulLoadingsOnlyHappenOnce()
         throws IOException
     {
-        bundle.getKey("", FR);
-        bundle.getKey("", FR);
+        final List<MessageSource> expected = Arrays.asList(FR_SOURCE);
 
-        final InOrder order = inOrder(bundle);
-        order.verify(bundle, times(1)).tryAndLookup(FR);
-        order.verify(bundle, times(1)).tryAndLookup(Locale.ROOT);
+        final List<MessageSource> l1 = bundle.getSources(FR);
+        final List<MessageSource> l2 = bundle.getSources(FR);
+
+        assertEquals(l1, expected);
+        assertEquals(l2, expected);
+        verify(bundle).tryAndLookup(FR);
     }
 
     @Test
     public void whenCalledSequentiallyFailedLoadingsOnlyHappenOnce()
         throws IOException
     {
-        bundle.getKey("", EN_US);
-        bundle.getKey("", EN_US);
+        final List<MessageSource> expected = Collections.emptyList();
 
-        final InOrder order = inOrder(bundle);
-        order.verify(bundle, times(1)).tryAndLookup(EN_US);
-        order.verify(bundle, times(1)).tryAndLookup(Locale.ROOT);
+        final List<MessageSource> l1 = bundle.getSources(EN_US);
+        final List<MessageSource> l2 = bundle.getSources(EN_US);
+
+        assertEquals(l1, expected);
+        assertEquals(l2, expected);
+        verify(bundle).tryAndLookup(EN_US);
     }
 
     /*

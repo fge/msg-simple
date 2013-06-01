@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * <p>This class provides two methods:</p>
  *
  * <ul>
- *     <li>{@link #parse(String)} parses a string and builds a {@code Locale}
+ *     <li>{@link #parseLocale(String)} parses a string and builds a {@code Locale}
  *     object out of this parsed string (strangely enough, there is no such
  *     method in the JDK!!);</li>
  *     <li>{@link #getApplicable(Locale)} returns an ordered list of locales
@@ -60,7 +60,7 @@ public final class LocaleUtils
      * @throws IllegalArgumentException input is malformed (see above)
      * @return a {@link Locale}
      */
-    public static Locale parse(final String input)
+    public static Locale parseLocale(final String input)
     {
         if (input == null)
             throw new NullPointerException("input cannot be null");

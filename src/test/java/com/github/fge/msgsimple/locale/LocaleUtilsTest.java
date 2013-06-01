@@ -17,7 +17,7 @@ public final class LocaleUtilsTest
     public void parsingNullInputIsNotAllowed()
     {
         try {
-            LocaleUtils.parse(null);
+            LocaleUtils.parseLocale(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "input cannot be null");
@@ -28,7 +28,7 @@ public final class LocaleUtilsTest
     public void parsingInputWithTooManyElementsIsNotAllowed()
     {
         try {
-            LocaleUtils.parse("a_b_c_d");
+            LocaleUtils.parseLocale("a_b_c_d");
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "malformed input a_b_c_d");
@@ -76,7 +76,7 @@ public final class LocaleUtilsTest
     public void localeParsingWorksCorrectly(final String input,
         final String language, final String country, final String variant)
     {
-        final Locale locale = LocaleUtils.parse(input);
+        final Locale locale = LocaleUtils.parseLocale(input);
 
         assertEquals(locale.getLanguage(), language);
         assertEquals(locale.getCountry(), country);
@@ -100,6 +100,6 @@ public final class LocaleUtilsTest
     public void localeStringsWithEmptyLanguageAreParsedAsLocaleROOT(
         final String input)
     {
-        assertEquals(LocaleUtils.parse(input), Locale.ROOT);
+        assertEquals(LocaleUtils.parseLocale(input), Locale.ROOT);
     }
 }

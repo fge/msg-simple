@@ -73,4 +73,16 @@ public final class StaticI18NBundleTest
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source2, source1));
     }
+
+    @Test(dependsOnMethods = "multipleAppendedSourcesAreVisibleInOrder")
+    public void modifyingABundleWorksAsExpected()
+    {
+        final I18NMessageBundle orig = builder.appendSource(ROOT, source1)
+            .build();
+
+        final I18NMessageBundle bundle = orig.modify()
+            .appendSource(ROOT, source2).build();
+
+        assertEquals(bundle.getSources(ROOT), Arrays.asList(source1, source2));
+    }
 }

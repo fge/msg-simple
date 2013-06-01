@@ -39,6 +39,18 @@ public final class CachedI18NMessageBundleTest
         order.verify(bundle, times(1)).tryAndLookup(Locale.ROOT);
     }
 
+    @Test
+    public void whenCalledSequentiallyFailedLoadingsOnlyHappenOnce()
+        throws IOException
+    {
+        bundle.getKey("", EN_US);
+        bundle.getKey("", EN_US);
+
+        final InOrder order = inOrder(bundle);
+        order.verify(bundle, times(1)).tryAndLookup(EN_US);
+        order.verify(bundle, times(1)).tryAndLookup(Locale.ROOT);
+    }
+
     /*
      * We have to do that... Mocks have their limits!
      *

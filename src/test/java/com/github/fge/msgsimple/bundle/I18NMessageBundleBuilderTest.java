@@ -12,7 +12,6 @@ import static org.testng.Assert.*;
 public final class I18NMessageBundleBuilderTest
 {
     private I18NMessageBundle.Builder builder;
-
     private MessageSource source;
 
     @BeforeMethod

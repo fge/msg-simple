@@ -4,6 +4,7 @@ import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -17,16 +18,22 @@ public final class StaticI18NBundle
 
     private StaticI18NBundle(final Builder builder)
     {
+        List<MessageSource> list;
+
         for (final Map.Entry<Locale, List<MessageSource>> entry:
-            builder.sources.entrySet())
-            sources.put(entry.getKey(),
-                new ArrayList<MessageSource>(entry.getValue()));
+            builder.sources.entrySet()) {
+            list = new ArrayList<MessageSource>(entry.getValue());
+            sources.put(entry.getKey(), Collections.unmodifiableList(list));
+        }
     }
 
     @Override
     protected List<MessageSource> getSources(final Locale locale)
     {
-        return sources.get(locale);
+        final List<MessageSource> ret = sources.get(locale);
+        // We can return ret directly: on build, it was wrapped with
+        // Collections.unmodifiableList()
+        return ret == null ? Collections.<MessageSource>emptyList() : ret;
     }
 
     @Override
@@ -58,12 +65,14 @@ public final class StaticI18NBundle
         protected void doAppendSource(final Locale locale,
             final MessageSource source)
         {
+            getSourceList(locale).add(source);
         }
 
         @Override
         protected void doPrependSource(final Locale locale,
             final MessageSource source)
         {
+            getSourceList(locale).add(0, source);
         }
 
         @Override

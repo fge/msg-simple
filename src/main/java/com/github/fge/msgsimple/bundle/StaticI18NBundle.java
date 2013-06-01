@@ -29,12 +29,26 @@ public final class StaticI18NBundle
         return sources.get(locale);
     }
 
+    @Override
+    public I18NMessageBundle.Builder modify()
+    {
+        return new Builder(this);
+    }
+
     @NotThreadSafe
     static final class Builder
         extends I18NMessageBundle.Builder
     {
         private final Map<Locale, List<MessageSource>> sources
             = new HashMap<Locale, List<MessageSource>>();
+
+        private Builder(final StaticI18NBundle bundle)
+        {
+            for (final Map.Entry<Locale, List<MessageSource>> entry:
+                bundle.sources.entrySet())
+                sources.put(entry.getKey(),
+                    new ArrayList<MessageSource>(entry.getValue()));
+        }
 
         @Override
         protected void doAppendSource(final Locale locale,

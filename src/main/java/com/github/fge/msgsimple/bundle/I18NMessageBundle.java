@@ -49,6 +49,8 @@ public abstract class I18NMessageBundle
         return getKey(key, Locale.getDefault());
     }
 
+    public abstract Builder modify();
+
     @NotThreadSafe
     public abstract static class Builder
     {

@@ -30,13 +30,28 @@ public final class StaticI18NBundle
     }
 
     @NotThreadSafe
-    public static final class Builder
+    static final class Builder
+        extends I18NMessageBundle.Builder
     {
         private final Map<Locale, List<MessageSource>> sources
             = new HashMap<Locale, List<MessageSource>>();
 
-        Builder()
+        @Override
+        protected void doAppendSource(final Locale locale,
+            final MessageSource source)
         {
+        }
+
+        @Override
+        protected void doPrependSource(final Locale locale,
+            final MessageSource source)
+        {
+        }
+
+        @Override
+        public I18NMessageBundle build()
+        {
+            return new StaticI18NBundle(this);
         }
 
         private List<MessageSource> getSourceList(final Locale locale)
@@ -50,29 +65,5 @@ public final class StaticI18NBundle
 
             return ret;
         }
-
-        public void appendSource(final Locale locale,
-            final MessageSource source)
-        {
-            if (locale == null)
-                throw new NullPointerException("locale is null");
-            if (source == null)
-                throw new NullPointerException("message source is null");
-        }
-
-        public void prependSource(final Locale locale,
-            final MessageSource source)
-        {
-            if (locale == null)
-                throw new NullPointerException("locale is null");
-            if (source == null)
-                throw new NullPointerException("message source is null");
-        }
-
-        I18NMessageBundle build()
-        {
-            return new StaticI18NBundle(this);
-        }
-
     }
 }

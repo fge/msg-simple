@@ -3,6 +3,7 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,7 +11,7 @@ public abstract class I18NMessageBundle
 {
     protected abstract List<MessageSource> getSources(final Locale locale);
 
-    public static StaticI18NBundle.Builder newStaticBundle()
+    public static Builder newStaticBundle()
     {
         return new StaticI18NBundle.Builder();
     }
@@ -46,5 +47,35 @@ public abstract class I18NMessageBundle
     public final String getKey(final String key)
     {
         return getKey(key, Locale.getDefault());
+    }
+
+    @NotThreadSafe
+    public abstract static class Builder
+    {
+        public final void appendSource(final Locale locale,
+            final MessageSource source)
+        {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
+            if (source == null)
+                throw new NullPointerException("message source is null");
+        }
+
+        public final void prependSource(final Locale locale,
+            final MessageSource source)
+        {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
+            if (source == null)
+                throw new NullPointerException("message source is null");
+        }
+
+        protected abstract void doAppendSource(final Locale locale,
+            final MessageSource source);
+
+        protected abstract void doPrependSource(final Locale locale,
+            final MessageSource source);
+
+        protected abstract I18NMessageBundle build();
     }
 }

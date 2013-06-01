@@ -76,7 +76,7 @@ public final class I18NMessageBundleBuilderTest
     @Test
     public void whenParamsAreOkDoPrependIsCalled()
     {
-        builder.appendSource(Locale.ROOT, source);
+        builder.prependSource(Locale.ROOT, source);
         verify(builder, only()).doPrependSource(Locale.ROOT, source);
     }
 }

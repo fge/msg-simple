@@ -42,6 +42,10 @@ public final class StaticI18NBundle
         private final Map<Locale, List<MessageSource>> sources
             = new HashMap<Locale, List<MessageSource>>();
 
+        Builder()
+        {
+        }
+
         private Builder(final StaticI18NBundle bundle)
         {
             for (final Map.Entry<Locale, List<MessageSource>> entry:

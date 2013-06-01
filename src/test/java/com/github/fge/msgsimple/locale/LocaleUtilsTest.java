@@ -102,4 +102,58 @@ public final class LocaleUtilsTest
     {
         assertEquals(LocaleUtils.parseLocale(input), Locale.ROOT);
     }
+
+    @DataProvider
+    public Iterator<Object[]> descendingLocaleLists()
+    {
+        final List<Object[]> list = new ArrayList<Object[]>();
+
+        Locale baseLocale;
+        List<Locale> localeList;
+
+        baseLocale = Locale.ROOT;
+        localeList = Arrays.asList(Locale.ROOT);
+        list.add(new Object[] { baseLocale, localeList });
+
+        baseLocale = LocaleUtils.parseLocale("ja_JP_JP");
+        localeList = Arrays.asList(
+            baseLocale,
+            LocaleUtils.parseLocale("ja_JP"),
+            LocaleUtils.parseLocale("ja"),
+            Locale.ROOT
+        );
+        list.add(new Object[] { baseLocale, localeList });
+
+        baseLocale = LocaleUtils.parseLocale("it_IT");
+        localeList = Arrays.asList(
+            baseLocale,
+            LocaleUtils.parseLocale("it"),
+            Locale.ROOT
+        );
+        list.add(new Object[] { baseLocale, localeList });
+
+        baseLocale = LocaleUtils.parseLocale("nl");
+        localeList = Arrays.asList(baseLocale, Locale.ROOT);
+        list.add(new Object[] { baseLocale, localeList });
+
+        baseLocale = LocaleUtils.parseLocale("foo__bar");
+        localeList = Arrays.asList(
+            baseLocale,
+            LocaleUtils.parseLocale("foo"),
+            Locale.ROOT
+        );
+        list.add(new Object[] { baseLocale, localeList });
+
+        return list.iterator();
+    }
+
+    @Test(
+        dependsOnMethods = "localeParsingWorksCorrectly",
+        dataProvider = "descendingLocaleLists"
+    )
+    public void localeListCalculationWorks(final Locale baseLocale,
+        final List<Locale> localeList)
+    {
+        assertEquals(LocaleUtils.getApplicable(baseLocale), localeList);
+    }
 }

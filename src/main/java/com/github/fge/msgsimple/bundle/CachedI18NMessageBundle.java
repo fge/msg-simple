@@ -79,6 +79,14 @@ public abstract class CachedI18NMessageBundle
          * return an empty list.
          */
         try {
+            /*
+             * TODO: introduce a timeout?
+             *
+             * Threads may be waiting infinitely on the line below... If a
+             * timeout is defined, it has to have a sane value.
+             *
+             * But what is a sane value? 1 minute? 30 seconds? Less? More?
+             */
             return Arrays.asList(task.get());
         } catch (ExecutionException ignored) {
             return Collections.emptyList();

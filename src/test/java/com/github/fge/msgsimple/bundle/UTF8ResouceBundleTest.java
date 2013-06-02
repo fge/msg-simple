@@ -1,11 +1,20 @@
 package com.github.fge.msgsimple.bundle;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
 public final class UTF8ResouceBundleTest
 {
+    private static final I18NMessageBundle BUNDLE
+        = new UTF8ResouceBundle("/org/foobar/msg");
+    private static final String KEY = "hello";
+
     @Test
     public void constructorRefusesNullPrefix()
     {
@@ -27,5 +36,42 @@ public final class UTF8ResouceBundleTest
             assertEquals(e.getMessage(), "there must be at least" +
                 " a properties file for Locale.ROOT; none was found");
         }
+    }
+
+    @DataProvider
+    public Iterator<Object[]> lookups()
+    {
+        final List<Object[]> list = new ArrayList<Object[]>();
+
+        String locale, message;
+
+        locale = "";
+        message = "world";
+        list.add(new Object[] { locale, message });
+
+        locale = "fr";
+        message = "le monde";
+        list.add(new Object[] { locale, message });
+
+        locale = "it_IT";
+        message = "il mondo";
+        list.add(new Object[] { locale, message });
+
+        locale = "fr_FR";
+        message = "le monde";
+        list.add(new Object[] { locale, message });
+
+        locale = "es";
+        message = "world";
+        list.add(new Object[] { locale, message });
+
+        return list.iterator();
+    }
+
+    @Test(dataProvider = "lookups", threadPoolSize = 10, invocationCount = 2)
+    public void bundleLookupWorksCorrectly(final String locale,
+        final String msg)
+    {
+        assertEquals(BUNDLE.getKey(KEY, locale), msg);
     }
 }

@@ -17,6 +17,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
 // Hopefully, this class is...
@@ -68,7 +70,7 @@ public abstract class CachedI18NMessageBundle
              * this locale.
              */
             task = lookups.get(locale);
-            if (task == null) {
+            if (task == null || task.isCancelled()) {
                 /*
                  * If not, create it and run it.
                  */
@@ -84,18 +86,13 @@ public abstract class CachedI18NMessageBundle
          * return an empty list.
          */
         try {
-            /*
-             * TODO: introduce a timeout?
-             *
-             * Threads may be waiting infinitely on the line below... If a
-             * timeout is defined, it has to have a sane value.
-             *
-             * But what is a sane value? 1 minute? 30 seconds? Less? More?
-             */
-            return Arrays.asList(task.get());
+            return Arrays.asList(task.get(10, TimeUnit.SECONDS));
         } catch (ExecutionException ignored) {
             return Collections.emptyList();
-        } catch (InterruptedException  ignored) {
+        } catch (InterruptedException ignored) {
+            return Collections.emptyList();
+        } catch (TimeoutException ignored) {
+            task.cancel(true);
             return Collections.emptyList();
         }
     }

@@ -30,6 +30,9 @@ public final class CachedI18NMessageBundleTest
     private static final Locale FR = LocaleUtils.parseLocale("fr");
     private static final Locale EN_US = LocaleUtils.parseLocale("en_US");
 
+    private static final Locale ILLBEHAVED = LocaleUtils.parseLocale("foo");
+    private static final long TIMEOUT = 20000;
+
     private static final String KEY = "key";
     private static final String ROOT_VALUE = "root";
     private static final String FR_VALUE = "aparté";
@@ -132,6 +135,16 @@ public final class CachedI18NMessageBundleTest
         verify(bundle).tryAndLookup(EN_US);
     }
 
+    @Test
+    public void whenTimedOutAnotherTaskIsScheduled()
+        throws IOException
+    {
+        bundle.getSources(ILLBEHAVED);
+        bundle.getSources(ILLBEHAVED);
+
+        verify(bundle, times(2)).tryAndLookup(ILLBEHAVED);
+    }
+
     /*
      * We have to do that... Mocks have their limits!
      *
@@ -146,9 +159,14 @@ public final class CachedI18NMessageBundleTest
             throws IOException
         {
             /*
-             * Provide two successes (Locale.ROOT and FR). All other locales
-             * lead to a failure.
+             * Provide two successes (Locale.ROOT and FR) and one timeout
+             * (ILLBEHAVED). All other locales lead to a failure.
              */
+            if (locale.equals(ILLBEHAVED))
+                try {
+                    Thread.sleep(TIMEOUT);
+                } catch (InterruptedException ignored) {
+                }
             if (locale.equals(Locale.ROOT))
                 return ROOT_SOURCE;
             if (locale.equals(FR))

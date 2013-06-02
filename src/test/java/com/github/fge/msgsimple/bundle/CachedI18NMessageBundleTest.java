@@ -120,8 +120,6 @@ public final class CachedI18NMessageBundleTest
         throws IOException
     {
         /*
-         * Dedicated test for the so_try2 implementation.
-         *
          * Create a thread pool; make it access the same resource repeatedly;
          * check that the tryAndLookup() method is only ever called once.
          */
@@ -146,8 +144,6 @@ public final class CachedI18NMessageBundleTest
         throws IOException
     {
         /*
-         * Dedicated test for the so_try2 implementation.
-         *
          * Create a thread pool; make it access the same resource repeatedly;
          * check that the tryAndLookup() method is only ever called once.
          */

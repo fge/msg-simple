@@ -65,7 +65,7 @@ public abstract class CachedI18NMessageBundle
                 /*
                  * If not, create it and run it.
                  */
-                task = new FutureTask<MessageSource>(tryLocale(locale));
+                task = lookupTask(locale);
                 lookups.put(locale, task);
                 task.run();
             }
@@ -99,15 +99,15 @@ public abstract class CachedI18NMessageBundle
 
     /**
      * Wraps an invocation of {@link #tryAndLookup(Locale)} into a {@link
-     * Callable}
+     * FutureTask}
      *
      * @param locale the locale to pass as an argument to {@link
      * #tryAndLookup(Locale)}
-     * @return a {@link Callable}
+     * @return a {@link FutureTask}
      */
-    private Callable<MessageSource> tryLocale(final Locale locale)
+    private FutureTask<MessageSource> lookupTask(final Locale locale)
     {
-        return new Callable<MessageSource>()
+        final Callable<MessageSource> callable = new Callable<MessageSource>()
         {
             @Override
             public MessageSource call()
@@ -116,5 +116,7 @@ public abstract class CachedI18NMessageBundle
                 return tryAndLookup(locale);
             }
         };
+
+        return new FutureTask<MessageSource>(callable);
     }
 }

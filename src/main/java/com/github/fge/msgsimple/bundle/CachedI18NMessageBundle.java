@@ -76,7 +76,6 @@ public abstract class CachedI18NMessageBundle
         /*
          * Try and get the result for this locale; on any failure event (either
          * an IOException thrown by tryAndLookup() or a thread interrupt),
-         * record the failure into the (thread safe) lookupFailures set, and
          * return an empty list.
          */
         try {

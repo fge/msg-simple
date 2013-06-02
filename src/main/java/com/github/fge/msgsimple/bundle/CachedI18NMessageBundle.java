@@ -2,7 +2,6 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.source.MessageSource;
 
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,16 +27,7 @@ public abstract class CachedI18NMessageBundle
     private static final int NTHREADS = 5;
 
     private final ExecutorService service
-        = Executors.newFixedThreadPool(NTHREADS, new ThreadFactory()
-    {
-        @Override
-        public Thread newThread(@Nonnull final Runnable r)
-        {
-            final Thread ret = Executors.defaultThreadFactory().newThread(r);
-            ret.setDaemon(true);
-            return ret;
-        }
-    });
+        = Executors.newFixedThreadPool(NTHREADS);
 
     /**
      * Map pairing locales with {@link FutureTask} instances returning message

@@ -9,17 +9,17 @@ import java.util.List;
 
 import static org.testng.Assert.*;
 
-public final class UTF8ResouceBundleTest
+public final class I18NPropertiesMessageBundleTest
 {
     private static final I18NMessageBundle BUNDLE
-        = new UTF8ResouceBundle("/org/foobar/msg");
+        = new I18NPropertiesMessageBundle("/org/foobar/msg");
     private static final String KEY = "hello";
 
     @Test
     public void constructorRefusesNullPrefix()
     {
         try {
-            new UTF8ResouceBundle(null);
+            new I18NPropertiesMessageBundle(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "base path must not be null");
@@ -30,7 +30,7 @@ public final class UTF8ResouceBundleTest
     public void constructorRefusesCreationOfBundleWithoutRootLocale()
     {
         try {
-            new UTF8ResouceBundle("foo");
+            new I18NPropertiesMessageBundle("foo");
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "there must be at least" +

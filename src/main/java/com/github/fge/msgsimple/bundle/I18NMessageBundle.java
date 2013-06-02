@@ -31,7 +31,7 @@ import java.util.Locale;
  * @see LocaleUtils#getApplicable(Locale)
  * @see StaticI18NBundle
  * @see CachedI18NMessageBundle
- * @see UTF8ResouceBundle
+ * @see I18NPropertiesMessageBundle
  * @see Builder
  */
 @ThreadSafe

@@ -2,7 +2,6 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.source.MessageSource;
 
-import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 // Hopefully, this class is...
@@ -33,14 +31,8 @@ public abstract class CachedI18NMessageBundle
      * <p>The tasks' {@link FutureTask#run()} method will be executed the first
      * time this object is initialized.</p>
      */
-    @GuardedBy("lock")
     private final Map<Locale, FutureTask<MessageSource>> lookups
         = new HashMap<Locale, FutureTask<MessageSource>>();
-
-    /**
-     * Lock used to guarantee exclusive access to the {@link #lookups} map
-     */
-    private final Lock lock = new ReentrantLock();
 
     @Override
     protected final List<MessageSource> getSources(final Locale locale)
@@ -51,11 +43,8 @@ public abstract class CachedI18NMessageBundle
          * Grab an exclusive lock to the lookups map. The lock is held only for
          * the time necessary to grab the FutureTask or create it (and run it)
          * if it didn't exist previously.
-         *
-         * We can do this, since FutureTask's .run() is asynchronous.
          */
-        lock.lock();
-        try {
+        synchronized (lookups) {
             /*
              * Try and see whether there is already a FutureTask associated with
              * this locale.
@@ -67,10 +56,8 @@ public abstract class CachedI18NMessageBundle
                  */
                 task = lookupTask(locale);
                 lookups.put(locale, task);
-                task.run();
+                new Thread(task).start();
             }
-        } finally {
-            lock.unlock();
         }
 
         /*

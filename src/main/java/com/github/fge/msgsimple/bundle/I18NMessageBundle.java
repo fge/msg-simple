@@ -29,7 +29,7 @@ import java.util.Locale;
  * its existing implementations.</p>
  *
  * @see LocaleUtils#getApplicable(Locale)
- * @see StaticI18NBundle
+ * @see FixedMessageBundle
  * @see CachedI18NMessageBundle
  * @see I18NPropertiesMessageBundle
  * @see Builder
@@ -38,13 +38,13 @@ import java.util.Locale;
 public abstract class I18NMessageBundle
 {
     /**
-     * Return a new builder for a {@link StaticI18NBundle}
+     * Return a new builder for a {@link FixedMessageBundle}
      *
      * @return a {@link Builder}
      */
     public static Builder newStaticBundle()
     {
-        return new StaticI18NBundle.Builder();
+        return new FixedMessageBundle.Builder();
     }
 
     /**

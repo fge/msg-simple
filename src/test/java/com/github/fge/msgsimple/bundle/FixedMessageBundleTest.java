@@ -11,7 +11,7 @@ import static java.util.Locale.*;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
-public final class StaticI18NBundleTest
+public final class FixedMessageBundleTest
 {
     private I18NMessageBundle.Builder builder;
     private MessageSource source1;

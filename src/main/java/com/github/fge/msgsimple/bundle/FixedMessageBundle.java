@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public final class StaticI18NBundle
+public final class FixedMessageBundle
     extends I18NMessageBundle
 {
     private final Map<Locale, List<MessageSource>> sources
         = new HashMap<Locale, List<MessageSource>>();
 
-    private StaticI18NBundle(final Builder builder)
+    private FixedMessageBundle(final Builder builder)
     {
         List<MessageSource> list;
 
@@ -53,7 +53,7 @@ public final class StaticI18NBundle
         {
         }
 
-        private Builder(final StaticI18NBundle bundle)
+        private Builder(final FixedMessageBundle bundle)
         {
             for (final Map.Entry<Locale, List<MessageSource>> entry:
                 bundle.sources.entrySet())
@@ -78,7 +78,7 @@ public final class StaticI18NBundle
         @Override
         public I18NMessageBundle build()
         {
-            return new StaticI18NBundle(this);
+            return new FixedMessageBundle(this);
         }
 
         private List<MessageSource> getSourceList(final Locale locale)

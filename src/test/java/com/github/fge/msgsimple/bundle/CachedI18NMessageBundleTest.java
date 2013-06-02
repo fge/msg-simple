@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
@@ -47,12 +48,14 @@ public final class CachedI18NMessageBundleTest
 
     private ExecutorService service;
     private CachedI18NMessageBundle bundle;
+    private AtomicInteger intrCount;
 
     @BeforeMethod
     public void initBundle()
     {
         service = Executors.newFixedThreadPool(NTHREADS);
-        bundle = spy(new TestBundle());
+        intrCount = new AtomicInteger(0);
+        bundle = spy(new TestBundle(intrCount));
     }
 
     @DataProvider
@@ -143,6 +146,7 @@ public final class CachedI18NMessageBundleTest
         bundle.getSources(ILLBEHAVED);
 
         verify(bundle, times(2)).tryAndLookup(ILLBEHAVED);
+        assertEquals(intrCount.get(), 2);
     }
 
     /*
@@ -154,12 +158,15 @@ public final class CachedI18NMessageBundleTest
     private static class TestBundle
         extends CachedI18NMessageBundle
     {
-        private TestBundle()
+        private final AtomicInteger intrCount;
+
+        private TestBundle(final AtomicInteger intrCount)
         {
             // As always, this is a wild guess... We don't want a test to
             // fail because of that, and we don't want them to take too long
             // either.
             super(250L, TimeUnit.MILLISECONDS);
+            this.intrCount = intrCount;
         }
 
         @Override
@@ -174,6 +181,7 @@ public final class CachedI18NMessageBundleTest
                 try {
                     TimeUnit.MINUTES.sleep(1L);
                 } catch (InterruptedException ignored) {
+                    intrCount.incrementAndGet();
                 }
             if (locale.equals(Locale.ROOT))
                 return ROOT_SOURCE;

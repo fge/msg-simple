@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
@@ -31,7 +32,6 @@ public final class CachedI18NMessageBundleTest
     private static final Locale EN_US = LocaleUtils.parseLocale("en_US");
 
     private static final Locale ILLBEHAVED = LocaleUtils.parseLocale("foo");
-    private static final long TIMEOUT = 20000;
 
     private static final String KEY = "key";
     private static final String ROOT_VALUE = "root";
@@ -154,6 +154,14 @@ public final class CachedI18NMessageBundleTest
     private static class TestBundle
         extends CachedI18NMessageBundle
     {
+        private TestBundle()
+        {
+            // As always, this is a wild guess... We don't want a test to
+            // fail because of that, and we don't want them to take too long
+            // either.
+            super(250L, TimeUnit.MILLISECONDS);
+        }
+
         @Override
         protected MessageSource tryAndLookup(final Locale locale)
             throws IOException
@@ -164,7 +172,7 @@ public final class CachedI18NMessageBundleTest
              */
             if (locale.equals(ILLBEHAVED))
                 try {
-                    Thread.sleep(TIMEOUT);
+                    TimeUnit.MINUTES.sleep(1L);
                 } catch (InterruptedException ignored) {
                 }
             if (locale.equals(Locale.ROOT))

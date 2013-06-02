@@ -29,6 +29,21 @@ public abstract class CachedI18NMessageBundle
     private final ExecutorService service
         = Executors.newFixedThreadPool(NTHREADS);
 
+    private final long duration;
+    private final TimeUnit timeUnit;
+
+    protected CachedI18NMessageBundle(final long duration,
+        final TimeUnit timeUnit)
+    {
+        this.duration = duration;
+        this.timeUnit = timeUnit;
+    }
+
+    protected CachedI18NMessageBundle()
+    {
+        this(5L, TimeUnit.SECONDS);
+    }
+
     /**
      * Map pairing locales with {@link FutureTask} instances returning message
      * sources
@@ -75,7 +90,7 @@ public abstract class CachedI18NMessageBundle
          * return an empty list.
          */
         try {
-            return Arrays.asList(task.get(10, TimeUnit.SECONDS));
+            return Arrays.asList(task.get(duration, timeUnit));
         } catch (ExecutionException ignored) {
             return Collections.emptyList();
         } catch (InterruptedException ignored) {

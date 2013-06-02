@@ -52,6 +52,7 @@ public final class LocaleUtils
      *     illegal;</li>
      *     <li>if the first component (the language) is empty, {@link
      *     Locale#ROOT} is returned.</li>
+     * </ul>
      *
      * @see Locale
      *
@@ -77,7 +78,7 @@ public final class LocaleUtils
         if (elements[0].isEmpty())
             return Locale.ROOT;
 
-        switch (elements.length) {
+        switch (len) {
             case 1:
                 return new Locale(elements[0]);
             case 2:

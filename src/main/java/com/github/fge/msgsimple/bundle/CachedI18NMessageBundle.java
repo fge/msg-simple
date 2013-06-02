@@ -2,16 +2,22 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.source.MessageSource;
 
+import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 // Hopefully, this class is...
 @ThreadSafe
@@ -25,41 +31,74 @@ public abstract class CachedI18NMessageBundle
      */
     private final Set<Locale> lookupFailures
         = new CopyOnWriteArraySet<Locale>();
+    /**
+     * Map pairing locales with {@link FutureTask} instances returning message
+     * sources
+     *
+     * <p>There will only ever be one task associated with one locale; we
+     * therefore choose to make it a normal map, guarded by a {@link
+     * ReentrantLock}.</p>
+     *
+     * <p>The tasks' {@link FutureTask#run()} method will be executed the first
+     * time this object is initialized.</p>
+     */
+    @GuardedBy("lock")
+    private final Map<Locale, FutureTask<MessageSource>> lookups
+        = new HashMap<Locale, FutureTask<MessageSource>>();
 
     /**
-     * Set of message sources successfully looked up
-     *
-     * <p>When a source is in there, it is there permanently for now.</p>
+     * Lock used to guarantee exclusive access to the {@link #lookups} map
      */
-    private final ConcurrentMap<Locale, MessageSource> sources
-        = new ConcurrentHashMap<Locale, MessageSource>();
+    private final Lock lock = new ReentrantLock();
 
     @Override
     protected final List<MessageSource> getSources(final Locale locale)
     {
-        MessageSource source = sources.get(locale);
-
         /*
-         * If found, return it
-         */
-        if (source != null)
-            return Arrays.asList(source);
-
-        /*
-         * If it is a registered failure, return the empty list
+         * Check whether the lookup has been declared to fail already. If this
+         * is the case, just return an empty list.
          */
         if (lookupFailures.contains(locale))
             return Collections.emptyList();
 
+        FutureTask<MessageSource> task;
+
         /*
-         * OK, try and look it up. On success, register it in the sources map.
-         * On failure, record the failure an return the empty list.
+         * If we reach this point, we have a potential candidate message source.
+         *
+         * Grab an exclusive lock to the lookups map.
+         */
+        lock.lock();
+        try {
+            /*
+             * Try and see whether there is already a FutureTask associated with
+             * this locale.
+             */
+            task = lookups.get(locale);
+            if (task == null) {
+                /*
+                 * If not, create it and run it.
+                 */
+                task = new FutureTask<MessageSource>(tryLocale(locale));
+                lookups.put(locale, task);
+                task.run();
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        /*
+         * Try and get the result for this locale; on any failure event (either
+         * an IOException thrown by tryAndLookup() or a thread interrupt),
+         * record the failure into the (thread safe) lookupFailures set, and
+         * return an empty list.
          */
         try {
-            source = tryAndLookup(locale);
-            sources.putIfAbsent(locale, source);
-            return Arrays.asList(sources.get(locale));
-        } catch (IOException ignored) {
+            return Arrays.asList(task.get());
+        } catch (ExecutionException ignored) {
+            lookupFailures.add(locale);
+            return Collections.emptyList();
+        } catch (InterruptedException  ignored) {
             lookupFailures.add(locale);
             return Collections.emptyList();
         }
@@ -72,5 +111,26 @@ public abstract class CachedI18NMessageBundle
     public final Builder modify()
     {
         throw new IllegalStateException("cached bundles cannot be modified");
+    }
+
+    /**
+     * Wraps an invocation of {@link #tryAndLookup(Locale)} into a {@link
+     * Callable}
+     *
+     * @param locale the locale to pass as an argument to {@link
+     * #tryAndLookup(Locale)}
+     * @return a {@link Callable}
+     */
+    private Callable<MessageSource> tryLocale(final Locale locale)
+    {
+        return new Callable<MessageSource>()
+        {
+            @Override
+            public MessageSource call()
+                throws IOException
+            {
+                return tryAndLookup(locale);
+            }
+        };
     }
 }

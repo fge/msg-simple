@@ -31,7 +31,7 @@ public final class UTF8ResouceBundle
         try {
             tryAndLookup(Locale.ROOT);
         } catch (IOException e) {
-            throw new IllegalArgumentException("there must at least be" +
+            throw new IllegalArgumentException("there must be at least" +
                 " a properties file for Locale.ROOT; none was found", e);
         }
     }

@@ -2,23 +2,29 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
 public final class CachedI18NMessageBundleTest
 {
+    private static final int TOTAL_THREADS = 50;
     private static final int NTHREADS = 30;
 
     private static final Locale FR = LocaleUtils.parseLocale("fr");
@@ -36,11 +42,13 @@ public final class CachedI18NMessageBundleTest
         when(FR_SOURCE.getKey(KEY)).thenReturn(FR_VALUE);
     }
 
+    private ExecutorService service;
     private CachedI18NMessageBundle bundle;
 
     @BeforeMethod
-    public void init()
+    public void initBundle()
     {
+        service = Executors.newFixedThreadPool(NTHREADS);
         bundle = spy(new TestBundle());
     }
 
@@ -79,23 +87,22 @@ public final class CachedI18NMessageBundleTest
      * This is quite a large thread pool size and invocation count, but this is
      * entirely on purpose.
      */
-    @Test(threadPoolSize = 50, invocationCount = 10, dataProvider = "lookups")
+    @Test(dataProvider = "lookups")
     public void existingKeyLookupWorksOK(final Locale locale, final String ret)
+        throws InterruptedException, ExecutionException
     {
-        assertEquals(bundle.getKey(KEY, locale), ret);
+        final List<Future<String>> list
+            = service.invokeAll(createTasks(bundle, KEY, locale));
+
+        for (int i = 0; i < TOTAL_THREADS; i++)
+            assertEquals(list.get(i).get(), ret, "value differ at index " + i);
     }
 
     @Test
     public void onlyOneTaskIsCreatedPerSuccessfulLocaleLookup()
         throws IOException
     {
-        /*
-         * Create a thread pool; make it access the same resource repeatedly;
-         * check that the tryAndLookup() method is only ever called once.
-         */
-        final ExecutorService service = Executors.newFixedThreadPool(NTHREADS);
-
-        for (int i = 0; i < NTHREADS; i++)
+        for (int i = 0; i < TOTAL_THREADS; i++)
             service.execute(new Runnable()
             {
                 @Override
@@ -105,7 +112,6 @@ public final class CachedI18NMessageBundleTest
                 }
             });
 
-        service.shutdown();
         verify(bundle).tryAndLookup(Locale.ROOT);
     }
 
@@ -113,13 +119,7 @@ public final class CachedI18NMessageBundleTest
     public void onlyOneTaskIsCreatedPerFailedLocaleLookup()
         throws IOException
     {
-        /*
-         * Create a thread pool; make it access the same resource repeatedly;
-         * check that the tryAndLookup() method is only ever called once.
-         */
-        final ExecutorService service = Executors.newFixedThreadPool(NTHREADS);
-
-        for (int i = 0; i < NTHREADS; i++)
+        for (int i = 0; i < TOTAL_THREADS; i++)
             service.execute(new Runnable()
             {
                 @Override
@@ -129,7 +129,6 @@ public final class CachedI18NMessageBundleTest
                 }
             });
 
-        service.shutdown();
         verify(bundle).tryAndLookup(EN_US);
     }
 
@@ -156,5 +155,31 @@ public final class CachedI18NMessageBundleTest
                 return FR_SOURCE;
             throw new IOException("Too bad!");
         }
+    }
+
+    private static Collection<Callable<String>> createTasks(
+        final CachedI18NMessageBundle bundle, final String key,
+        final Locale locale)
+    {
+        final List<Callable<String>> ret
+            = new ArrayList<Callable<String>>(TOTAL_THREADS);
+
+        for (int i = 0; i < TOTAL_THREADS; i++)
+            ret.add(new Callable<String>()
+            {
+                @Override
+                public String call()
+                    throws IOException
+                {
+                    return bundle.getKey(key, locale);
+                }
+            });
+        return ret;
+    }
+
+    @AfterMethod
+    public void waitForAllThreads()
+    {
+        service.shutdown();
     }
 }

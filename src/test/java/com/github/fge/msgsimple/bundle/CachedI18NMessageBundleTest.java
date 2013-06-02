@@ -13,12 +13,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
 public final class CachedI18NMessageBundleTest
 {
+    private static final int NTHREADS = 30;
+
     private static final Locale FR = LocaleUtils.parseLocale("fr");
     private static final Locale EN_US = LocaleUtils.parseLocale("en_US");
 
@@ -109,6 +113,58 @@ public final class CachedI18NMessageBundleTest
     public void existingKeyLookupWorksOK(final Locale locale, final String ret)
     {
         assertEquals(bundle.getKey(KEY, locale), ret);
+    }
+
+    @Test
+    public void onlyOneTaskIsCreatedPerSuccessfulLocaleLookup()
+        throws IOException
+    {
+        /*
+         * Dedicated test for the so_try2 implementation.
+         *
+         * Create a thread pool; make it access the same resource repeatedly;
+         * check that the tryAndLookup() method is only ever called once.
+         */
+        final ExecutorService service = Executors.newFixedThreadPool(NTHREADS);
+
+        for (int i = 0; i < NTHREADS; i++)
+            service.execute(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    bundle.getSources(Locale.ROOT);
+                }
+            });
+
+        service.shutdown();
+        verify(bundle).tryAndLookup(Locale.ROOT);
+    }
+
+    @Test
+    public void onlyOneTaskIsCreatedPerFailedLocaleLookup()
+        throws IOException
+    {
+        /*
+         * Dedicated test for the so_try2 implementation.
+         *
+         * Create a thread pool; make it access the same resource repeatedly;
+         * check that the tryAndLookup() method is only ever called once.
+         */
+        final ExecutorService service = Executors.newFixedThreadPool(NTHREADS);
+
+        for (int i = 0; i < NTHREADS; i++)
+            service.execute(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    bundle.getSources(EN_US);
+                }
+            });
+
+        service.shutdown();
+        verify(bundle).tryAndLookup(EN_US);
     }
 
     /*

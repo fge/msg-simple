@@ -8,8 +8,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -44,34 +42,6 @@ public final class CachedI18NMessageBundleTest
     public void init()
     {
         bundle = spy(new TestBundle());
-    }
-
-    @Test
-    public void whenCalledSequentiallySuccessfulLoadingsOnlyHappenOnce()
-        throws IOException
-    {
-        final List<MessageSource> expected = Arrays.asList(FR_SOURCE);
-
-        final List<MessageSource> l1 = bundle.getSources(FR);
-        final List<MessageSource> l2 = bundle.getSources(FR);
-
-        assertEquals(l1, expected);
-        assertEquals(l2, expected);
-        verify(bundle).tryAndLookup(FR);
-    }
-
-    @Test
-    public void whenCalledSequentiallyFailedLoadingsOnlyHappenOnce()
-        throws IOException
-    {
-        final List<MessageSource> expected = Collections.emptyList();
-
-        final List<MessageSource> l1 = bundle.getSources(EN_US);
-        final List<MessageSource> l2 = bundle.getSources(EN_US);
-
-        assertEquals(l1, expected);
-        assertEquals(l2, expected);
-        verify(bundle).tryAndLookup(EN_US);
     }
 
     @DataProvider

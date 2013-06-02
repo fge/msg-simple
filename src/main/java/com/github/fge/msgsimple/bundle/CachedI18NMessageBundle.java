@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.locks.Lock;
@@ -24,13 +22,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class CachedI18NMessageBundle
     extends I18NMessageBundle
 {
-    /**
-     * Set of locales known to have failed lookup.
-     *
-     * <p>When a locale is in this set, it will not attempt to be reloaded.</p>
-     */
-    private final Set<Locale> lookupFailures
-        = new CopyOnWriteArraySet<Locale>();
     /**
      * Map pairing locales with {@link FutureTask} instances returning message
      * sources
@@ -54,19 +45,14 @@ public abstract class CachedI18NMessageBundle
     @Override
     protected final List<MessageSource> getSources(final Locale locale)
     {
-        /*
-         * Check whether the lookup has been declared to fail already. If this
-         * is the case, just return an empty list.
-         */
-        if (lookupFailures.contains(locale))
-            return Collections.emptyList();
-
         FutureTask<MessageSource> task;
 
         /*
-         * If we reach this point, we have a potential candidate message source.
+         * Grab an exclusive lock to the lookups map. The lock is held only for
+         * the time necessary to grab the FutureTask or create it (and run it)
+         * if it didn't exist previously.
          *
-         * Grab an exclusive lock to the lookups map.
+         * We can do this, since FutureTask's .run() is asynchronous.
          */
         lock.lock();
         try {
@@ -96,10 +82,8 @@ public abstract class CachedI18NMessageBundle
         try {
             return Arrays.asList(task.get());
         } catch (ExecutionException ignored) {
-            lookupFailures.add(locale);
             return Collections.emptyList();
         } catch (InterruptedException  ignored) {
-            lookupFailures.add(locale);
             return Collections.emptyList();
         }
     }

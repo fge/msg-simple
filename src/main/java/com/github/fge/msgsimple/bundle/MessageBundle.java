@@ -1,174 +1,162 @@
 package com.github.fge.msgsimple.bundle;
 
+import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Simple, non-localized message bundle
+ * Base abstract class for message bundles
  *
- * <p>In order to create a bundle, you need to perform the following steps:</p>
+ * <p>When looking up a message for a given key and locale (using either of
+ * {@link #getKey(String, Locale)} or {@link #getKey(String, String)}), the
+ * locales are queried, from the more specific to the more general, for a list
+ * of {@link MessageSource}s. The first source having a matching key wins.</p>
  *
- * <ul>
- *     <li>create one or more {@link MessageSource}s;</li>
- *     <li>create a new bundle builder, using {@link
- *     MessageBundle#newBundle()}</li>;
- *     <li>append/prepend your message sources using {@link
- *     MessageBundle.Builder#appendSource(MessageSource)} or {@link
- *     MessageBundle.Builder#prependSource(MessageSource)};</li>
- *     <li>build the final bundle using {@link
- *     MessageBundle.Builder#build()}.</li>
- * </ul>
+ * <p>This is essentially the same as what the JDK's {@link ResourceBundle}
+ * does, but with one difference: if the key is not found in any source,
+ * the key itself is returned, instead of throwin an (unchecked!) exception.</p>
  *
- * <p>You can also reuse an existing bundle and modify it to suit your needs,
- * using the {@link #modify()} method. Note that this will return a builder;
- * once you {@link MessageBundle.Builder#build()} it again, this will be a
- * <b>new</b> bundle, the original one will be left intact.</p>
+ * @see LocaleUtils#getApplicable(Locale)
+ * @see FixedMessageBundle
+ * @see CachedMessageBundle
+ * @see PropertiesMessageBundle
+ * @see Builder
  */
 @ThreadSafe
-public final class MessageBundle
+public abstract class MessageBundle
 {
-    private final List<MessageSource> sources;
-
-    private MessageBundle(final Builder builder)
+    /**
+     * Return a new builder for a {@link FixedMessageBundle}
+     *
+     * @return a {@link Builder}
+     */
+    public static Builder newStaticBundle()
     {
-        sources = new ArrayList<MessageSource>(builder.sources);
+        return new FixedMessageBundle.Builder();
     }
 
     /**
-     * Get the message matching that key
+     * Get a message for the given key and locale
      *
-     * <p>This method looks up all declared message sources for a string
-     * matching this key. If the given key was not found in any message source,
-     * the key itself is returned.</p>
-     *
-     * <p>This is therefore a very different behaviour from what you would
-     * expect from a {@link ResourceBundle}, which throws an (unchecked!)
-     * exception if the key cannot be found. This also means that this method
-     * <b>never</b> returns {@code null}.</p>
-     *
-     * @param key the key to return
-     * @return the first matching message for that key; the key itself if no
-     * source has a matching entry for this key
-     * @throws NullPointerException key is null
-     * @see MessageSource
-     * @see MessageBundle.Builder
+     * @param key the key
+     * @param locale the locale
+     * @return a matching message if found; the key itself if no message is
+     * found
+     * @throws NullPointerException either the key or the locale is null
      */
-    public String getKey(final String key)
+    public final String getKey(final String key, final Locale locale)
     {
         if (key == null)
-            throw new NullPointerException("cannot query null key");
+            throw new NullPointerException("null keys are not allowed");
+        if (locale == null)
+            throw new NullPointerException("null locales are not allowed");
 
         String ret;
 
-        for (final MessageSource source: sources) {
-            ret = source.getKey(key);
-            if (ret != null)
-                return ret;
-        }
+        for (final Locale candidate: LocaleUtils.getApplicable(locale))
+            for (final MessageSource source: getSources(candidate)) {
+                ret = source.getKey(key);
+                if (ret != null)
+                    return ret;
+            }
 
+        // No source found which has the key... Return the key itself.
         return key;
     }
 
     /**
-     * Return a modifable version of this bundle
+     * Return a message for a given key and locale
      *
-     * @return a {@link Builder} with this bundle's message sources
-     * @since 0.2
+     * <p>This tries and parses the locale, then calls {@link
+     * #getKey(String, Locale)}.</p>
+     *
+     * @param key the key to look up
+     * @param locale the locale
+     * @return a matching message if found; the key itself if no message is
+     * found
+     * @throws NullPointerException either the key or the locale is null
+     * @throws IllegalArgumentException cannot parse locale string
+     * @see LocaleUtils#parseLocale(String)
      */
-    public Builder modify()
+    public final String getKey(final String key, final String locale)
     {
-        return new Builder(this);
+        return getKey(key, LocaleUtils.parseLocale(locale));
     }
 
     /**
-     * Return a modifable version of this bundle
+     * Return a message for a given key, using the JVM's current locale
      *
-     * @return a {@link Builder} with this bundle's message sources
-     * @deprecated use {@link #modify()} instead. Will be gone in 0.3.
+     * @param key the key
+     * @return a matching message if found; the key itself if no message is
+     * found
+     * @throws NullPointerException key is null
+     * @see Locale#getDefault()
+     * @see Locale#setDefault(Locale)
      */
-    @Deprecated
-    public Builder copy()
+    public final String getKey(final String key)
     {
-        return modify();
+        return getKey(key, Locale.getDefault());
     }
 
     /**
-     * Create a new, empty bundle builder
+     * Get the list of message sources for a given locale
      *
-     * @return a {@link Builder}
-     * @since 0.2
+     * <p>This method must NEVER return {@code null}. If no sources are
+     * applicable, an empty list should be returned.</p>
+     *
+     * @param locale the locale
+     * @return the list of message sources for this locale; an empty list if no
+     * sources are applicable
      */
-    public static Builder newBundle()
-    {
-        return new Builder();
-    }
+    protected abstract List<MessageSource> getSources(final Locale locale);
 
+    /**
+     * Create a mutable version of this bundle, if possible
+     *
+     * @return a {@link Builder} with this bundle's data
+     * @throws IllegalStateException cannot create a builder for this bundle
+     */
+    public abstract Builder modify();
+
+    /**
+     * Abstract builder class for an {@link MessageBundle}
+     */
     @NotThreadSafe
-    public static final class Builder
+    public abstract static class Builder
     {
-        private final List<MessageSource> sources
-            = new ArrayList<MessageSource>();
-
-        /**
-         * Constructor
-         *
-         * @deprecated use {@link #newBundle()} instead. Will be gone in 0.3.
-         */
-        @Deprecated
-        public Builder()
+        public final Builder appendSource(final Locale locale,
+            final MessageSource source)
         {
-        }
-
-        private Builder(final MessageBundle bundle)
-        {
-            sources.addAll(bundle.sources);
-        }
-
-        /**
-         * Append one message source to the already registered sources
-         *
-         * @param source the source to append
-         * @throws NullPointerException source is null
-         * @return this
-         */
-        public Builder appendSource(final MessageSource source)
-        {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
             if (source == null)
-                throw new NullPointerException("cannot append " +
-                    "null message source");
-            sources.add(source);
+                throw new NullPointerException("message source is null");
+            doAppendSource(locale, source);
             return this;
         }
 
-        /**
-         * Prepend one message source to the already registered soruces
-         *
-         * @param source the source to prepend
-         * @throws NullPointerException source is null
-         * @return this
-         */
-        public Builder prependSource(final MessageSource source)
+        public final Builder prependSource(final Locale locale,
+            final MessageSource source)
         {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
             if (source == null)
-                throw new NullPointerException("cannot prepend " +
-                    "null message source");
-            sources.add(0, source);
+                throw new NullPointerException("message source is null");
+            doPrependSource(locale, source);
             return this;
         }
 
-        /**
-         * Build the bundle
-         *
-         * @return a newly created {@link MessageBundle}
-         */
-        public MessageBundle build()
-        {
-            return new MessageBundle(this);
-        }
+        protected abstract void doAppendSource(final Locale locale,
+            final MessageSource source);
+
+        protected abstract void doPrependSource(final Locale locale,
+            final MessageSource source);
+
+        protected abstract MessageBundle build();
     }
 }

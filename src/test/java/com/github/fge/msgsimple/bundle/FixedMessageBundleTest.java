@@ -13,14 +13,14 @@ import static org.testng.Assert.*;
 
 public final class FixedMessageBundleTest
 {
-    private I18NMessageBundle.Builder builder;
+    private MessageBundle.Builder builder;
     private MessageSource source1;
     private MessageSource source2;
 
     @BeforeMethod
     public void init()
     {
-        builder = I18NMessageBundle.newStaticBundle();
+        builder = MessageBundle.newStaticBundle();
         source1 = mock(MessageSource.class);
         source2 = mock(MessageSource.class);
     }
@@ -37,7 +37,7 @@ public final class FixedMessageBundleTest
     @Test(dependsOnMethods = "emptyListIsReturnedForLocalesWithoutSources")
     public void appendedSourceIsVisible()
     {
-        final I18NMessageBundle bundle = builder.appendSource(ROOT, source1)
+        final MessageBundle bundle = builder.appendSource(ROOT, source1)
             .build();
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source1));
@@ -46,7 +46,7 @@ public final class FixedMessageBundleTest
     @Test(dependsOnMethods = "emptyListIsReturnedForLocalesWithoutSources")
     public void prependedSourceIsVisible()
     {
-        final I18NMessageBundle bundle = builder.prependSource(ROOT, source1)
+        final MessageBundle bundle = builder.prependSource(ROOT, source1)
             .build();
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source1));
@@ -55,7 +55,7 @@ public final class FixedMessageBundleTest
     @Test(dependsOnMethods = "appendedSourceIsVisible")
     public void multipleAppendedSourcesAreVisibleInOrder()
     {
-        final I18NMessageBundle bundle = builder.appendSource(ROOT, source1)
+        final MessageBundle bundle = builder.appendSource(ROOT, source1)
             .appendSource(ROOT, source2).build();
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source1, source2));
@@ -67,7 +67,7 @@ public final class FixedMessageBundleTest
     })
     public void prependedSourcesAreVisibleBeforeAppendedSources()
     {
-        final I18NMessageBundle bundle = builder.appendSource(ROOT, source1)
+        final MessageBundle bundle = builder.appendSource(ROOT, source1)
             .prependSource(ROOT, source2).build();
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source2, source1));
@@ -76,10 +76,10 @@ public final class FixedMessageBundleTest
     @Test(dependsOnMethods = "multipleAppendedSourcesAreVisibleInOrder")
     public void modifyingABundleWorksAsExpected()
     {
-        final I18NMessageBundle orig = builder.appendSource(ROOT, source1)
+        final MessageBundle orig = builder.appendSource(ROOT, source1)
             .build();
 
-        final I18NMessageBundle bundle = orig.modify()
+        final MessageBundle bundle = orig.modify()
             .appendSource(ROOT, source2).build();
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source1, source2));

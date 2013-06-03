@@ -47,7 +47,7 @@ public final class CachedI18NMessageBundleTest
     }
 
     private ExecutorService service;
-    private CachedI18NMessageBundle bundle;
+    private CachedMessageBundle bundle;
     private AtomicInteger intrCount;
 
     @BeforeMethod
@@ -156,7 +156,7 @@ public final class CachedI18NMessageBundleTest
      * we cannot spy.
      */
     private static class TestBundle
-        extends CachedI18NMessageBundle
+        extends CachedMessageBundle
     {
         private final AtomicInteger intrCount;
 
@@ -192,7 +192,7 @@ public final class CachedI18NMessageBundleTest
     }
 
     private static Collection<Callable<String>> createTasks(
-        final CachedI18NMessageBundle bundle, final String key,
+        final CachedMessageBundle bundle, final String key,
         final Locale locale)
     {
         final List<Callable<String>> ret

@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class FixedMessageBundle
-    extends I18NMessageBundle
+    extends MessageBundle
 {
     private final Map<Locale, List<MessageSource>> sources
         = new HashMap<Locale, List<MessageSource>>();
@@ -37,14 +37,14 @@ public final class FixedMessageBundle
     }
 
     @Override
-    public I18NMessageBundle.Builder modify()
+    public MessageBundle.Builder modify()
     {
         return new Builder(this);
     }
 
     @NotThreadSafe
     static final class Builder
-        extends I18NMessageBundle.Builder
+        extends MessageBundle.Builder
     {
         private final Map<Locale, List<MessageSource>> sources
             = new HashMap<Locale, List<MessageSource>>();
@@ -76,7 +76,7 @@ public final class FixedMessageBundle
         }
 
         @Override
-        public I18NMessageBundle build()
+        public MessageBundle build()
         {
             return new FixedMessageBundle(this);
         }

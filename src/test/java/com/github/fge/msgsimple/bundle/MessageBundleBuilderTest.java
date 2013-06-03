@@ -9,15 +9,15 @@ import java.util.Locale;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
-public final class I18NMessageBundleBuilderTest
+public final class MessageBundleBuilderTest
 {
-    private I18NMessageBundle.Builder builder;
+    private MessageBundle.Builder builder;
     private MessageSource source;
 
     @BeforeMethod
     public void init()
     {
-        builder = mock(I18NMessageBundle.Builder.class);
+        builder = mock(MessageBundle.Builder.class);
         source = mock(MessageSource.class);
     }
 

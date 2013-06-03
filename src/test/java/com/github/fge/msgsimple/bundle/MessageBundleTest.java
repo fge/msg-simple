@@ -1,97 +1,122 @@
 package com.github.fge.msgsimple.bundle;
 
+import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
 public final class MessageBundleTest
 {
-    private static final String KEY1 = "FOO";
-    private static final String KEY2 = "BAR";
+    private static final Locale FR = LocaleUtils.parseLocale("fr");
+    private static final Locale EN_US = LocaleUtils.parseLocale("en_US");
 
-    private MessageSource source1;
-    private MessageSource source2;
+    private static final String KEY = "key";
+    private static final String DEFAULT_MESSAGE = "default";
+    private static final String FR_MESSAGE = "français !";
+    private static final String EN_US_MESSAGE = "English here";
+
+    private MessageSource rootSource;
+    private MessageSource frSource;
+    private MessageSource enUsSource;
+
     private MessageBundle bundle;
 
     @BeforeMethod
     public void init()
     {
-        source1 = mock(MessageSource.class);
-        source2 = mock(MessageSource.class);
-        bundle = MessageBundle.newBundle().appendSource(source1)
-            .appendSource(source2).build();
+        bundle = mock(MessageBundle.class);
+        when(bundle.getSources(any(Locale.class)))
+            .thenReturn(Collections.<MessageSource>emptyList());
+
+        rootSource = mock(MessageSource.class);
+        when(rootSource.getKey(KEY)).thenReturn(DEFAULT_MESSAGE);
+        when(bundle.getSources(Locale.ROOT))
+            .thenReturn(Arrays.asList(rootSource));
+
+        frSource = mock(MessageSource.class);
+        when(frSource.getKey(KEY)).thenReturn(FR_MESSAGE);
+        when(bundle.getSources(FR))
+            .thenReturn(Arrays.asList(frSource));
+
+        enUsSource = mock(MessageSource.class);
+        when(enUsSource.getKey(KEY)).thenReturn(EN_US_MESSAGE);
+        when(bundle.getSources(EN_US))
+            .thenReturn(Arrays.asList(enUsSource));
+    }
+
+    @DataProvider
+    public Iterator<Object[]> singleKeyLookupData()
+    {
+        final List<Object[]> list = new ArrayList<Object[]>();
+
+        Locale locale;
+        String message;
+
+        locale = LocaleUtils.parseLocale("fr_CA");
+        message = FR_MESSAGE;
+        list.add(new Object[] { locale, message });
+
+        locale = FR;
+        message = FR_MESSAGE;
+        list.add(new Object[] { locale, message });
+
+        locale = EN_US;
+        message = EN_US_MESSAGE;
+        list.add(new Object[] { locale, message });
+
+        locale = LocaleUtils.parseLocale("en");
+        message = DEFAULT_MESSAGE;
+        list.add(new Object[] { locale, message });
+
+        locale = LocaleUtils.parseLocale("ja_JP_JP");
+        message = DEFAULT_MESSAGE;
+        list.add(new Object[] { locale, message });
+
+        locale = Locale.ROOT;
+        message = DEFAULT_MESSAGE;
+        list.add(new Object[] { locale, message });
+
+        return list.iterator();
+    }
+
+    @Test(dataProvider = "singleKeyLookupData")
+    public void singleKeyLookupWorksOK(final Locale locale,
+        final String message)
+    {
+        assertEquals(bundle.getKey(KEY, locale), message);
     }
 
     @Test
-    public void keyIsReturnedWhenNotDefinedInAnySource()
+    public void whenKeyIsNotFoundInMatchingLocaleFurtherSourcesAreTried()
     {
-        assertEquals(bundle.getKey(KEY1), KEY1);
-        assertEquals(bundle.getKey(KEY2), KEY2);
+        final String key2 = "key2";
+        final String value2 = "value2";
+        when(rootSource.getKey(key2)).thenReturn(value2);
+
+        /*
+         * We have a source for en_US, but it does not have the key
+         */
+        assertEquals(bundle.getKey(key2, EN_US), value2);
     }
 
     @Test
-    public void firstBundleToContainKeyWins()
+    public void whenNoSourceMatchesKeyItselfIsReturned()
     {
-        final String msg1 = "foo";
-        final String msg2 = "bar";
-        when(source1.getKey(KEY1)).thenReturn(msg1);
-        when(source2.getKey(KEY2)).thenReturn(msg2);
+        final String key3 = "key3";
 
-        assertEquals(bundle.getKey(KEY1), msg1);
-        verify(source1).getKey(KEY1);
-        verify(source2, never()).getKey(KEY1);
-
-        assertEquals(bundle.getKey(KEY2), msg2);
-        verify(source1).getKey(KEY2);
-        verify(source2).getKey(KEY2);
-    }
-
-    @Test
-    public void cannotAppendNullMessageSource()
-    {
-        try {
-            MessageBundle.newBundle().appendSource(null);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot append null message source");
-        }
-    }
-
-    @Test
-    public void cannotPrependNullMessageSource()
-    {
-        try {
-            MessageBundle.newBundle().prependSource(null);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot prepend null message source");
-        }
-    }
-
-    @Test
-    public void prependingSourceWorksAsExpected()
-    {
-        final String value = "meh";
-        final MessageSource source = mock(MessageSource.class);
-        when(source.getKey(KEY1)).thenReturn(value);
-
-        final MessageBundle bundle2 = bundle.modify().prependSource(source)
-            .build();
-
-        assertEquals(bundle2.getKey(KEY1), value);
-    }
-
-    @Test
-    public void cannotQueryNullKey()
-    {
-        try {
-            bundle.getKey(null);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot query null key");
-        }
+        assertEquals(bundle.getKey(key3, Locale.ROOT), key3);
+        assertEquals(bundle.getKey(key3, FR), key3);
+        assertEquals(bundle.getKey(key3, EN_US), key3);
     }
 }

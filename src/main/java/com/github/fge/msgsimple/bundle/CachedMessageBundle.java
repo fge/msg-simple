@@ -21,8 +21,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 // Hopefully, this class is...
 @ThreadSafe
-public abstract class CachedI18NMessageBundle
-    extends I18NMessageBundle
+public abstract class CachedMessageBundle
+    extends MessageBundle
 {
     private static final int NTHREADS = 5;
 
@@ -32,14 +32,13 @@ public abstract class CachedI18NMessageBundle
     private final long duration;
     private final TimeUnit timeUnit;
 
-    protected CachedI18NMessageBundle(final long duration,
-        final TimeUnit timeUnit)
+    protected CachedMessageBundle(final long duration, final TimeUnit timeUnit)
     {
         this.duration = duration;
         this.timeUnit = timeUnit;
     }
 
-    protected CachedI18NMessageBundle()
+    protected CachedMessageBundle()
     {
         this(5L, TimeUnit.SECONDS);
     }

@@ -89,6 +89,6 @@ public final class PropertiesMessageBundleTest
     public void bundleLookupWorksCorrectly(final String locale,
         final String msg)
     {
-        assertEquals(BUNDLE.getKey(KEY, locale), msg);
+        assertEquals(BUNDLE.getMessage(KEY, locale), msg);
     }
 }

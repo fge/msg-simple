@@ -111,7 +111,7 @@ public final class MessageBundleTest
     public void singleKeyLookupWorksOK(final Locale locale,
         final String message)
     {
-        assertEquals(bundle.getKey(KEY, locale), message);
+        assertEquals(bundle.getMessage(KEY, locale), message);
     }
 
     @Test
@@ -124,7 +124,7 @@ public final class MessageBundleTest
         /*
          * We have a source for en_US, but it does not have the key
          */
-        assertEquals(bundle.getKey(key2, EN_US), value2);
+        assertEquals(bundle.getMessage(key2, EN_US), value2);
     }
 
     @Test
@@ -132,8 +132,8 @@ public final class MessageBundleTest
     {
         final String key3 = "key3";
 
-        assertEquals(bundle.getKey(key3, Locale.ROOT), key3);
-        assertEquals(bundle.getKey(key3, FR), key3);
-        assertEquals(bundle.getKey(key3, EN_US), key3);
+        assertEquals(bundle.getMessage(key3, Locale.ROOT), key3);
+        assertEquals(bundle.getMessage(key3, FR), key3);
+        assertEquals(bundle.getMessage(key3, EN_US), key3);
     }
 }

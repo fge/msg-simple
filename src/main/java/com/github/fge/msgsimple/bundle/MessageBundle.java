@@ -28,7 +28,7 @@ import java.util.Locale;
  * Base abstract class for message bundles
  *
  * <p>When looking up a message for a given key and locale (using either of
- * {@link #getKey(String, Locale)} or {@link #getKey(String, String)}), the
+ * {@link #getMessage(String, Locale)} or {@link #getMessage(String, String)}), the
  * locales are queried, from the more specific to the more general, for a list
  * of {@link MessageSource}s. The first source having a matching key wins.</p>
  *
@@ -46,7 +46,7 @@ public abstract class MessageBundle
      * found
      * @throws NullPointerException either the key or the locale is null
      */
-    public final String getKey(final String key, final Locale locale)
+    public final String getMessage(final String key, final Locale locale)
     {
         if (key == null)
             throw new NullPointerException("null keys are not allowed");
@@ -70,7 +70,7 @@ public abstract class MessageBundle
      * Return a message for a given key and locale
      *
      * <p>This tries and parses the locale, then calls {@link
-     * #getKey(String, Locale)}.</p>
+     * #getMessage(String, Locale)}.</p>
      *
      * @param key the key to look up
      * @param locale the locale
@@ -80,9 +80,14 @@ public abstract class MessageBundle
      * @throws IllegalArgumentException cannot parse locale string
      * @see LocaleUtils#parseLocale(String)
      */
-    public final String getKey(final String key, final String locale)
+    public final String getMessage(final String key, final String locale)
     {
-        return getKey(key, LocaleUtils.parseLocale(locale));
+        return getMessage(key, LocaleUtils.parseLocale(locale));
+    }
+
+    public final String getMessage(final String key)
+    {
+        return getMessage(key, Locale.getDefault());
     }
 
     /**
@@ -94,10 +99,12 @@ public abstract class MessageBundle
      * @throws NullPointerException key is null
      * @see Locale#getDefault()
      * @see Locale#setDefault(Locale)
+     * @deprecated use {@link #getMessage(String)} instead; will be removed in
+     * 0.3
      */
     public final String getKey(final String key)
     {
-        return getKey(key, Locale.getDefault());
+        return getMessage(key);
     }
 
     /**

@@ -222,7 +222,7 @@ public final class CachedI18NMessageBundleTest
                 public String call()
                     throws IOException
                 {
-                    return bundle.getKey(key, locale);
+                    return bundle.getMessage(key, locale);
                 }
             });
         return ret;

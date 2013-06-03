@@ -9,7 +9,16 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 /**
- * A UTF-8 capable, {@link String}-only version of a {@link ResourceBundle}
+ * A UTF-8 equivalent of a JDK's {@link ResourceBundle}
+ *
+ * <p>This mimics what a {@link ResourceBundle} does, with the fundamental
+ * difference that the encoding used to read property files is UTF-8, and not
+ * ISO-8859-1.</p>
+ *
+ * <p>Locale property file lookup is cached.</p>
+ *
+ * @see CachedMessageBundle
+ * @see PropertiesMessageSource#fromResource(String)
  */
 public final class PropertiesMessageBundle
     extends CachedMessageBundle
@@ -18,14 +27,29 @@ public final class PropertiesMessageBundle
 
     private final String prefix;
 
-    // FIXME: make this constructor package local and create a static factory
-    // method in MessageBundle?
+    /**
+     * Constructor
+     *
+     * <p>Like {@link ResourceBundle#getBundle(String)}, you can omit both the
+     * initial {@code /} and the {@code .properties} suffix in the base path.
+     * </p>
+     *
+     * <p>Note that it is required that there be at least a matching property
+     * file for {@link Locale#ROOT}.</p>
+     *
+     * @param basePath the base path
+     * @throws NullPointerException base path is null
+     * @throws IllegalArgumentException no property file found for root locale
+     */
     public PropertiesMessageBundle(final String basePath)
     {
         if (basePath == null)
             throw new NullPointerException("base path must not be null");
 
-        prefix = SUFFIX.matcher(basePath).replaceFirst("");
+        final String realPath = basePath.startsWith("/") ? basePath
+            : '/' + basePath;
+
+        prefix = SUFFIX.matcher(realPath).replaceFirst("");
 
         try {
             tryAndLookup(Locale.ROOT);

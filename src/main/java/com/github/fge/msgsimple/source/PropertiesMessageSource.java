@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -19,14 +18,8 @@ import java.util.ResourceBundle;
  * A message source built from a properties files
  *
  * <p>This can be viewed as a "single locale equivalent" of a {@link
- * ResourceBundle}; however there are key differences:</p>
- *
- * <ul>
- *     <li>the properties file is read as UTF-8;</li>
- *     <li>the message text is <i>not</i> read as a {@link MessageFormat}.</li>
- * </ul>
- *
- * <p>The latter point means you do not have to double all single quotes.</p>
+ * ResourceBundle}, with the key difference that the property file is read
+ * using UTF-8 instead of ISO-8859-1.</p>
  *
  * @see Properties#load(Reader)
  */

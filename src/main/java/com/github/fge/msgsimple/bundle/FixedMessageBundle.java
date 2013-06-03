@@ -3,6 +3,7 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+@ThreadSafe
 public final class FixedMessageBundle
     extends MessageBundle
 {

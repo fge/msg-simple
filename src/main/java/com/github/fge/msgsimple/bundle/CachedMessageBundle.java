@@ -17,9 +17,31 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.ReentrantLock;
 
-// Hopefully, this class is...
+/**
+ * A {@link MessageBundle} with caching
+ *
+ * <p>Implementations of this class only have one method to override: {@link
+ * #tryAndLookup(Locale)}.</p>
+ *
+ * <p>When a locale is looked up, this method is wrapped into a {@link
+ * FutureTask} and the message source is returned as the result of this task.
+ * </p>
+ *
+ * <p>Note that the task is only ever created once; this means lookup results,
+ * whether they be successes or failures, are kept during the lifetime of the
+ * bundle existence. The only exception is when a lookup task times out; in this
+ * case, the task is {@link FutureTask#cancel(boolean)}led, evicted from the
+ * task map, and a new task is recreated. The default lookup timeout is 5
+ * seconds; you can choose another value at construction time.</p>
+ *
+ * <p>Internally, lookup tasks are recorded in a simple `Map`, accessed
+ * synchronously; tasks are executed asynchronously in an {@link
+ * ExecutorService} using {@link ExecutorService#execute(Runnable)}.</p>
+ *
+ * @see FutureTask
+ * @see Executors#newFixedThreadPool(int)
+ */
 @ThreadSafe
 public abstract class CachedMessageBundle
     extends MessageBundle
@@ -32,28 +54,29 @@ public abstract class CachedMessageBundle
     private final long duration;
     private final TimeUnit timeUnit;
 
+    /**
+     * Protected constructor
+     *
+     * @param duration number of units for the timeout
+     * @param timeUnit time unit for the timeout
+     */
     protected CachedMessageBundle(final long duration, final TimeUnit timeUnit)
     {
         this.duration = duration;
         this.timeUnit = timeUnit;
     }
 
+    /**
+     * No-arg protected constructor
+     *
+     * <p>This calls {@link #CachedMessageBundle(long, TimeUnit)} with {@code
+     * 5L} as a duration and {@link TimeUnit#SECONDS} as a unit.</p>
+     */
     protected CachedMessageBundle()
     {
         this(5L, TimeUnit.SECONDS);
     }
 
-    /**
-     * Map pairing locales with {@link FutureTask} instances returning message
-     * sources
-     *
-     * <p>There will only ever be one task associated with one locale; we
-     * therefore choose to make it a normal map, guarded by a {@link
-     * ReentrantLock}.</p>
-     *
-     * <p>The tasks' {@link FutureTask#run()} method will be executed the first
-     * time this object is initialized.</p>
-     */
     private final Map<Locale, FutureTask<MessageSource>> lookups
         = new HashMap<Locale, FutureTask<MessageSource>>();
 
@@ -75,7 +98,8 @@ public abstract class CachedMessageBundle
             task = lookups.get(locale);
             if (task == null || task.isCancelled()) {
                 /*
-                 * If not, create it and run it.
+                 * If not, or it exists but has been cancelled (which happens on
+                 * a timeout), create the and run it asynchronously.
                  */
                 task = lookupTask(locale);
                 lookups.put(locale, task);
@@ -85,8 +109,8 @@ public abstract class CachedMessageBundle
 
         /*
          * Try and get the result for this locale; on any failure event (either
-         * an IOException thrown by tryAndLookup() or a thread interrupt),
-         * return an empty list.
+         * an IOException thrown by tryAndLookup(), a thread interrupt or a
+         * timeout), return an empty list.
          */
         try {
             return Arrays.asList(task.get(duration, timeUnit));
@@ -95,22 +119,28 @@ public abstract class CachedMessageBundle
         } catch (InterruptedException ignored) {
             return Collections.emptyList();
         } catch (TimeoutException ignored) {
+            // Cancel the task if it has timed out
             task.cancel(true);
             return Collections.emptyList();
         }
     }
 
+    /**
+     * Try and look up the message source for a given locale
+     *
+     * <p>It is guaranteed that the {@code locale} argument is never null; this
+     * means the "no locale" call is really a call with {@link Locale#ROOT} as
+     * an argument.</p>
+     *
+     * <p>This method MUST NOT return {@code null}.</p>
+     *
+     * @param locale the locale to look up
+     * @return the matching {@link MessageSource}
+     * @throws IOException failed
+     */
     protected abstract MessageSource tryAndLookup(final Locale locale)
         throws IOException;
 
-    /**
-     * Wraps an invocation of {@link #tryAndLookup(Locale)} into a {@link
-     * FutureTask}
-     *
-     * @param locale the locale to pass as an argument to {@link
-     * #tryAndLookup(Locale)}
-     * @return a {@link FutureTask}
-     */
     private FutureTask<MessageSource> lookupTask(final Locale locale)
     {
         final Callable<MessageSource> callable = new Callable<MessageSource>()

@@ -6,7 +6,6 @@ import com.github.fge.msgsimple.source.MessageSource;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Base abstract class for message bundles
@@ -16,14 +15,7 @@ import java.util.ResourceBundle;
  * locales are queried, from the more specific to the more general, for a list
  * of {@link MessageSource}s. The first source having a matching key wins.</p>
  *
- * <p>This is essentially the same as what the JDK's {@link ResourceBundle}
- * does, but with one difference: if the key is not found in any source,
- * the key itself is returned, instead of throwin an (unchecked!) exception.</p>
- *
  * @see LocaleUtils#getApplicable(Locale)
- * @see FixedMessageBundle
- * @see CachedMessageBundle
- * @see PropertiesMessageBundle
  */
 @ThreadSafe
 public abstract class MessageBundle

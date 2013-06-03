@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
  * <p>This class provides two methods:</p>
  *
  * <ul>
- *     <li>{@link #parseLocale(String)} parses a string and builds a {@code Locale}
- *     object out of this parsed string (strangely enough, there is no such
- *     method in the JDK!!);</li>
+ *     <li>{@link #parseLocale(String)} parses a string and builds a {@link
+ *     Locale} object (strangely enough, there is no such method in the JDK!);
+ *     </li>
  *     <li>{@link #getApplicable(Locale)} returns an ordered list of locales
  *     "applicable" to the given locale.</li>
  * </ul>

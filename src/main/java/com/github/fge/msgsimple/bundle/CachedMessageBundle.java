@@ -103,12 +103,6 @@ public abstract class CachedMessageBundle
     protected abstract MessageSource tryAndLookup(final Locale locale)
         throws IOException;
 
-    @Override
-    public final Builder modify()
-    {
-        throw new IllegalStateException("cached bundles cannot be modified");
-    }
-
     /**
      * Wraps an invocation of {@link #tryAndLookup(Locale)} into a {@link
      * FutureTask}

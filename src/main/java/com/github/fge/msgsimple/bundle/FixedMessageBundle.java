@@ -27,6 +27,11 @@ public final class FixedMessageBundle
         }
     }
 
+    public static Builder newBuilder()
+    {
+        return new Builder();
+    }
+
     @Override
     protected List<MessageSource> getSources(final Locale locale)
     {
@@ -36,15 +41,16 @@ public final class FixedMessageBundle
         return ret == null ? Collections.<MessageSource>emptyList() : ret;
     }
 
-    @Override
-    public MessageBundle.Builder modify()
+    public static Builder modify(final MessageBundle bundle)
     {
-        return new Builder(this);
+        if (!(bundle instanceof FixedMessageBundle))
+            throw new IllegalStateException("bundle is not modifyable" +
+                " (not a FixedMessageBundle)");
+        return new Builder((FixedMessageBundle) bundle);
     }
 
     @NotThreadSafe
-    static final class Builder
-        extends MessageBundle.Builder
+    public static final class Builder
     {
         private final Map<Locale, List<MessageSource>> sources
             = new HashMap<Locale, List<MessageSource>>();
@@ -61,21 +67,28 @@ public final class FixedMessageBundle
                     new ArrayList<MessageSource>(entry.getValue()));
         }
 
-        @Override
-        protected void doAppendSource(final Locale locale,
+        public Builder appendSource(final Locale locale,
             final MessageSource source)
         {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
+            if (source == null)
+                throw new NullPointerException("message source is null");
             getSourceList(locale).add(source);
+            return this;
         }
 
-        @Override
-        protected void doPrependSource(final Locale locale,
+        public Builder prependSource(final Locale locale,
             final MessageSource source)
         {
+            if (locale == null)
+                throw new NullPointerException("locale is null");
+            if (source == null)
+                throw new NullPointerException("message source is null");
             getSourceList(locale).add(0, source);
+            return this;
         }
 
-        @Override
         public MessageBundle build()
         {
             return new FixedMessageBundle(this);

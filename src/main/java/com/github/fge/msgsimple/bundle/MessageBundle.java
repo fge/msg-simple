@@ -3,7 +3,6 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.source.MessageSource;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.Locale;
@@ -25,21 +24,10 @@ import java.util.ResourceBundle;
  * @see FixedMessageBundle
  * @see CachedMessageBundle
  * @see PropertiesMessageBundle
- * @see Builder
  */
 @ThreadSafe
 public abstract class MessageBundle
 {
-    /**
-     * Return a new builder for a {@link FixedMessageBundle}
-     *
-     * @return a {@link Builder}
-     */
-    public static Builder newStaticBundle()
-    {
-        return new FixedMessageBundle.Builder();
-    }
-
     /**
      * Get a message for the given key and locale
      *
@@ -114,49 +102,4 @@ public abstract class MessageBundle
      * sources are applicable
      */
     protected abstract List<MessageSource> getSources(final Locale locale);
-
-    /**
-     * Create a mutable version of this bundle, if possible
-     *
-     * @return a {@link Builder} with this bundle's data
-     * @throws IllegalStateException cannot create a builder for this bundle
-     */
-    public abstract Builder modify();
-
-    /**
-     * Abstract builder class for an {@link MessageBundle}
-     */
-    @NotThreadSafe
-    public abstract static class Builder
-    {
-        public final Builder appendSource(final Locale locale,
-            final MessageSource source)
-        {
-            if (locale == null)
-                throw new NullPointerException("locale is null");
-            if (source == null)
-                throw new NullPointerException("message source is null");
-            doAppendSource(locale, source);
-            return this;
-        }
-
-        public final Builder prependSource(final Locale locale,
-            final MessageSource source)
-        {
-            if (locale == null)
-                throw new NullPointerException("locale is null");
-            if (source == null)
-                throw new NullPointerException("message source is null");
-            doPrependSource(locale, source);
-            return this;
-        }
-
-        protected abstract void doAppendSource(final Locale locale,
-            final MessageSource source);
-
-        protected abstract void doPrependSource(final Locale locale,
-            final MessageSource source);
-
-        protected abstract MessageBundle build();
-    }
 }

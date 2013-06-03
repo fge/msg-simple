@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Locale.*;
 import static org.mockito.Mockito.*;
@@ -13,18 +14,61 @@ import static org.testng.Assert.*;
 
 public final class FixedMessageBundleTest
 {
-    private MessageBundle.Builder builder;
+    private FixedMessageBundle.Builder builder;
     private MessageSource source1;
     private MessageSource source2;
 
     @BeforeMethod
     public void init()
     {
-        builder = MessageBundle.newStaticBundle();
+        builder = FixedMessageBundle.newBuilder();
         source1 = mock(MessageSource.class);
         source2 = mock(MessageSource.class);
     }
 
+    @Test
+    public void cannotAppendToNullLocale()
+    {
+        try {
+            builder.appendSource(null, source1);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "locale is null");
+        }
+    }
+
+    @Test
+    public void cannotPrependToNullLocale()
+    {
+        try {
+            builder.prependSource(null, source1);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "locale is null");
+        }
+    }
+
+    @Test
+    public void cannotAppendNullSource()
+    {
+        try {
+            builder.appendSource(Locale.ROOT, null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "message source is null");
+        }
+    }
+
+    @Test
+    public void cannotPrependNullSource()
+    {
+        try {
+            builder.prependSource(Locale.ROOT, null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "message source is null");
+        }
+    }
     @Test
     public void emptyListIsReturnedForLocalesWithoutSources()
     {
@@ -79,7 +123,7 @@ public final class FixedMessageBundleTest
         final MessageBundle orig = builder.appendSource(ROOT, source1)
             .build();
 
-        final MessageBundle bundle = orig.modify()
+        final MessageBundle bundle = FixedMessageBundle.modify(orig)
             .appendSource(ROOT, source2).build();
 
         assertEquals(bundle.getSources(ROOT), Arrays.asList(source1, source2));

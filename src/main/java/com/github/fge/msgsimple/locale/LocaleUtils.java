@@ -101,10 +101,8 @@ public final class LocaleUtils
         final String[] elements = UNDERSCORE.split(input, -1);
         final int len = elements.length;
 
-        // FIXME: probable bug: element[0] is tested for emptiness before the
-        // length is confirmed to be less than or equal to 3. Test that.
-        if (len == 0)
-            return Locale.ROOT;
+        if (len > 3)
+            throw new IllegalArgumentException("malformed input " + input);
         if (elements[0].isEmpty())
             return Locale.ROOT;
 
@@ -116,7 +114,7 @@ public final class LocaleUtils
             case 3:
                 return new Locale(elements[0], elements[1], elements[2]);
             default:
-                throw new IllegalArgumentException("malformed input " + input);
+                throw new IllegalStateException("How did I get there??");
         }
     }
 

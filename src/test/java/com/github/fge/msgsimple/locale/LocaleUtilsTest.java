@@ -173,4 +173,24 @@ public final class LocaleUtilsTest
     {
         assertEquals(LocaleUtils.getApplicable(baseLocale), localeList);
     }
+
+    @DataProvider
+    public Iterator<Object[]> illegalLocales()
+    {
+        return Arrays.asList(
+            new Object[] { "a___" },
+            new Object[] { "___" }
+        ).iterator();
+    }
+
+    @Test(dataProvider = "illegalLocales")
+    public void illegalLocalesAreRecognizedAsSuch(final String input)
+    {
+        try {
+            LocaleUtils.parseLocale(input);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "malformed input " + input);
+        }
+    }
 }

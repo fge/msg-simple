@@ -87,9 +87,10 @@ public final class LocaleUtils
             return Locale.ROOT;
 
         final String[] elements = UNDERSCORE.split(input);
-
         final int len = elements.length;
 
+        // FIXME: probable bug: element[0] is tested for emptiness before the
+        // length is confirmed to be less than or equal to 3. Test that.
         if (len == 0)
             return Locale.ROOT;
         if (elements[0].isEmpty())

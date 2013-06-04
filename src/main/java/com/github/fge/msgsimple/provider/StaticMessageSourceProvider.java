@@ -63,7 +63,7 @@ public final class StaticMessageSourceProvider
             return this;
         }
 
-        public StaticMessageSourceProvider build()
+        public MessageSourceProvider build()
         {
             return new StaticMessageSourceProvider(this);
         }

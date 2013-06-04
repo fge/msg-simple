@@ -28,7 +28,7 @@ public final class LoadingMessageSourceProvider
         {
         }
 
-        public LoadingMessageSourceProvider build()
+        public MessageSourceProvider build()
         {
             return new LoadingMessageSourceProvider(this);
         }

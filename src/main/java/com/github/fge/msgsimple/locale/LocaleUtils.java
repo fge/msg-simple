@@ -86,7 +86,19 @@ public final class LocaleUtils
         if (input.isEmpty())
             return Locale.ROOT;
 
-        final String[] elements = UNDERSCORE.split(input);
+        /*
+         * NOTE NOTE NOTE: in order for .split() to behave in a sane manner, we
+         * MUST use the "multi-argument" version of .split() with a negative
+         * argument. The no-argument version (this also stands for String's
+         * .split()) will remove all empty strings from the end of the resulting
+         * array up to the first non empty element.
+         *
+         * I don't know who designed this API, but he should either be given
+         * the boot or killed[1].
+         *
+         * [1] choose the better option; hint: choose option 2
+         */
+        final String[] elements = UNDERSCORE.split(input, -1);
         final int len = elements.length;
 
         // FIXME: probable bug: element[0] is tested for emptiness before the

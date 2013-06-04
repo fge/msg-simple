@@ -17,6 +17,7 @@
 
 package com.github.fge.msgsimple.bundle2;
 
+import com.github.fge.Frozen;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
@@ -41,9 +42,20 @@ import java.util.Locale;
  */
 @ThreadSafe
 public final class MessageBundle
+    implements Frozen<MessageBundleBuilder>
 {
-    private final List<MessageSourceProvider> providers
+    final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();
+
+    public static MessageBundleBuilder newBundle()
+    {
+        return new MessageBundleBuilder();
+    }
+
+    MessageBundle(final MessageBundleBuilder builder)
+    {
+        providers.addAll(builder.providers);
+    }
 
     /**
      * Get a message for the given key and locale
@@ -118,5 +130,11 @@ public final class MessageBundle
     public String getKey(final String key)
     {
         return getMessage(key);
+    }
+
+    @Override
+    public MessageBundleBuilder thaw()
+    {
+        return new MessageBundleBuilder(this);
     }
 }

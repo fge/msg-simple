@@ -1,7 +1,7 @@
 package com.github.fge.msgsimple.bundle2;
 
 import com.github.fge.Thawed;
-import com.github.fge.msgsimple.provider.MessageSourceProvider;
+import com.github.fge.msgsimple.provider.MessageProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,7 @@ import java.util.List;
 public final class MessageBundleBuilder
     implements Thawed<MessageBundle>
 {
-    final List<MessageSourceProvider> providers
-        = new ArrayList<MessageSourceProvider>();
+    final List<MessageProvider> providers = new ArrayList<MessageProvider>();
 
     MessageBundleBuilder()
     {

@@ -19,7 +19,7 @@ package com.github.fge.msgsimple.bundle2;
 
 import com.github.fge.Frozen;
 import com.github.fge.msgsimple.locale.LocaleUtils;
-import com.github.fge.msgsimple.provider.MessageSourceProvider;
+import com.github.fge.msgsimple.provider.MessageProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -33,19 +33,18 @@ import java.util.Locale;
  * <p>When looking up a message for a given key and locale (using either of
  * {@link #getMessage(String, Locale)} or {@link #getMessage(String, String)}),
  * the locales are queried, from the more specific to the more general, for a
- * list of {@link MessageSourceProvider}s. If the provider has a {@link
- * MessageSource} for this locale, it is queried for the key. The first message
- * source having an entry for that key wins.</p>
+ * list of {@link MessageProvider}s. If the provider has a {@link MessageSource}
+ * for this locale, it is queried for the key. The first message source having
+ * an entry for that key wins.</p>
  *
  * @see LocaleUtils#getApplicable(Locale)
- * @see MessageSourceProvider
+ * @see MessageProvider
  */
 @ThreadSafe
 public final class MessageBundle
     implements Frozen<MessageBundleBuilder>
 {
-    final List<MessageSourceProvider> providers
-        = new ArrayList<MessageSourceProvider>();
+    final List<MessageProvider> providers = new ArrayList<MessageProvider>();
 
     public static MessageBundleBuilder newBundle()
     {
@@ -77,7 +76,7 @@ public final class MessageBundle
         MessageSource source;
 
         for (final Locale l: LocaleUtils.getApplicable(locale))
-            for (final MessageSourceProvider provider: providers) {
+            for (final MessageProvider provider: providers) {
                 source = provider.getMessageSource(l);
                 if (source == null)
                     continue;

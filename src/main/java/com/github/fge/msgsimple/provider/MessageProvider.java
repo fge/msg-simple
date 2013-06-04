@@ -7,7 +7,7 @@ import java.util.Locale;
 /**
  * Provider for one message source, according to a given locale
  */
-public interface MessageSourceProvider
+public interface MessageProvider
 {
     /**
      * Provide a message source for a given locale

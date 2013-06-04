@@ -22,6 +22,7 @@ public final class LoadingMessageSourceProviderTest
     {
         builder = LoadingMessageSourceProvider.newBuilder();
         loader = mock(MessageSourceLoader.class);
+        defaultSource = mock(MessageSource.class);
     }
 
     @Test
@@ -68,5 +69,32 @@ public final class LoadingMessageSourceProviderTest
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "default source cannot be null");
         }
+    }
+
+    @Test(dependsOnMethods = {
+        "loaderIsUsedWhenItIsSet",
+        "cannotProvideNullDefaultSource"
+    })
+    public void defaultSourceIsReturnedWhenLoaderHasNoMatch()
+    {
+        final MessageSourceProvider provider = builder.setLoader(loader)
+            .setDefaultSource(defaultSource).build();
+
+        assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
+    }
+
+    @Test(dependsOnMethods = {
+        "loaderIsUsedWhenItIsSet",
+        "cannotProvideNullDefaultSource"
+    })
+    public void defaultSourceIsReturnedIfLoaderThrowsAnException()
+        throws IOException
+    {
+        when(loader.load(any(Locale.class)))
+            .thenThrow(new IOException());
+        final MessageSourceProvider provider = builder.setLoader(loader)
+            .setDefaultSource(defaultSource).build();
+
+        assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
     }
 }

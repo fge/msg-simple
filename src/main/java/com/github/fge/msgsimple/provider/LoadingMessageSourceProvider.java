@@ -10,10 +10,12 @@ public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
 {
     private final MessageSourceLoader loader;
+    private final MessageSource defaultSource;
 
     private LoadingMessageSourceProvider(final Builder builder)
     {
         loader = builder.loader;
+        defaultSource = builder.defaultSource;
     }
 
     public static Builder newBuilder()
@@ -25,15 +27,17 @@ public final class LoadingMessageSourceProvider
     public MessageSource getMessageSource(final Locale locale)
     {
         try {
-            return loader.load(locale);
+            final MessageSource source = loader.load(locale);
+            return source == null ? defaultSource : source;
         } catch (IOException ignored) {
-            return null;
+            return defaultSource;
         }
     }
 
     public static final class Builder
     {
         private MessageSourceLoader loader;
+        private MessageSource defaultSource;
 
         Builder()
         {
@@ -47,10 +51,11 @@ public final class LoadingMessageSourceProvider
             return this;
         }
 
-        public Builder setDefaultSource(final MessageSource source)
+        public Builder setDefaultSource(final MessageSource defaultSource)
         {
-            if (source == null)
+            if (defaultSource == null)
                 throw new NullPointerException("default source cannot be null");
+            this.defaultSource = defaultSource;
             return this;
         }
 

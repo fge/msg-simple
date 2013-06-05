@@ -1,6 +1,5 @@
 package com.github.fge.msgsimple.provider;
 
-import com.github.fge.msgsimple.provider.load.MessageSourceLoader;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import java.io.IOException;

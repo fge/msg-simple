@@ -1,4 +1,4 @@
-package com.github.fge.msgsimple.provider.load;
+package com.github.fge.msgsimple.provider;
 
 import com.github.fge.msgsimple.source.MessageSource;
 

@@ -2,6 +2,7 @@ package com.github.fge.msgsimple.provider;
 
 import com.github.fge.msgsimple.source.MessageSource;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,6 +15,28 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * A caching, on-demand loading message source provider
+ *
+ * <p>This class uses a {@link MessageSourceLoader} internally to look up
+ * message sources. As is the case for {@link StaticMessageSourceProvider}, you
+ * can also set a default source if the loader fails to grab a source.</p>
+ *
+ * <p>Important notes:</p>
+ *
+ * <ul>
+ *     <li>the default source is also returned if the load fails with an
+ *     exception;</li>
+ *     <li>when a source is loaded, it is permanently cached;</li>
+ *     <li>there is also a timeout for loading (which is 5 seconds by default);
+ *     if the timeout is reached, the loading is attempted again the next time
+ *     the locale is asked for.</li>
+ * </ul>
+ *
+ * <p>You cannot instantiate that class directly; use {@link #newBuilder()} to
+ * obtain a builder class and set up your provider.</p>
+ */
+@ThreadSafe
 public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
 {
@@ -36,6 +59,11 @@ public final class LoadingMessageSourceProvider
         unit = builder.unit;
     }
 
+    /**
+     * Create a new builder
+     *
+     * @return an empty builder
+     */
     public static Builder newBuilder()
     {
         return new Builder();
@@ -100,6 +128,9 @@ public final class LoadingMessageSourceProvider
         });
     }
 
+    /**
+     * Builder class for a {@link LoadingMessageSourceProvider}
+     */
     public static final class Builder
     {
         private MessageSourceLoader loader;
@@ -111,6 +142,13 @@ public final class LoadingMessageSourceProvider
         {
         }
 
+        /**
+         * Set the message source loader
+         *
+         * @param loader the loader
+         * @throws NullPointerException loader is null
+         * @return this
+         */
         public Builder setLoader(final MessageSourceLoader loader)
         {
             if (loader == null)
@@ -119,6 +157,13 @@ public final class LoadingMessageSourceProvider
             return this;
         }
 
+        /**
+         * Set the default message source if the loader fails to load
+         *
+         * @param defaultSource the default source
+         * @throws NullPointerException source is null
+         * @return this
+         */
         public Builder setDefaultSource(final MessageSource defaultSource)
         {
             if (defaultSource == null)
@@ -127,6 +172,15 @@ public final class LoadingMessageSourceProvider
             return this;
         }
 
+        /**
+         * Set the load timeout
+         *
+         * @param nr number of units
+         * @param unit the time unit
+         * @throws IllegalArgumentException {@code nr} is negative or zero
+         * @throws NullPointerException time unit is null
+         * @return this
+         */
         public Builder setTimeout(final long nr, final TimeUnit unit)
         {
             if (nr <= 0L)
@@ -139,6 +193,11 @@ public final class LoadingMessageSourceProvider
             return this;
         }
 
+        /**
+         * Build the provider
+         *
+         * @return a {@link LoadingMessageSourceProvider}
+         */
         public MessageSourceProvider build()
         {
             if (loader == null)

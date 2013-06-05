@@ -47,6 +47,18 @@ public final class LoadingMessageSourceProvider
     {
         FutureTask<MessageSource> task;
 
+        /*
+         * The algorithm is as follows:
+         *
+         * - access the sources map in a synchronous manner;
+         * - grab the FutureTask matching the required locale:
+         *     - if no task exists, create it;
+         *     - if it exists but has been cancelled (in the event of a timeout,
+         *       see below), create it anew;
+         * - always within the synchronized access to sources, submit the task
+         *   for immediate execution to our ExecutorService;
+         * - to be followed...
+         */
         synchronized (sources) {
             task = sources.get(locale);
             if (task == null || task.isCancelled()) {
@@ -56,9 +68,15 @@ public final class LoadingMessageSourceProvider
             }
         }
 
+        /*
+         * - try and get the result of the task, with a timeout;
+         * - if we get a result in time, return it, or the default source if
+         *   the result is null;
+         * - in the event of an error, return the default source; in addition,
+         *   if this is a timeout, cancel the task.
+         */
         try {
-            final MessageSource source;
-            source = task.get(nr, unit);
+            final MessageSource source = task.get(nr, unit);
             return source == null ? defaultSource : source;
         } catch (InterruptedException ignored) {
             return defaultSource;

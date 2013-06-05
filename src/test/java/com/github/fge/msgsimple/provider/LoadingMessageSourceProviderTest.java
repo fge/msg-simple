@@ -187,12 +187,13 @@ public final class LoadingMessageSourceProviderTest
                 TimeUnit.SECONDS.sleep(2L);
                 return source;
             }
-        });
+        }).thenReturn(source);
 
         final MessageSourceProvider provider
             = builder.setLoader(loader).setTimeout(250L, TimeUnit.MILLISECONDS)
             .setDefaultSource(defaultSource).build();
 
         assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
+        assertSame(provider.getMessageSource(Locale.ROOT), source);
     }
 }

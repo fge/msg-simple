@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
@@ -21,6 +22,8 @@ public final class LoadingMessageSourceProvider
 
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;
+    private final long nr;
+    private final TimeUnit unit;
     private final ExecutorService service
         = Executors.newFixedThreadPool(NTHREADS);
     private final Map<Locale, FutureTask<MessageSource>> sources
@@ -30,6 +33,8 @@ public final class LoadingMessageSourceProvider
     {
         loader = builder.loader;
         defaultSource = builder.defaultSource;
+        nr = builder.nr;
+        unit = builder.unit;
     }
 
     public static Builder newBuilder()
@@ -44,7 +49,7 @@ public final class LoadingMessageSourceProvider
 
         synchronized (sources) {
             task = sources.get(locale);
-            if (task == null) {
+            if (task == null || task.isCancelled()) {
                 task = loadingTask(locale);
                 sources.put(locale, task);
                 service.execute(task);
@@ -53,11 +58,14 @@ public final class LoadingMessageSourceProvider
 
         try {
             final MessageSource source;
-            source = task.get();
+            source = task.get(nr, unit);
             return source == null ? defaultSource : source;
         } catch (InterruptedException ignored) {
             return defaultSource;
         } catch (ExecutionException ignored) {
+            return defaultSource;
+        } catch (TimeoutException ignored) {
+            task.cancel(true);
             return defaultSource;
         }
     }
@@ -79,6 +87,8 @@ public final class LoadingMessageSourceProvider
     {
         private MessageSourceLoader loader;
         private MessageSource defaultSource;
+        private long nr = 5L;
+        private TimeUnit unit = TimeUnit.SECONDS;
 
         Builder()
         {
@@ -107,6 +117,8 @@ public final class LoadingMessageSourceProvider
                     "than 0");
             if (unit == null)
                 throw new NullPointerException("time unit must not be null");
+            this.nr = nr;
+            this.unit = unit;
             return this;
         }
 

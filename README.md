@@ -11,9 +11,8 @@ properties files and ultimately, various other resources.</p>
 
 <h2>Versions</h2>
 
-<p>The current version is <b>0.1</b>.</p>
-
-<p>No javadoc yet. However, the API is easy enough. See below for code samples.</p>
+<p>The current version is <b>0.2</b>. Javadoc <a
+href="http://fge.github.io/msg-simple/index.html">here</a>.</p>
 
 <h2>Maven artifact</h2>
 
@@ -35,6 +34,8 @@ href="https://github.com/fge/msg-simple/wiki/Roadmap">here</a>. Feature requests
 welcome!</p>
 
 <h2>Sample usage</h2>
+
+<p><i>Note: not up to date</i></p>
 
 <p>In order to use this library, you will need two things:</p>
 

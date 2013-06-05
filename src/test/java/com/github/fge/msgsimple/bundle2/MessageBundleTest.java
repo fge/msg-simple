@@ -46,11 +46,26 @@ public final class MessageBundleTest
     }
 
     @Test(dependsOnMethods = "cannotAppendNullProvider")
-    public void appendedProvidersAreActuallyUsed()
+    public void appendedProvidersAreUsed()
     {
         final MessageBundle bundle = builder.appendProvider(provider).freeze();
         bundle.getMessage("foo", Locale.ROOT);
         verify(provider, only()).getMessageSource(Locale.ROOT);
+    }
+
+    @Test(dependsOnMethods = "appendedProvidersAreUsed")
+    public void appendedProvidersAreUsedInOrderOfInsertion()
+    {
+        final MessageBundle bundle = builder.appendProvider(provider)
+            .appendProvider(provider2).freeze();
+
+        bundle.getMessage("foo", Locale.ROOT);
+
+        final InOrder inOrder = inOrder(provider, provider2);
+
+        inOrder.verify(provider).getMessageSource(Locale.ROOT);
+        inOrder.verify(provider2).getMessageSource(Locale.ROOT);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -66,7 +81,7 @@ public final class MessageBundleTest
 
     @Test(dependsOnMethods = {
         "cannotPrependNullProvider",
-        "appendedProvidersAreActuallyUsed"
+        "appendedProvidersAreUsed"
     })
     public void prependedProvidersAreUsedFirst()
     {
@@ -82,7 +97,7 @@ public final class MessageBundleTest
         inOrder.verifyNoMoreInteractions();
     }
 
-    @Test(dependsOnMethods = "prependedProvidersAreUsedFirst")
+    @Test(dependsOnMethods = "appendedProvidersAreUsed")
     public void localesAreAllTriedUntilRootLocale()
     {
         final MessageBundle bundle = builder.appendProvider(provider).freeze();
@@ -123,6 +138,82 @@ public final class MessageBundleTest
         inOrder.verify(provider).getMessageSource(locale3);
         inOrder.verify(source2).getKey(key);
         inOrder.verify(provider).getMessageSource(Locale.ROOT);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test(dependsOnMethods = {
+        "appendedProvidersAreUsed",
+        "localesAreAllTriedUntilRootLocale"
+    })
+    public void providersAreAllTriedForOneLocaleBeforeTryingNextOne()
+    {
+        final MessageBundle bundle = builder.appendProvider(provider)
+            .appendProvider(provider2).freeze();
+
+        final Locale locale = LocaleUtils.parseLocale("ja_JP_JP");
+
+        bundle.getMessage("foo", locale);
+
+        final InOrder inOrder = inOrder(provider, provider2);
+
+        for (final Locale l: LocaleUtils.getApplicable(locale)) {
+            inOrder.verify(provider).getMessageSource(l);
+            inOrder.verify(provider2).getMessageSource(l);
+        }
+
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void whenNoMessageIsFoundKeyIsReturned()
+    {
+        assertEquals(builder.freeze().getMessage("foo", Locale.ROOT), "foo");
+    }
+
+    @Test(dependsOnMethods = {
+        "appendedProvidersAreUsed",
+        "localesAreAllTriedUntilRootLocale"
+    })
+    public void whenKeyIsFoundMessageIsReturned()
+    {
+        final Locale locale = Locale.CHINA;
+        final String key = "key";
+        final String value = "value";
+
+        when(source.getKey(key)).thenReturn(value);
+        when(provider.getMessageSource(locale)).thenReturn(source);
+
+        final MessageBundle bundle = builder.appendProvider(provider).freeze();
+
+        final String msg = bundle.getMessage(key, locale);
+
+        assertEquals(msg, value);
+    }
+
+    @Test(dependsOnMethods = "whenKeyIsFoundMessageIsReturned")
+    public void whenKeyIsFoundNoFurtherProvidersOrSourcesAreTried()
+    {
+        final Locale locale1 = LocaleUtils.parseLocale("fr_FR");
+        final Locale locale2 = LocaleUtils.parseLocale("fr");
+        final String key = "key";
+        final String value = "value";
+
+        when(provider.getMessageSource(locale1)).thenReturn(source);
+        when(source2.getKey(key)).thenReturn(value);
+        when(provider2.getMessageSource(locale2)).thenReturn(source2);
+
+        final MessageBundle bundle = builder.appendProvider(provider)
+            .appendProvider(provider2).freeze();
+
+        final InOrder inOrder = inOrder(provider, source, provider2, source2);
+
+        bundle.getMessage(key, locale1);
+
+        inOrder.verify(provider).getMessageSource(locale1);
+        inOrder.verify(source).getKey(key);
+        inOrder.verify(provider2).getMessageSource(locale1);
+        inOrder.verify(provider).getMessageSource(locale2);
+        inOrder.verify(source2).getKey(key);
         inOrder.verifyNoMoreInteractions();
     }
 }

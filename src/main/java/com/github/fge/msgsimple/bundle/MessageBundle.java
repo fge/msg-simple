@@ -20,6 +20,7 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.Frozen;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
+import com.github.fge.msgsimple.provider.StaticMessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -67,6 +68,12 @@ public final class MessageBundle
     }
 
     MessageBundle(final MessageBundleBuilder builder)
+    {
+        providers.addAll(builder.providers);
+    }
+
+    @Deprecated
+    private MessageBundle(final Builder builder)
     {
         providers.addAll(builder.providers);
     }
@@ -141,5 +148,138 @@ public final class MessageBundle
     public MessageBundleBuilder thaw()
     {
         return new MessageBundleBuilder(this);
+    }
+
+    /**
+     * @deprecated use the new builder class instead; will be removed in 0.3
+     *
+     * @see {@link #newBuilder()}
+     */
+    @Deprecated
+    public Builder copy()
+    {
+        return new Builder(this);
+    }
+
+    /**
+     * Old builder class
+     *
+     * @deprecated use the new builder class instead
+     * @see MessageBundle#newBuilder()
+     */
+    @Deprecated
+    public static final class Builder
+    {
+        final List<MessageSourceProvider> providers
+            = new ArrayList<MessageSourceProvider>();
+
+        public Builder()
+        {
+        }
+
+        private Builder(final MessageBundle bundle)
+        {
+            providers.addAll(bundle.providers);
+        }
+
+        /**
+         * Append a message provider
+         *
+         * @param provider the provider
+         * @throws NullPointerException provider is null
+         * @return this
+         */
+        public Builder appendProvider(
+            final MessageSourceProvider provider)
+        {
+            if (provider == null)
+                throw new NullPointerException("cannot append null provider");
+            providers.add(provider);
+            return this;
+        }
+
+        /**
+         * Prepend a message provider
+         *
+         * @param provider the provider
+         * @throws NullPointerException provider is null
+         * @return this
+         */
+        public Builder prependProvider(
+            final MessageSourceProvider provider)
+        {
+            if (provider == null)
+                throw new NullPointerException("cannot prepend null provider");
+            providers.add(0, provider);
+            return this;
+        }
+
+        /**
+         * Convenience method to append a single-source provider
+         *
+         * @param source the message source
+         * @return this
+         * @see StaticMessageSourceProvider#withSingleSource(MessageSource)
+         */
+        public Builder appendSource(final MessageSource source)
+        {
+            final MessageSourceProvider provider
+                = StaticMessageSourceProvider.withSingleSource(source);
+            providers.add(provider);
+            return this;
+        }
+
+        /**
+         * Convenience method to prepend a single-source provider
+         *
+         * @param source the message source
+         * @return this
+         * @see StaticMessageSourceProvider#withSingleSource(MessageSource)
+         */
+        public Builder prependSource(final MessageSource source)
+        {
+            final MessageSourceProvider provider
+                = StaticMessageSourceProvider.withSingleSource(source);
+            providers.add(0, provider);
+            return this;
+        }
+
+        /**
+         * Convenience method to append a single-source provider for a given locale
+         *
+         * @param source the message source
+         * @return this
+         * @see StaticMessageSourceProvider#withSingleSource(Locale, MessageSource)
+         */
+        public Builder appendSource(final Locale locale,
+            final MessageSource source)
+        {
+            final MessageSourceProvider provider
+                = StaticMessageSourceProvider.withSingleSource(locale, source);
+            providers.add(provider);
+            return this;
+        }
+
+        /**
+         * Convenience method to prepend a single-source provider for a given locale
+         *
+         * @param source the message source
+         * @return this
+         * @see StaticMessageSourceProvider#withSingleSource(Locale, MessageSource)
+         */
+        public Builder prependSource(final Locale locale,
+            final MessageSource source)
+        {
+            final MessageSourceProvider provider
+                = StaticMessageSourceProvider.withSingleSource(locale, source);
+            providers.add(0, provider);
+            return this;
+        }
+
+        public MessageBundle build()
+        {
+            return new MessageBundle(this);
+        }
+
     }
 }

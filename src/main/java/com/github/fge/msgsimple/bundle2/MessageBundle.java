@@ -30,12 +30,21 @@ import java.util.Locale;
 /**
  * Base abstract class for message bundles
  *
- * <p>When looking up a message for a given key and locale (using either of
- * {@link #getMessage(String, Locale)} or {@link #getMessage(String, String)}),
- * the locales are queried, from the more specific to the more general, for a
- * list of {@link MessageSourceProvider}s. If the provider has a {@link
- * MessageSource} for this locale, it is queried for the key. The first message
- * source having an entry for that key wins.</p>
+ * <p>A bundle is a list of {@link MessageSourceProvider}s. When a message is
+ * looked up, providers are queried in order for a {@link MessageSource} for
+ * that locale; if a source is found, it is queried for the message.</p>
+ *
+ * <p>When a method is used which does not take a {@link Locale} as an argument,
+ * the default locale is used (obtained via {@link Locale#getDefault()}). If no
+ * match is found for the locale, the next, more general locale is found.</p>
+ *
+ * <p>Finally, if no match was found for any provider/source, the key itself is
+ * returned.</p>
+ *
+ * <p>You cannot instantiate this class directly: use {@link #newBuilder()} to
+ * obtain a builder, then that builder's {@link MessageBundleBuilder#freeze()}
+ * method to obtain the bundle; alternatively, you can reuse an existing bundle
+ * and {@link #thaw()} it, modify it and freeze it again.</p>
  *
  * @see LocaleUtils#getApplicable(Locale)
  * @see MessageSourceProvider
@@ -47,6 +56,11 @@ public final class MessageBundle
     final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();
 
+    /**
+     * Create a new, empty builder for a bundle
+     *
+     * @return a builder
+     */
     public static MessageBundleBuilder newBuilder()
     {
         return new MessageBundleBuilder();
@@ -60,13 +74,13 @@ public final class MessageBundle
     /**
      * Get a message for the given key and locale
      *
-     * @param key the key
      * @param locale the locale
+     * @param key the key
      * @return a matching message if found; the key itself if no message is
      * found
      * @throws NullPointerException either the key or the locale is null
      */
-    public String getMessage(final String key, final Locale locale)
+    public String getMessage(final Locale locale, final String key)
     {
         if (key == null)
             throw new NullPointerException("null keys are not allowed");
@@ -91,27 +105,18 @@ public final class MessageBundle
     }
 
     /**
-     * Return a message for a given key and locale
+     * Return a message for a given key, using the JVM's current locale
      *
-     * <p>This tries and parses the locale, then calls {@link
-     * #getMessage(String, Locale)}.</p>
-     *
-     * @param key the key to look up
-     * @param locale the locale
+     * @param key the key
      * @return a matching message if found; the key itself if no message is
      * found
-     * @throws NullPointerException either the key or the locale is null
-     * @throws IllegalArgumentException cannot parse locale string
-     * @see LocaleUtils#parseLocale(String)
+     * @throws NullPointerException key is null
+     * @see Locale#getDefault()
+     * @see Locale#setDefault(Locale)
      */
-    public String getMessage(final String key, final String locale)
-    {
-        return getMessage(key, LocaleUtils.parseLocale(locale));
-    }
-
     public String getMessage(final String key)
     {
-        return getMessage(key, Locale.getDefault());
+        return getMessage(Locale.getDefault(), key);
     }
 
     /**

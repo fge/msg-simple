@@ -49,7 +49,7 @@ public final class MessageBundleTest
     public void appendedProvidersAreUsed()
     {
         final MessageBundle bundle = builder.appendProvider(provider).freeze();
-        bundle.getMessage("foo", Locale.ROOT);
+        bundle.getMessage(Locale.ROOT, "foo");
         verify(provider, only()).getMessageSource(Locale.ROOT);
     }
 
@@ -59,7 +59,7 @@ public final class MessageBundleTest
         final MessageBundle bundle = builder.appendProvider(provider)
             .appendProvider(provider2).freeze();
 
-        bundle.getMessage("foo", Locale.ROOT);
+        bundle.getMessage(Locale.ROOT, "foo");
 
         final InOrder inOrder = inOrder(provider, provider2);
 
@@ -88,7 +88,7 @@ public final class MessageBundleTest
         final MessageBundle bundle = builder.appendProvider(provider)
             .prependProvider(provider2).freeze();
 
-        bundle.getMessage("foo", Locale.ROOT);
+        bundle.getMessage(Locale.ROOT, "foo");
 
         final InOrder inOrder = inOrder(provider, provider2);
 
@@ -106,7 +106,7 @@ public final class MessageBundleTest
 
         final InOrder inOrder = inOrder(provider);
 
-        bundle.getMessage("foo", locale);
+        bundle.getMessage(locale, "foo");
 
         for (final Locale l: LocaleUtils.getApplicable(locale))
             inOrder.verify(provider).getMessageSource(l);
@@ -128,7 +128,7 @@ public final class MessageBundleTest
 
         final MessageBundle bundle = builder.appendProvider(provider).freeze();
 
-        bundle.getMessage(key, locale1);
+        bundle.getMessage(locale1, key);
 
         final InOrder inOrder = inOrder(provider, source, source2);
 
@@ -152,7 +152,7 @@ public final class MessageBundleTest
 
         final Locale locale = LocaleUtils.parseLocale("ja_JP_JP");
 
-        bundle.getMessage("foo", locale);
+        bundle.getMessage(locale, "foo");
 
         final InOrder inOrder = inOrder(provider, provider2);
 
@@ -167,7 +167,7 @@ public final class MessageBundleTest
     @Test
     public void whenNoMessageIsFoundKeyIsReturned()
     {
-        assertEquals(builder.freeze().getMessage("foo", Locale.ROOT), "foo");
+        assertEquals(builder.freeze().getMessage(Locale.ROOT, "foo"), "foo");
     }
 
     @Test(dependsOnMethods = {
@@ -185,7 +185,7 @@ public final class MessageBundleTest
 
         final MessageBundle bundle = builder.appendProvider(provider).freeze();
 
-        final String msg = bundle.getMessage(key, locale);
+        final String msg = bundle.getMessage(locale, key);
 
         assertEquals(msg, value);
     }
@@ -207,7 +207,7 @@ public final class MessageBundleTest
 
         final InOrder inOrder = inOrder(provider, source, provider2, source2);
 
-        bundle.getMessage(key, locale1);
+        bundle.getMessage(locale1, key);
 
         inOrder.verify(provider).getMessageSource(locale1);
         inOrder.verify(source).getKey(key);
@@ -221,7 +221,7 @@ public final class MessageBundleTest
     public void cannotQueryNullKey()
     {
         try {
-            builder.freeze().getMessage(null, Locale.ROOT);
+            builder.freeze().getMessage(Locale.ROOT, null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "null keys are not allowed");
@@ -232,7 +232,7 @@ public final class MessageBundleTest
     public void cannotQueryNullLocale()
     {
         try {
-            builder.freeze().getMessage("foo", (Locale) null);
+            builder.freeze().getMessage((Locale) null, "foo");
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "null locales are not allowed");

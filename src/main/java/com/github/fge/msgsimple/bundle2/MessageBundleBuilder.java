@@ -6,6 +6,12 @@ import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Builder class for a message bundle
+ *
+ * <p>You cannot instantiate this class directly: use {@link
+ * MessageBundle#newBuilder()}.</p>
+ */
 public final class MessageBundleBuilder
     implements Thawed<MessageBundle>
 {
@@ -21,6 +27,13 @@ public final class MessageBundleBuilder
         providers.addAll(bundle.providers);
     }
 
+    /**
+     * Append a message provider
+     *
+     * @param provider the provider
+     * @throws NullPointerException provider is null
+     * @return this
+     */
     public MessageBundleBuilder appendProvider(
         final MessageSourceProvider provider)
     {
@@ -30,6 +43,13 @@ public final class MessageBundleBuilder
         return this;
     }
 
+    /**
+     * Prepend a message provider
+     *
+     * @param provider the provider
+     * @throws NullPointerException provider is null
+     * @return this
+     */
     public MessageBundleBuilder prependProvider(
         final MessageSourceProvider provider)
     {

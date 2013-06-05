@@ -216,4 +216,26 @@ public final class MessageBundleTest
         inOrder.verify(source2).getKey(key);
         inOrder.verifyNoMoreInteractions();
     }
+
+    @Test
+    public void cannotQueryNullKey()
+    {
+        try {
+            builder.freeze().getMessage(null, Locale.ROOT);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "null keys are not allowed");
+        }
+    }
+
+    @Test
+    public void cannotQueryNullLocale()
+    {
+        try {
+            builder.freeze().getMessage("foo", (Locale) null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "null locales are not allowed");
+        }
+    }
 }

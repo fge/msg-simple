@@ -37,7 +37,7 @@ import java.util.Locale;
  *
  * <p>When a method is used which does not take a {@link Locale} as an argument,
  * the default locale is used (obtained via {@link Locale#getDefault()}). If no
- * match is found for the locale, the next, more general locale is found.</p>
+ * match is found for the locale, the next, more general locale is tried.</p>
  *
  * <p>Finally, if no match was found for any provider/source, the key itself is
  * returned.</p>

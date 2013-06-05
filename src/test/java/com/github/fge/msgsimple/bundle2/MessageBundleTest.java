@@ -110,8 +110,10 @@ public final class MessageBundleTest
 
         bundle.getMessage("foo", Locale.ROOT);
 
-        verify(provider2, only()).getMessageSource(Locale.ROOT);
-        verify(provider, only()).getMessageSource(Locale.ROOT);
+        final InOrder inOrder = inOrder(provider2, provider);
+        inOrder.verify(provider2).getMessageSource(Locale.ROOT);
+        inOrder.verify(provider).getMessageSource(Locale.ROOT);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test(dependsOnMethods = "whenProviderHasNoSourceNextProviderIsTried")
@@ -128,9 +130,11 @@ public final class MessageBundleTest
 
         bundle.getMessage("foo", Locale.ROOT);
 
-        verify(provider2, only()).getMessageSource(Locale.ROOT);
-        verify(source2, only()).getKey("foo");
-        verify(provider, only()).getMessageSource(Locale.ROOT);
+        final InOrder inOrder = inOrder(provider2, source2, provider);
+        inOrder.verify(provider2).getMessageSource(Locale.ROOT);
+        inOrder.verify(source2).getKey("foo");
+        inOrder.verify(provider).getMessageSource(Locale.ROOT);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test(dependsOnMethods = "prependedProvidersAreUsedBeforeAppendedProviders")

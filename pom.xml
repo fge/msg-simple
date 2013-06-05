@@ -45,6 +45,7 @@
                     <links>
                         <link>http://docs.oracle.com/javase/6/docs/api</link>
                         <link>http://jsr-305.googlecode.com/svn/trunk/javadoc</link>
+                        <link>http://fge.github.com/btf</link>
                     </links>
                 </configuration>
                 <executions>

@@ -47,7 +47,7 @@ public final class MessageBundle
     final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();
 
-    public static MessageBundleBuilder newBundle()
+    public static MessageBundleBuilder newBuilder()
     {
         return new MessageBundleBuilder();
     }

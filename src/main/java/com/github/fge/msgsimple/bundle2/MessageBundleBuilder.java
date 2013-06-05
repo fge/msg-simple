@@ -21,6 +21,24 @@ public final class MessageBundleBuilder
         providers.addAll(bundle.providers);
     }
 
+    public MessageBundleBuilder appendProvider(
+        final MessageSourceProvider provider)
+    {
+        if (provider == null)
+            throw new NullPointerException("cannot append null provider");
+        providers.add(provider);
+        return this;
+    }
+
+    public MessageBundleBuilder prependProvider(
+        final MessageSourceProvider provider)
+    {
+        if (provider == null)
+            throw new NullPointerException("cannot prepend null provider");
+        providers.add(0, provider);
+        return this;
+    }
+
     @Override
     public MessageBundle freeze()
     {

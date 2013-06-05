@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
@@ -96,6 +97,16 @@ public final class LoadingMessageSourceProvider
             if (defaultSource == null)
                 throw new NullPointerException("default source cannot be null");
             this.defaultSource = defaultSource;
+            return this;
+        }
+
+        public Builder setTimeout(final long nr, final TimeUnit unit)
+        {
+            if (nr <= 0L)
+                throw new IllegalArgumentException("timeout must be greater " +
+                    "than 0");
+            if (unit == null)
+                throw new NullPointerException("time unit must not be null");
             return this;
         }
 

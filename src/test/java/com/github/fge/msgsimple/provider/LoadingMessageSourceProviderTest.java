@@ -2,6 +2,8 @@ package com.github.fge.msgsimple.provider;
 
 import com.github.fge.msgsimple.provider.load.MessageSourceLoader;
 import com.github.fge.msgsimple.source.MessageSource;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
@@ -137,5 +140,59 @@ public final class LoadingMessageSourceProviderTest
             assertSame(results.get(i).get(), source);
 
         verify(loader, only()).load(Locale.ROOT);
+    }
+
+    @Test
+    public void cannotSetZeroOrNegativeTimeout()
+    {
+        try {
+            builder.setTimeout(0L, null);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "timeout must be greater than 0");
+        }
+
+        try {
+            builder.setTimeout(-1L, null);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "timeout must be greater than 0");
+        }
+    }
+
+    @Test(dependsOnMethods = "cannotSetZeroOrNegativeTimeout")
+    public void cannotSetNullTimeUnit()
+    {
+        try {
+            builder.setTimeout(1L, null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "time unit must not be null");
+        }
+    }
+
+    @Test(dependsOnMethods = {
+        "loaderIsUsedWhenItIsSet",
+        "cannotSetNullTimeUnit"
+    })
+    public void whenLoadTimesOutDefaultSourceIsReturned()
+        throws IOException
+    {
+        when(loader.load(Locale.ROOT)).then(new Answer<MessageSource>()
+        {
+            @Override
+            public MessageSource answer(final InvocationOnMock invocation)
+                throws IOException, InterruptedException
+            {
+                TimeUnit.SECONDS.sleep(2L);
+                return source;
+            }
+        });
+
+        final MessageSourceProvider provider
+            = builder.setLoader(loader).setTimeout(250L, TimeUnit.MILLISECONDS)
+            .setDefaultSource(defaultSource).build();
+
+        assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
     }
 }

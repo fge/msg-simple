@@ -232,7 +232,7 @@ public final class MessageBundleTest
     public void cannotQueryNullLocale()
     {
         try {
-            builder.freeze().getMessage((Locale) null, "foo");
+            builder.freeze().getMessage(null, "foo");
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), "null locales are not allowed");

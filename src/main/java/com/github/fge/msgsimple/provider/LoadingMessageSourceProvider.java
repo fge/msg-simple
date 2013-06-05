@@ -138,7 +138,7 @@ public final class LoadingMessageSourceProvider
         private long nr = 5L;
         private TimeUnit unit = TimeUnit.SECONDS;
 
-        Builder()
+        private Builder()
         {
         }
 

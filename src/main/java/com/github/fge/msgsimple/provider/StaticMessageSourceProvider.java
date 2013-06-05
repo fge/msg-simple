@@ -37,6 +37,36 @@ public final class StaticMessageSourceProvider
         return new Builder();
     }
 
+    /**
+     * Convenience method to create a provider with a single source
+     *
+     * <p>This source will be used for all locales.</p>
+     *
+     * @param source the message source
+     * @return a message provider
+     * @see Builder#setDefaultSource(MessageSource)
+     */
+    public static MessageSourceProvider withSingleSource(
+        final MessageSource source)
+    {
+        return new Builder().setDefaultSource(source).build();
+    }
+
+    /**
+     * Convenience method to create a provider with a single source for a
+     * specific locale
+     *
+     * @param locale the locale
+     * @param source the message source
+     * @return a message provider
+     * @see Builder#addSource(Locale, MessageSource)
+     */
+    public static MessageSourceProvider withSingleSource(final Locale locale,
+        final MessageSource source)
+    {
+        return new Builder().addSource(locale, source).build();
+    }
+
     private StaticMessageSourceProvider(final Builder builder)
     {
         defaultSource = builder.defaultSource;
@@ -60,7 +90,7 @@ public final class StaticMessageSourceProvider
         private final Map<Locale, MessageSource> sources
             = new HashMap<Locale, MessageSource>();
 
-        Builder()
+        private Builder()
         {
         }
 

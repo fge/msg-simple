@@ -153,7 +153,7 @@ public final class MessageBundle
     /**
      * @deprecated use the new builder class instead; will be removed in 0.3
      *
-     * @see {@link #newBuilder()}
+     * @see #newBuilder()
      */
     @Deprecated
     public Builder copy()

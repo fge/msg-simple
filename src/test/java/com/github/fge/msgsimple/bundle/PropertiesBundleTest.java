@@ -17,41 +17,31 @@
 
 package com.github.fge.msgsimple.bundle;
 
+import com.github.fge.msgsimple.locale.LocaleUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import static org.testng.Assert.*;
 
-public final class PropertiesMessageBundleTest
+public final class PropertiesBundleTest
 {
     private static final MessageBundle BUNDLE
-        = new PropertiesMessageBundle("/org/foobar/msg");
+        = PropertiesBundle.forPath("/org/foobar/msg");
     private static final String KEY = "hello";
 
     @Test
     public void constructorRefusesNullPrefix()
     {
         try {
-            new PropertiesMessageBundle(null);
+            PropertiesBundle.forPath(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "base path must not be null");
-        }
-    }
-
-    @Test
-    public void constructorRefusesCreationOfBundleWithoutRootLocale()
-    {
-        try {
-            new PropertiesMessageBundle("foo");
-            fail("No exception thrown!");
-        } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "there must be at least" +
-                " a properties file for Locale.ROOT; none was found");
+            assertEquals(e.getMessage(), "resource path is null");
         }
     }
 
@@ -64,31 +54,31 @@ public final class PropertiesMessageBundleTest
 
         locale = "";
         message = "world";
-        list.add(new Object[] { locale, message });
+        list.add(new Object[] { LocaleUtils.parseLocale(locale), message });
 
         locale = "fr";
         message = "le monde";
-        list.add(new Object[] { locale, message });
+        list.add(new Object[] { LocaleUtils.parseLocale(locale), message });
 
         locale = "it_IT";
         message = "il mondo";
-        list.add(new Object[] { locale, message });
+        list.add(new Object[] { LocaleUtils.parseLocale(locale), message });
 
         locale = "fr_FR";
         message = "le monde";
-        list.add(new Object[] { locale, message });
+        list.add(new Object[] { LocaleUtils.parseLocale(locale), message });
 
         locale = "es";
         message = "world";
-        list.add(new Object[] { locale, message });
+        list.add(new Object[] { LocaleUtils.parseLocale(locale), message });
 
         return list.iterator();
     }
 
-    @Test(dataProvider = "lookups", threadPoolSize = 10, invocationCount = 2)
-    public void bundleLookupWorksCorrectly(final String locale,
+    @Test(dataProvider = "lookups")
+    public void bundleLookupWorksCorrectly(final Locale locale,
         final String msg)
     {
-        assertEquals(BUNDLE.getMessage(KEY, locale), msg);
+        assertEquals(BUNDLE.getMessage(locale, KEY), msg);
     }
 }

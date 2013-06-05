@@ -1,4 +1,4 @@
-package com.github.fge.msgsimple.bundle2;
+package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import com.github.fge.msgsimple.provider.MessageSourceLoader;

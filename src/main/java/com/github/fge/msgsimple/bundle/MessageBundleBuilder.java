@@ -2,9 +2,12 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.Thawed;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
+import com.github.fge.msgsimple.provider.StaticMessageSourceProvider;
+import com.github.fge.msgsimple.source.MessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Builder class for a message bundle
@@ -55,6 +58,68 @@ public final class MessageBundleBuilder
     {
         if (provider == null)
             throw new NullPointerException("cannot prepend null provider");
+        providers.add(0, provider);
+        return this;
+    }
+
+    /**
+     * Convenience method to append a single-source provider
+     *
+     * @param source the message source
+     * @return this
+     * @see StaticMessageSourceProvider#withSingleSource(MessageSource)
+     */
+    public MessageBundleBuilder appendSource(final MessageSource source)
+    {
+        final MessageSourceProvider provider
+            = StaticMessageSourceProvider.withSingleSource(source);
+        providers.add(provider);
+        return this;
+    }
+
+    /**
+     * Convenience method to prepend a single-source provider
+     *
+     * @param source the message source
+     * @return this
+     * @see StaticMessageSourceProvider#withSingleSource(MessageSource)
+     */
+    public MessageBundleBuilder prependSource(final MessageSource source)
+    {
+        final MessageSourceProvider provider
+            = StaticMessageSourceProvider.withSingleSource(source);
+        providers.add(0, provider);
+        return this;
+    }
+
+    /**
+     * Convenience method to append a single-source provider for a given locale
+     *
+     * @param source the message source
+     * @return this
+     * @see StaticMessageSourceProvider#withSingleSource(Locale, MessageSource)
+     */
+    public MessageBundleBuilder appendSource(final Locale locale,
+        final MessageSource source)
+    {
+        final MessageSourceProvider provider
+            = StaticMessageSourceProvider.withSingleSource(locale, source);
+        providers.add(provider);
+        return this;
+    }
+
+    /**
+     * Convenience method to prepend a single-source provider for a given locale
+     *
+     * @param source the message source
+     * @return this
+     * @see StaticMessageSourceProvider#withSingleSource(Locale, MessageSource)
+     */
+    public MessageBundleBuilder prependSource(final Locale locale,
+        final MessageSource source)
+    {
+        final MessageSourceProvider provider
+            = StaticMessageSourceProvider.withSingleSource(locale, source);
         providers.add(0, provider);
         return this;
     }

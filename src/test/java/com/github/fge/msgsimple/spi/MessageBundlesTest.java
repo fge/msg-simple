@@ -12,14 +12,14 @@ import static org.testng.Assert.*;
 
 public final class MessageBundlesTest
 {
-    private MessageBundles.MapBuilder builder;
+    private MessageBundles.Loader loader;
     private Map<String, MessageBundle> bundles;
     private MessageBundleProvider provider;
 
     @BeforeMethod
     public void init()
     {
-        builder = new MessageBundles.MapBuilder();
+        loader = new MessageBundles.Loader();
         bundles = new HashMap<String, MessageBundle>();
         provider = mock(MessageBundleProvider.class);
         when(provider.getBundles()).thenReturn(bundles);
@@ -30,9 +30,9 @@ public final class MessageBundlesTest
     {
         bundles.put(null, null);
         try {
-            builder.loadFrom(provider);
+            loader.loadFrom(provider);
             fail("No exception thrown!");
-        } catch (MessageBundles.BundleLoadingException e) {
+        } catch (MessageBundles.LoadingException e) {
             assertEquals(e.getMessage(), "null bundle names are not allowed");
         }
     }
@@ -42,9 +42,9 @@ public final class MessageBundlesTest
     {
         bundles.put("foo", null);
         try {
-            builder.loadFrom(provider);
+            loader.loadFrom(provider);
             fail("No exception thrown!");
-        } catch (MessageBundles.BundleLoadingException e) {
+        } catch (MessageBundles.LoadingException e) {
             assertEquals(e.getMessage(), "null bundles are not allowed");
         }
     }
@@ -55,10 +55,10 @@ public final class MessageBundlesTest
         // Can't mock MessageBundle, it's final by design, so...
         bundles.put("foo", MessageBundle.newBuilder().freeze());
         try {
-            builder.loadFrom(provider);
-            builder.loadFrom(provider);
+            loader.loadFrom(provider);
+            loader.loadFrom(provider);
             fail("No exception thrown!");
-        } catch (MessageBundles.BundleLoadingException e) {
+        } catch (MessageBundles.LoadingException e) {
             assertEquals(e.getMessage(), "there is already a bundle with " +
                 "name \"foo\"");
         }
@@ -66,11 +66,11 @@ public final class MessageBundlesTest
 
     @Test
     public void insertedBundlesAreRetrievable()
-        throws MessageBundles.BundleLoadingException
+        throws MessageBundles.LoadingException
     {
         final MessageBundle bundle = MessageBundle.newBuilder().freeze();
         bundles.put("foo", bundle);
-        builder.loadFrom(provider);
-        assertSame(builder.getMap().get("foo"), bundle);
+        loader.loadFrom(provider);
+        assertSame(loader.getMap().get("foo"), bundle);
     }
 }

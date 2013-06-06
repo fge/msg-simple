@@ -27,13 +27,13 @@ public final class MessageBundles
     /**
      * Visible for testing purposes only! Do not instantiate!
      */
-    static final class MapBuilder
+    static final class Loader
     {
         private final Map<String, MessageBundle> map
             = new HashMap<String, MessageBundle>();
 
         void loadFrom(final MessageBundleProvider provider)
-            throws BundleLoadingException
+            throws LoadingException
         {
             String name;
             MessageBundle bundle;
@@ -43,13 +43,13 @@ public final class MessageBundles
                 name = entry.getKey();
                 bundle = entry.getValue();
                 if (name == null)
-                    throw new BundleLoadingException("null bundle names are " +
+                    throw new LoadingException("null bundle names are " +
                         "not allowed");
                 if (bundle == null)
-                    throw new BundleLoadingException("null bundles are not " +
+                    throw new LoadingException("null bundles are not " +
                         "allowed");
                 if (map.put(name, bundle) != null)
-                    throw new BundleLoadingException("there is already a " +
+                    throw new LoadingException("there is already a " +
                         "bundle with name \"" + name + '"');
             }
         }
@@ -64,10 +64,10 @@ public final class MessageBundles
     /**
      * Visible for testing purposes only! Do not use!
      */
-    static final class BundleLoadingException
+    static final class LoadingException
         extends Exception
     {
-        BundleLoadingException(final String message)
+        LoadingException(final String message)
         {
             super(message);
         }

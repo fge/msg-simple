@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NotThreadSafe
-public class SimpleMessageBundleProvider
+public abstract class SimpleMessageBundleProvider
     implements MessageBundleProvider
 {
     private final Map<String, MessageBundle> bundles

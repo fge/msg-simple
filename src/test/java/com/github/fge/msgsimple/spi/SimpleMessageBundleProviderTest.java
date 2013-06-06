@@ -15,7 +15,7 @@ public final class SimpleMessageBundleProviderTest
     @BeforeMethod
     public void init()
     {
-        provider = new SimpleMessageBundleProvider();
+        provider = new SimpleMessageBundleProvider(){};
     }
 
     @Test

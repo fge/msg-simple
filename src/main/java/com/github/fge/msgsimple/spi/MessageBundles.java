@@ -8,29 +8,33 @@ import java.util.ServiceLoader;
 
 public final class MessageBundles
 {
-    private static final ServiceLoader<MessageBundleProvider> LOADER
-        = ServiceLoader.load(MessageBundleProvider.class);
+    private static MessageBundles INSTANCE;
 
-    private static final Map<String, MessageBundle> BUNDLES;
-
-    static {
-        final Loader loader = new Loader();
-        try {
-            for (final MessageBundleProvider provider : LOADER)
-                loader.loadFrom(provider);
-            BUNDLES = loader.getMap();
-        } catch (LoadingException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
+    private final Map<String, MessageBundle> bundles;
 
     private MessageBundles()
+        throws LoadingException
     {
+        final ServiceLoader<MessageBundleProvider> serviceLoader
+            = ServiceLoader.load(MessageBundleProvider.class);
+        final Loader loader = new Loader();
+        for (final MessageBundleProvider provider: serviceLoader)
+            loader.loadFrom(provider);
+        bundles = loader.getMap();
     }
 
     public static MessageBundle getByName(final String name)
     {
-        return BUNDLES.get(name);
+        // No choice... Bah, it's a one shot. And it's simple.
+        synchronized (MessageBundles.class) {
+            if (INSTANCE == null)
+                try {
+                    INSTANCE = new MessageBundles();
+                } catch (LoadingException e) {
+                    throw new ExceptionInInitializerError(e);
+                }
+        }
+        return INSTANCE.bundles.get(name);
     }
 
     /**

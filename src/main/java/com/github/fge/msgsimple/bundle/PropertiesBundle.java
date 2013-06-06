@@ -5,6 +5,7 @@ import com.github.fge.msgsimple.provider.MessageSourceLoader;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -34,7 +35,12 @@ import java.util.regex.Pattern;
  */
 public final class PropertiesBundle
 {
+    // FIXME: if I declare this AFTER the bundle, I get an NPE on SUFFIX when
+    // I run tests! WTF? Probably a synchronization bug...
     private static final Pattern SUFFIX = Pattern.compile("\\.properties$");
+
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
 
     private PropertiesBundle()
     {
@@ -59,7 +65,8 @@ public final class PropertiesBundle
     public static MessageBundle forPath(final String resourcePath)
     {
         if (resourcePath == null)
-            throw new NullPointerException("resource path is null");
+            throw new NullPointerException(
+                BUNDLE.getMessage("cfg.nullResourcePath"));
 
         final String s = resourcePath.startsWith("/") ? resourcePath
             : '/' + resourcePath;

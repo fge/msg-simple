@@ -18,6 +18,7 @@
 package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.locale.LocaleUtils;
+import com.github.fge.msgsimple.spi.MessageBundles;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -31,6 +32,8 @@ import static org.testng.Assert.*;
 public final class PropertiesBundleTest
 {
     private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+    private static final MessageBundle TEST_BUNDLE
         = PropertiesBundle.forPath("/org/foobar/msg");
     private static final String KEY = "hello";
 
@@ -41,7 +44,8 @@ public final class PropertiesBundleTest
             PropertiesBundle.forPath(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "resource path is null");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nullResourcePath"));
         }
     }
 
@@ -79,6 +83,6 @@ public final class PropertiesBundleTest
     public void bundleLookupWorksCorrectly(final Locale locale,
         final String msg)
     {
-        assertEquals(BUNDLE.getMessage(locale, KEY), msg);
+        assertEquals(TEST_BUNDLE.getMessage(locale, KEY), msg);
     }
 }

@@ -22,6 +22,10 @@ public final class SimpleMessageBundleProvider
 
     public void put(final String key, final MessageBundle bundle)
     {
-
+        if (key == null)
+            throw new NullPointerException("null keys are not allowed");
+        if (bundle == null)
+            throw new NullPointerException("null values are not allowed");
+        bundles.put(key, bundle);
     }
 }

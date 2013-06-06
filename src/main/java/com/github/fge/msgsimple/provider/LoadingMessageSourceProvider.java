@@ -162,7 +162,8 @@ public final class LoadingMessageSourceProvider
         public Builder setLoader(final MessageSourceLoader loader)
         {
             if (loader == null)
-                throw new NullPointerException("loader cannot be null");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.nullLoader"));
             this.loader = loader;
             return this;
         }
@@ -177,7 +178,8 @@ public final class LoadingMessageSourceProvider
         public Builder setDefaultSource(final MessageSource defaultSource)
         {
             if (defaultSource == null)
-                throw new NullPointerException("default source cannot be null");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.nullDefaultSource"));
             this.defaultSource = defaultSource;
             return this;
         }
@@ -194,10 +196,11 @@ public final class LoadingMessageSourceProvider
         public Builder setTimeout(final long nr, final TimeUnit unit)
         {
             if (nr <= 0L)
-                throw new IllegalArgumentException("timeout must be greater " +
-                    "than 0");
+                throw new IllegalArgumentException(
+                    BUNDLE.getMessage("cfg.nonPositiveTimeout"));
             if (unit == null)
-                throw new NullPointerException("time unit must not be null");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.nullTimeUnit"));
             this.nr = nr;
             this.unit = unit;
             return this;
@@ -211,7 +214,8 @@ public final class LoadingMessageSourceProvider
         public MessageSourceProvider build()
         {
             if (loader == null)
-                throw new IllegalArgumentException("no loader has been provided");
+                throw new IllegalArgumentException(
+                    BUNDLE.getMessage("cfg.noLoader"));
             return new LoadingMessageSourceProvider(this);
         }
     }

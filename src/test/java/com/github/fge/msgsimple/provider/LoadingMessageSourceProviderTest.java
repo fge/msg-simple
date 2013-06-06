@@ -1,6 +1,8 @@
 package com.github.fge.msgsimple.provider;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
@@ -22,6 +24,9 @@ import static org.testng.Assert.*;
 
 public final class LoadingMessageSourceProviderTest
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     private LoadingMessageSourceProvider.Builder builder;
     private MessageSourceLoader loader;
     private MessageSource defaultSource;
@@ -43,7 +48,7 @@ public final class LoadingMessageSourceProviderTest
             builder.build();
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "no loader has been provided");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.noLoader"));
         }
     }
 
@@ -54,7 +59,7 @@ public final class LoadingMessageSourceProviderTest
             builder.setLoader(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "loader cannot be null");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullLoader"));
         }
     }
 
@@ -77,7 +82,8 @@ public final class LoadingMessageSourceProviderTest
             builder.setDefaultSource(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "default source cannot be null");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nullDefaultSource"));
         }
     }
 
@@ -148,14 +154,16 @@ public final class LoadingMessageSourceProviderTest
             builder.setTimeout(0L, null);
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "timeout must be greater than 0");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nonPositiveTimeout"));
         }
 
         try {
             builder.setTimeout(-1L, null);
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "timeout must be greater than 0");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nonPositiveTimeout"));
         }
     }
 
@@ -166,7 +174,8 @@ public final class LoadingMessageSourceProviderTest
             builder.setTimeout(1L, null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "time unit must not be null");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nullTimeUnit"));
         }
     }
 

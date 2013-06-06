@@ -2,7 +2,6 @@ package com.github.fge.msgsimple.spi;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -12,16 +11,26 @@ public final class MessageBundles
     private static final ServiceLoader<MessageBundleProvider> LOADER
         = ServiceLoader.load(MessageBundleProvider.class);
 
-    private static final Map<String, MessageBundle> BUNDLES
-        = new HashMap<String, MessageBundle>();
+    private static final Map<String, MessageBundle> BUNDLES;
 
     static {
-        for (final MessageBundleProvider provider: LOADER)
-            BUNDLES.putAll(provider.getBundles());
+        final Loader loader = new Loader();
+        try {
+            for (final MessageBundleProvider provider : LOADER)
+                loader.loadFrom(provider);
+            BUNDLES = loader.getMap();
+        } catch (LoadingException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
     private MessageBundles()
     {
+    }
+
+    public static MessageBundle getByName(final String name)
+    {
+        return BUNDLES.get(name);
     }
 
     /**
@@ -56,8 +65,7 @@ public final class MessageBundles
 
         Map<String, MessageBundle> getMap()
         {
-            // Just in case...
-            return Collections.unmodifiableMap(map);
+            return new HashMap<String, MessageBundle>(map);
         }
     }
 

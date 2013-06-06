@@ -8,19 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NotThreadSafe
-public final class SimpleMessageBundleProvider
+public class SimpleMessageBundleProvider
     implements MessageBundleProvider
 {
     private final Map<String, MessageBundle> bundles
         = new HashMap<String, MessageBundle>();
 
     @Override
-    public Map<String, MessageBundle> getBundles()
+    public final Map<String, MessageBundle> getBundles()
     {
         return Collections.unmodifiableMap(bundles);
     }
 
-    public void put(final String key, final MessageBundle bundle)
+    final void put(final String key, final MessageBundle bundle)
     {
         if (key == null)
             throw new NullPointerException("null keys are not allowed");

@@ -6,6 +6,7 @@ import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
 import com.github.fge.msgsimple.spi.MessageBundles;
+import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -43,7 +44,7 @@ public final class PropertiesBundle
     private static final Pattern SUFFIX = Pattern.compile("\\.properties$");
 
     private static final MessageBundle BUNDLE
-        = MessageBundles.getByName("com.github.fge:msg-simple");
+        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
 
     private PropertiesBundle()
     {

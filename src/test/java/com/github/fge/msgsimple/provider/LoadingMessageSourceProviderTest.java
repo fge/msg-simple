@@ -3,6 +3,7 @@ package com.github.fge.msgsimple.provider;
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.spi.MessageBundles;
+import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
@@ -25,7 +26,7 @@ import static org.testng.Assert.*;
 public final class LoadingMessageSourceProviderTest
 {
     private static final MessageBundle BUNDLE
-        = MessageBundles.getByName("com.github.fge:msg-simple");
+        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
 
     private LoadingMessageSourceProvider.Builder builder;
     private MessageSourceLoader loader;

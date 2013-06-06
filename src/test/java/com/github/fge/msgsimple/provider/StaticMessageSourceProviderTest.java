@@ -3,6 +3,7 @@ package com.github.fge.msgsimple.provider;
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.spi.MessageBundles;
+import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,7 +15,7 @@ import static org.testng.Assert.*;
 public final class StaticMessageSourceProviderTest
 {
     private static final MessageBundle BUNDLE
-        = MessageBundles.getByName("com.github.fge:msg-simple");
+        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
 
     private MessageSource source;
     private MessageSource source2;

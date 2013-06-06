@@ -3,6 +3,7 @@ package com.github.fge.msgsimple.provider;
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.spi.MessageBundles;
+import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public final class LoadingMessageSourceProvider
     private static final int NTHREADS = 5;
 
     private static final MessageBundle BUNDLE
-        = MessageBundles.getByName("com.github.fge:msg-simple");
+        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
 
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;

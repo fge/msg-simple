@@ -19,6 +19,7 @@ package com.github.fge.msgsimple.source;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.spi.MessageBundles;
+import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import static org.testng.Assert.*;
 public final class MapMessageSourceTest
 {
     private static final MessageBundle BUNDLE
-        = MessageBundles.getByName("com.github.fge:msg-simple");
+        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
 
     @Test
     public void mapContentsAreCopiedCorrectly()

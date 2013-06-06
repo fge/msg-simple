@@ -1,13 +1,16 @@
 package com.github.fge.msgsimple.spi;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.bundle.PropertiesBundle;
 
 public final class MsgSimpleMessageBundle
-    extends SimpleMessageBundleProvider
+    implements MessageBundleProvider
 {
-    public MsgSimpleMessageBundle()
+
+    @Override
+    public MessageBundle getBundle()
     {
-        put("com.github.fge:msg-simple",
-            PropertiesBundle.forPath("/com/github/fge/msgsimple/messages"));
+        return PropertiesBundle
+            .forPath("/com/github/fge/msgsimple/messages");
     }
 }

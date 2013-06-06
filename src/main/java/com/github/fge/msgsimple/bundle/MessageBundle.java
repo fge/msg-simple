@@ -22,6 +22,7 @@ import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.spi.MessageBundles;
+import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public final class MessageBundle
     implements Frozen<MessageBundleBuilder>
 {
     private static final MessageBundle BUNDLE
-        = MessageBundles.getByName("com.github.fge:msg-simple");
+        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
 
     final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();

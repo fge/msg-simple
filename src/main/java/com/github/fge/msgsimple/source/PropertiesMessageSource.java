@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,13 +63,13 @@ public final class PropertiesMessageSource
         if (resourcePath == null)
             throw new NullPointerException("resource path is null");
 
-        final InputStream in
-            = PropertiesMessageSource.class.getResourceAsStream(resourcePath);
+        final URL url = PropertiesMessageSource.class.getResource(resourcePath);
 
-        if (in == null)
+        if (url == null)
             throw new IOException("resource \"" + resourcePath
                 + "\" not found");
 
+        final InputStream in = url.openStream();
         try {
             return fromInputStream(in);
         } finally {

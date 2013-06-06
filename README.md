@@ -41,8 +41,12 @@ welcome!</p>
 
 <ul>
     <li>build a set of `MessageSource`s;</li>
-    <li>build a `MessageBundle` out of these sources.</li>
+    <li>build a set of `MessageSourceProvider`s;</li>
+    <li>build a `MessageBundle` out of these providers.</li>
 </ul>
+
+<p>Note that the examples below show shortcut methods to build a bundle only from sources. More
+complete examples will be added later on.</p>
 
 <h3>Message sources</h3>
 
@@ -72,7 +76,7 @@ propertySource = PropertiesMessageSource.fromPath("/path/to/messages.properties"
 use its builder class, and append or prepend message sources as you see fit:</p>
 
 ```java
-MessageBundle.Builder builder = new MessageBundle.Builder();
+MessageBundleBuilder builder = MessageBundle.newBuilder();
 
 // Append two sources
 builder = builder.appendSource(source1).appendSource(source2);
@@ -80,7 +84,7 @@ builder = builder.appendSource(source1).appendSource(source2);
 builder = builder.prependSource(source3);
 
 // Finally, build the bundle
-final MessageBundle bundle = builder.build();
+final MessageBundle bundle = builder.freeze();
 ```
 
 <h3>Reusing a bundle</h3>
@@ -90,11 +94,10 @@ final MessageBundle bundle = builder.build();
 <p>For instance, here is how you would append another message source to the bundle created above:
 
 ```java
-MessageBundle.Builder newBuilder = bundle.copy();
+MessageBundleBuilder newBuilder = bundle.thaw();
 
 newBuilder = newBuilder.appendSource(source4);
 
-final MessageBundle newBundle = newBuilder.build();
+final MessageBundle newBundle = newBuilder.freeze();
 ```
-
 

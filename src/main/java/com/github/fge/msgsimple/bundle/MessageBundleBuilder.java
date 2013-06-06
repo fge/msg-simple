@@ -61,7 +61,7 @@ public final class MessageBundleBuilder
         final MessageSourceProvider provider)
     {
         if (provider == null)
-            throw new NullPointerException("cannot prepend null provider");
+            throw new NullPointerException(BUNDLE.getMessage("cfg.nullProvider"));
         providers.add(0, provider);
         return this;
     }

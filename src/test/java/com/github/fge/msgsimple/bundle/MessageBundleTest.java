@@ -79,7 +79,7 @@ public final class MessageBundleTest
             builder.prependProvider(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot prepend null provider");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullProvider"));
         }
     }
 

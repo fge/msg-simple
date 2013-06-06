@@ -17,6 +17,9 @@
 
 package com.github.fge.msgsimple.source;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
+import com.github.fge.msgsimple.spi.MessageBundles;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +34,9 @@ import java.util.Map;
 public final class MapMessageSource
     implements MessageSource
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     private final Map<String, String> messages;
 
     public MapMessageSource(final Map<String, String> messages)
@@ -48,13 +54,15 @@ public final class MapMessageSource
     private static void checkMap(final Map<String, String> map)
     {
         if (map == null)
-            throw new NullPointerException("null map is not allowed");
+            throw new NullPointerException(BUNDLE.getMessage("cfg.nullMap"));
 
         for (final Map.Entry<String, String> entry: map.entrySet()) {
             if (entry.getKey() == null)
-                throw new NullPointerException("null keys not allowed in map");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.map.nullKey"));
             if (entry.getValue() == null)
-                throw new NullPointerException("null values not allowed in map");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.map.nullValue"));
         }
     }
 }

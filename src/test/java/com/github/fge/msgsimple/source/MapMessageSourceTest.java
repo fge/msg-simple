@@ -17,6 +17,8 @@
 
 package com.github.fge.msgsimple.source;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
+import com.github.fge.msgsimple.spi.MessageBundles;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -26,7 +28,9 @@ import static org.testng.Assert.*;
 
 public final class MapMessageSourceTest
 {
-    @Test
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     public void mapContentsAreCopiedCorrectly()
     {
         final String key = "foo";
@@ -47,7 +51,7 @@ public final class MapMessageSourceTest
             new MapMessageSource(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null map is not allowed");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullMap"));
         }
     }
 
@@ -61,7 +65,7 @@ public final class MapMessageSourceTest
             new MapMessageSource(map);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null keys not allowed in map");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.map.nullKey"));
         }
     }
 
@@ -75,7 +79,7 @@ public final class MapMessageSourceTest
             new MapMessageSource(map);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null values not allowed in map");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.map.nullValue"));
         }
     }
 }

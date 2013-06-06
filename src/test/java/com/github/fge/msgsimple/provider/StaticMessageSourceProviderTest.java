@@ -1,6 +1,8 @@
 package com.github.fge.msgsimple.provider;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -11,6 +13,9 @@ import static org.testng.Assert.*;
 
 public final class StaticMessageSourceProviderTest
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     private MessageSource source;
     private MessageSource source2;
 
@@ -31,7 +36,8 @@ public final class StaticMessageSourceProviderTest
             builder.setDefaultSource(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot set null default source");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nullDefaultSource"));
         }
     }
 
@@ -42,7 +48,7 @@ public final class StaticMessageSourceProviderTest
             builder.addSource(null, source);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null keys are not allowed");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullKey"));
         }
     }
 
@@ -53,7 +59,7 @@ public final class StaticMessageSourceProviderTest
             builder.addSource(Locale.ROOT, null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null sources are not allowed");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullSource"));
         }
     }
 

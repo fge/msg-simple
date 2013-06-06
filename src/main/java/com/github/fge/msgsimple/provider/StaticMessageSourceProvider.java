@@ -1,6 +1,8 @@
 package com.github.fge.msgsimple.provider;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -24,6 +26,9 @@ import java.util.Map;
 public final class StaticMessageSourceProvider
     implements MessageSourceProvider
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     private final MessageSource defaultSource;
     private final Map<Locale, MessageSource> sources;
 
@@ -106,9 +111,10 @@ public final class StaticMessageSourceProvider
             final MessageSource source)
         {
             if (locale == null)
-                throw new NullPointerException("null keys are not allowed");
+                throw new NullPointerException(BUNDLE.getMessage("cfg.nullKey"));
             if (source == null)
-                throw new NullPointerException("null sources are not allowed");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.nullSource"));
             sources.put(locale, source);
             return this;
         }
@@ -123,7 +129,8 @@ public final class StaticMessageSourceProvider
         public Builder setDefaultSource(final MessageSource source)
         {
             if (source == null)
-                throw new NullPointerException("cannot set null default source");
+                throw new NullPointerException(
+                    BUNDLE.getMessage("cfg.nullDefaultSource"));
             defaultSource = source;
             return this;
         }

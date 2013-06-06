@@ -2,6 +2,7 @@ package com.github.fge.msgsimple.spi;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -21,5 +22,54 @@ public final class MessageBundles
 
     private MessageBundles()
     {
+    }
+
+    /**
+     * Visible for testing purposes only! Do not instantiate!
+     */
+    static final class MapBuilder
+    {
+        private final Map<String, MessageBundle> map
+            = new HashMap<String, MessageBundle>();
+
+        void loadFrom(final MessageBundleProvider provider)
+            throws BundleLoadingException
+        {
+            String name;
+            MessageBundle bundle;
+
+            for (final Map.Entry<String, MessageBundle> entry:
+                provider.getBundles().entrySet()) {
+                name = entry.getKey();
+                bundle = entry.getValue();
+                if (name == null)
+                    throw new BundleLoadingException("null bundle names are " +
+                        "not allowed");
+                if (bundle == null)
+                    throw new BundleLoadingException("null bundles are not " +
+                        "allowed");
+                if (map.put(name, bundle) != null)
+                    throw new BundleLoadingException("there is already a " +
+                        "bundle with name \"" + name + '"');
+            }
+        }
+
+        Map<String, MessageBundle> getMap()
+        {
+            // Just in case...
+            return Collections.unmodifiableMap(map);
+        }
+    }
+
+    /**
+     * Visible for testing purposes only! Do not use!
+     */
+    static final class BundleLoadingException
+        extends Exception
+    {
+        BundleLoadingException(final String message)
+        {
+            super(message);
+        }
     }
 }

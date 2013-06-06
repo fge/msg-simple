@@ -1,6 +1,8 @@
 package com.github.fge.msgsimple.provider;
 
+import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
@@ -40,7 +42,15 @@ import java.util.concurrent.TimeoutException;
 public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
 {
+    /*
+     * Note that this variable MUST be initialized before we access the bundle
+     * below. Static initializers are run in order, and a bundle may well want
+     * to load an instance of this class!
+     */
     private static final int NTHREADS = 5;
+
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
 
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;

@@ -8,6 +8,7 @@ import java.util.ServiceLoader;
 
 public final class MessageBundles
 {
+    // Yes, "static" but not "final" :/
     private static MessageBundles INSTANCE;
 
     private final Map<String, MessageBundle> bundles;

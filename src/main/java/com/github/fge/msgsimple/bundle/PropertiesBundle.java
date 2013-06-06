@@ -35,8 +35,11 @@ import java.util.regex.Pattern;
  */
 public final class PropertiesBundle
 {
-    // FIXME: if I declare this AFTER the bundle, I get an NPE on SUFFIX when
-    // I run tests! WTF? Probably a synchronization bug...
+    /*
+     * Note that this variable MUST be initialized before we access the bundle
+     * below. Static initializers are run in order, and a bundle may well want
+     * to load an instance of this class!
+     */
     private static final Pattern SUFFIX = Pattern.compile("\\.properties$");
 
     private static final MessageBundle BUNDLE

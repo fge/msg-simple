@@ -31,6 +31,7 @@ public final class MapMessageSourceTest
     private static final MessageBundle BUNDLE
         = MessageBundles.getByName("com.github.fge:msg-simple");
 
+    @Test
     public void mapContentsAreCopiedCorrectly()
     {
         final String key = "foo";

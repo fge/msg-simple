@@ -23,17 +23,15 @@ public final class MessageBundles
         bundles = loader.getMap();
     }
 
-    public static MessageBundle getByName(final String name)
+    public static synchronized MessageBundle getByName(final String name)
     {
         // No choice... Bah, it's a one shot. And it's simple.
-        synchronized (MessageBundles.class) {
-            if (INSTANCE == null)
-                try {
-                    INSTANCE = new MessageBundles();
-                } catch (LoadingException e) {
-                    throw new ExceptionInInitializerError(e);
-                }
-        }
+        if (INSTANCE == null)
+            try {
+                INSTANCE = new MessageBundles();
+            } catch (LoadingException e) {
+                throw new ExceptionInInitializerError(e);
+            }
         return INSTANCE.bundles.get(name);
     }
 

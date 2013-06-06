@@ -5,8 +5,8 @@ import com.github.fge.msgsimple.provider.MessageSourceLoader;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
-import com.github.fge.msgsimple.spi.MessageBundles;
-import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.serviceloader.MessageBundles;
+import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 
 import java.io.IOException;
 import java.util.Locale;

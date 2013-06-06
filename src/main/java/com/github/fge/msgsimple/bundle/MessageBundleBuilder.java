@@ -4,8 +4,8 @@ import com.github.fge.Thawed;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.provider.StaticMessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
-import com.github.fge.msgsimple.spi.MessageBundles;
-import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.serviceloader.MessageBundles;
+import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 
 import java.util.ArrayList;
 import java.util.List;

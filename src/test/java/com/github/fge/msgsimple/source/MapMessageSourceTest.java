@@ -18,8 +18,8 @@
 package com.github.fge.msgsimple.source;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
-import com.github.fge.msgsimple.spi.MessageBundles;
-import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.serviceloader.MessageBundles;
+import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;

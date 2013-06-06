@@ -18,8 +18,8 @@
 package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.locale.LocaleUtils;
-import com.github.fge.msgsimple.spi.MessageBundles;
-import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.serviceloader.MessageBundles;
+import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

@@ -2,8 +2,8 @@ package com.github.fge.msgsimple.provider;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
-import com.github.fge.msgsimple.spi.MessageBundles;
-import com.github.fge.msgsimple.spi.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.serviceloader.MessageBundles;
+import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;

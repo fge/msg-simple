@@ -1,4 +1,4 @@
-package com.github.fge.msgsimple.spi;
+package com.github.fge.msgsimple.serviceloader;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
 

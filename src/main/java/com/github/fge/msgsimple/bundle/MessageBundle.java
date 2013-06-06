@@ -22,6 +22,7 @@ import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.provider.StaticMessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
@@ -54,6 +55,9 @@ import java.util.Locale;
 public final class MessageBundle
     implements Frozen<MessageBundleBuilder>
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();
 
@@ -90,9 +94,9 @@ public final class MessageBundle
     public String getMessage(final Locale locale, final String key)
     {
         if (key == null)
-            throw new NullPointerException("null keys are not allowed");
+            throw new NullPointerException(BUNDLE.getMessage("query.nullKey"));
         if (locale == null)
-            throw new NullPointerException("null locales are not allowed");
+            throw new NullPointerException(BUNDLE.getMessage("query.nullLocale"));
 
         String ret;
         MessageSource source;

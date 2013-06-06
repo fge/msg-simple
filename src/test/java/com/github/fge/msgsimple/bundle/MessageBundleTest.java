@@ -3,6 +3,7 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 import org.mockito.InOrder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,6 +15,9 @@ import static org.testng.Assert.*;
 
 public final class MessageBundleTest
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     private MessageBundleBuilder builder;
 
     private MessageSourceProvider provider;
@@ -41,7 +45,7 @@ public final class MessageBundleTest
             builder.appendProvider(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "cannot append null provider");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullProvider"));
         }
     }
 
@@ -224,7 +228,7 @@ public final class MessageBundleTest
             builder.freeze().getMessage(Locale.ROOT, null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null keys are not allowed");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("query.nullKey"));
         }
     }
 
@@ -235,7 +239,7 @@ public final class MessageBundleTest
             builder.freeze().getMessage(null, "foo");
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "null locales are not allowed");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("query.nullLocale"));
         }
     }
 }

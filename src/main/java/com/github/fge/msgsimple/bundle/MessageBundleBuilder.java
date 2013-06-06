@@ -4,6 +4,7 @@ import com.github.fge.Thawed;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.provider.StaticMessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
+import com.github.fge.msgsimple.spi.MessageBundles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,9 @@ import java.util.Locale;
 public final class MessageBundleBuilder
     implements Thawed<MessageBundle>
 {
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getByName("com.github.fge:msg-simple");
+
     final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();
 
@@ -41,7 +45,7 @@ public final class MessageBundleBuilder
         final MessageSourceProvider provider)
     {
         if (provider == null)
-            throw new NullPointerException("cannot append null provider");
+            throw new NullPointerException(BUNDLE.getMessage("cfg.nullProvider"));
         providers.add(provider);
         return this;
     }

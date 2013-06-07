@@ -25,10 +25,10 @@ import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingFormatArgumentException;
 
 /**
  * Base abstract class for message bundles
@@ -125,23 +125,33 @@ public final class MessageBundle
         return getMessage(Locale.getDefault(), key);
     }
 
-    public String getMessage(final Locale locale, final String key,
-        final Object first, final Object... other)
+    public String printf(final Locale locale, final String key,
+        final Object... params)
     {
-        final String pattern = getMessage(locale, key);
-
-        final int length = other.length;
-        final Object[] args = new Object[1 + length];
-        args[0] = first;
-        System.arraycopy(other, 0, args, 1, length);
-
-        final MessageFormat fmt = new MessageFormat(pattern, locale);
-        return fmt.format(args, new StringBuffer(), null).toString();
+        final String format = getMessage(locale, key);
+        try {
+            return String.format(locale, format, params);
+        } catch (MissingFormatArgumentException ignored) {
+            return format;
+        }
     }
 
     @Override
     public MessageBundleBuilder thaw()
     {
         return new MessageBundleBuilder(this);
+    }
+
+    private static String quoteFormat(final String input)
+    {
+        final StringBuilder sb = new StringBuilder();
+
+        for (final char c: input.toCharArray()) {
+            sb.append(c);
+            if (c == '\'')
+                sb.append(c);
+        }
+
+        return sb.toString();
     }
 }

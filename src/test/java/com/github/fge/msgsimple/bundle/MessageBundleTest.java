@@ -249,57 +249,62 @@ public final class MessageBundleTest
     }
 
     @DataProvider
-    public Iterator<Object[]> msgFormatData()
+    public Iterator<Object[]> printfData()
     {
         final List<Object[]> list = new ArrayList<Object[]>();
 
         Locale locale;
         String pattern;
-        Object first;
-        Object[] other;
+        Object[] params;
         String ret;
 
         locale = Locale.ROOT;
-        pattern = "Hello {0}";
-        first = "World";
-        other = new Object[0];
+        pattern = "Hello %s";
+        params = new Object[] { "World" };
         ret = "Hello World";
-        list.add(new Object[] { locale, pattern, ret, first, other });
+        list.add(new Object[] { locale, pattern, ret, params });
 
         locale = Locale.ROOT;
-        pattern = "Hello {0}";
-        first = null;
-        other = new Object[0];
+        pattern = "Hello %s";
+        params = new Object[] { null };
         ret = "Hello null";
-        list.add(new Object[] { locale, pattern, ret, first, other });
+        list.add(new Object[] { locale, pattern, ret, params });
+
+        locale = Locale.ROOT;
+        pattern = "Hello %s";
+        params = new Object[0];
+        ret = "Hello %s";
+        list.add(new Object[] { locale, pattern, ret, params });
 
         locale = LocaleUtils.parseLocale("fr_FR");
-        pattern = "La {0} du {1}";
-        first = "peur";
-        other = new Object[] { "gendarme" };
+        pattern = "La %s du %s";
+        params = new Object[] { "peur", "gendarme" };
         ret = "La peur du gendarme";
-        list.add(new Object[] { locale, pattern, ret, first, other });
+        list.add(new Object[] { locale, pattern, ret, params });
 
-        locale = LocaleUtils.parseLocale("fr_FR");
-        pattern = "L'odeur du bug";
-        first = null;
-        other = new Object[0];
-        ret = "L'odeur du bug";
-        list.add(new Object[] { locale, pattern, ret, first, other });
+        locale = Locale.CHINA;
+        pattern = "Plus on est de %s, moins il y a de %s !";
+        params = new Object[] { "fous", "riz", "Mao" };
+        ret = "Plus on est de fous, moins il y a de riz !";
+        list.add(new Object[] { locale, pattern, ret, params });
 
         return list.iterator();
     }
 
-    @Test(dataProvider = "msgFormatData")
-    public void messageFormatWorksCorrectly(final Locale locale,
-        final String pattern, final String ret, final Object first,
-        final Object[] other)
+    /*
+     * Note: despite the bug having supposedly been fixed in TestNG 6.1,
+     * @DataProvider doesn't like varargs methods...
+     */
+    @Test(dataProvider = "printfData")
+    public void printfWorksCorrectly(final Locale locale, final String pattern,
+        final String ret, final Object[] params)
     {
         final String key = "key";
         when(source.getKey(key)).thenReturn(pattern);
 
-        final MessageBundle bundle = builder.appendSource(source).freeze();
+        final MessageBundle bundle = builder.appendSource(locale, source)
+            .freeze();
 
-        assertEquals(bundle.getMessage(locale, "key", first, other), ret);
+        assertEquals(bundle.printf(locale, "key", params), ret);
     }
 }

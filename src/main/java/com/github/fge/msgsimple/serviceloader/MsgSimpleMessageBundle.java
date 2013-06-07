@@ -13,7 +13,6 @@ public final class MsgSimpleMessageBundle
     @Override
     public MessageBundle getBundle()
     {
-        return PropertiesBundle
-            .forPath("/com/github/fge/msgsimple/messages");
+        return PropertiesBundle.forPath("/com/github/fge/msgsimple/messages");
     }
 }

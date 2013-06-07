@@ -173,17 +173,4 @@ public final class MessageBundle
     {
         return new MessageBundleBuilder(this);
     }
-
-    private static String quoteFormat(final String input)
-    {
-        final StringBuilder sb = new StringBuilder();
-
-        for (final char c: input.toCharArray()) {
-            sb.append(c);
-            if (c == '\'')
-                sb.append(c);
-        }
-
-        return sb.toString();
-    }
 }

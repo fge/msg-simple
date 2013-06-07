@@ -46,11 +46,6 @@ public final class MapMessageSource
         this.messages = new HashMap<String, String>(messages);
     }
 
-    public static MapMessageSourceBuilder newBuilder()
-    {
-        return new MapMessageSourceBuilder();
-    }
-
     @Override
     public String getKey(final String key)
     {

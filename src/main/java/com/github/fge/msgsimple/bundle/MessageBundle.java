@@ -20,11 +20,12 @@ package com.github.fge.msgsimple.bundle;
 import com.github.fge.Frozen;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
-import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.serviceloader.MessageBundles;
 import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -122,6 +123,20 @@ public final class MessageBundle
     public String getMessage(final String key)
     {
         return getMessage(Locale.getDefault(), key);
+    }
+
+    public String getMessage(final Locale locale, final String key,
+        final Object first, final Object... other)
+    {
+        final String pattern = getMessage(locale, key);
+
+        final int length = other.length;
+        final Object[] args = new Object[1 + length];
+        args[0] = first;
+        System.arraycopy(other, 0, args, 1, length);
+
+        final MessageFormat fmt = new MessageFormat(pattern, locale);
+        return fmt.format(args, new StringBuffer(), null).toString();
     }
 
     @Override

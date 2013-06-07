@@ -2,13 +2,17 @@ package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
-import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.serviceloader.MessageBundles;
 import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.source.MessageSource;
 import org.mockito.InOrder;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.Mockito.*;
@@ -242,5 +246,60 @@ public final class MessageBundleTest
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), BUNDLE.getMessage("query.nullLocale"));
         }
+    }
+
+    @DataProvider
+    public Iterator<Object[]> msgFormatData()
+    {
+        final List<Object[]> list = new ArrayList<Object[]>();
+
+        Locale locale;
+        String pattern;
+        Object first;
+        Object[] other;
+        String ret;
+
+        locale = Locale.ROOT;
+        pattern = "Hello {0}";
+        first = "World";
+        other = new Object[0];
+        ret = "Hello World";
+        list.add(new Object[] { locale, pattern, ret, first, other });
+
+        locale = Locale.ROOT;
+        pattern = "Hello {0}";
+        first = null;
+        other = new Object[0];
+        ret = "Hello null";
+        list.add(new Object[] { locale, pattern, ret, first, other });
+
+        locale = LocaleUtils.parseLocale("fr_FR");
+        pattern = "La {0} du {1}";
+        first = "peur";
+        other = new Object[] { "gendarme" };
+        ret = "La peur du gendarme";
+        list.add(new Object[] { locale, pattern, ret, first, other });
+
+        locale = LocaleUtils.parseLocale("fr_FR");
+        pattern = "L'odeur du bug";
+        first = null;
+        other = new Object[0];
+        ret = "L'odeur du bug";
+        list.add(new Object[] { locale, pattern, ret, first, other });
+
+        return list.iterator();
+    }
+
+    @Test(dataProvider = "msgFormatData")
+    public void messageFormatWorksCorrectly(final Locale locale,
+        final String pattern, final String ret, final Object first,
+        final Object[] other)
+    {
+        final String key = "key";
+        when(source.getKey(key)).thenReturn(pattern);
+
+        final MessageBundle bundle = builder.appendSource(source).freeze();
+
+        assertEquals(bundle.getMessage(locale, "key", first, other), ret);
     }
 }

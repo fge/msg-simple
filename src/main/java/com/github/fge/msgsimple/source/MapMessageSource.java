@@ -40,10 +40,20 @@ public final class MapMessageSource
 
     private final Map<String, String> messages;
 
+    @Deprecated
     public MapMessageSource(final Map<String, String> messages)
     {
         checkMap(messages);
         this.messages = new HashMap<String, String>(messages);
+    }
+
+    private MapMessageSource(final Builder builder)
+    {
+        messages = new HashMap<String, String>(builder.messages);
+    }
+    public static Builder newBuilder()
+    {
+        return new Builder();
     }
 
     @Override
@@ -64,6 +74,27 @@ public final class MapMessageSource
             if (entry.getValue() == null)
                 throw new NullPointerException(
                     BUNDLE.getMessage("cfg.map.nullValue"));
+        }
+    }
+
+    public static class Builder
+    {
+        private final Map<String, String> messages
+            = new HashMap<String, String>();
+
+        private Builder()
+        {
+        }
+
+        public Builder put(final String key, final String message)
+        {
+            BUNDLE.checkNotNull(key, "cfg.map.nullKey");
+            return this;
+        }
+
+        public MessageSource build()
+        {
+            return new MapMessageSource(this);
         }
     }
 }

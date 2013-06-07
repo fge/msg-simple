@@ -20,6 +20,7 @@ package com.github.fge.msgsimple.source;
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.serviceloader.MessageBundles;
 import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -31,6 +32,14 @@ public final class MapMessageSourceTest
 {
     private static final MessageBundle BUNDLE
         = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+
+    private MapMessageSource.Builder builder;
+
+    @BeforeMethod
+    public void init()
+    {
+        builder = MapMessageSource.newBuilder();
+    }
 
     @Test
     public void mapContentsAreCopiedCorrectly()
@@ -82,6 +91,17 @@ public final class MapMessageSourceTest
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.map.nullValue"));
+        }
+    }
+
+    @Test
+    public void builderDoesNotAllowNullKeys()
+    {
+        try {
+            builder.put(null, null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.map.nullKey"));
         }
     }
 }

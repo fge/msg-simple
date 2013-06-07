@@ -5,16 +5,31 @@ text.</p>
 
 <h2>What this is</h2>
 
-<p>This is meant to be a lightweight, strings-only alternative to Java's <span
-class="font-family: monospace;">ResourceBundle</span> for getting messages from
-properties files and ultimately, various other resources.</p>
+<p>This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
+<span class="font-family: monospace;">ResourceBundle</span>. It has no external dependencies other
+than the JRE (1.6 or better).</p>
+
+<p>Among features that this library offers which <span class="font-family:
+monospace;">ResourceBundle</span> doesn't are:</p>
+
+<ul>
+    <li>UTF-8 support,</li>
+    <li><span class="font-family: monospace;">printf()</span>-like format for messages,</li>
+    <li>builtin assertions.</li>
+</ul>
+
+<p>See below for more.</p>
 
 <h2>Versions</h2>
 
-<p>The current version is <b>0.2</b>. Javadoc <a
+<p>The current version is <b>0.3</b>. Javadoc <a
 href="http://fge.github.io/msg-simple/index.html">here</a>.</p>
 
-<h2>Maven artifact</h2>
+<h2>Downloads and Maven artifact</h2>
+
+<p>You can download the jar directly on <a
+href="https://bintray.com/fge/maven/msg-simple">Bintray</a>. If you use Maven, use the following
+dependency:</p>
 
 ```xml
 <dependency>

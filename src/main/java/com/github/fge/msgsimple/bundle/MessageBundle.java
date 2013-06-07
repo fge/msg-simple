@@ -125,6 +125,23 @@ public final class MessageBundle
         return getMessage(Locale.getDefault(), key);
     }
 
+    /**
+     * Get a locale-dependent {@code printf()}-like formatted message
+     *
+     * <p>This is essentially a call to {@link String#format(Locale, String,
+     * Object...)}.</p>
+     *
+     * <p>There is however one important difference: while {@code
+     * String.format()} will throw a {@link MissingFormatArgumentException} if
+     * an argument is missing, this method returns the format itself (or the
+     * key, like {@link #getMessage(Locale, String)}, if no match was found for
+     * that locale/key pair).</p>
+     *
+     * @param locale the locale
+     * @param key the key
+     * @param params the format parameters
+     * @return the formatted message
+     */
     public String printf(final Locale locale, final String key,
         final Object... params)
     {
@@ -134,6 +151,21 @@ public final class MessageBundle
         } catch (MissingFormatArgumentException ignored) {
             return format;
         }
+    }
+
+    /**
+     * Get a {@code printf()}-like message with the default locale
+     *
+     * <p>This calls {@link #printf(Locale, String, Object...)} with {@link
+     * Locale#getDefault()} as the first argument.</p>
+     *
+     * @param key the key
+     * @param params the format parameters
+     * @return the formatted message
+     */
+    public String printf(final String key, final Object... params)
+    {
+        return printf(Locale.getDefault(), key,params);
     }
 
     @Override

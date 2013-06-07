@@ -307,4 +307,18 @@ public final class MessageBundleTest
 
         assertEquals(bundle.printf(locale, "key", params), ret);
     }
+
+    @Test
+    public void defaultLocaleIsUsedByGetMessage()
+    {
+        builder.appendProvider(provider).freeze().getMessage("foo");
+        verify(provider).getMessageSource(Locale.getDefault());
+    }
+
+    @Test
+    public void defaultLocaleIsUsedByPrintf()
+    {
+        builder.appendProvider(provider).freeze().printf("foo");
+        verify(provider).getMessageSource(Locale.getDefault());
+    }
 }

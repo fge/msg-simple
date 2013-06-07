@@ -72,10 +72,8 @@ public final class MapMessageSource
 
         public Builder put(final String key, final String message)
         {
-            messages.put(
-                BUNDLE.checkNotNull(key, "cfg.map.nullKey"),
-                BUNDLE.checkNotNull(message, "cfg.map.nullValue")
-            );
+            messages.put(BUNDLE.checkNotNull(key, "cfg.map.nullKey"),
+                BUNDLE.checkNotNull(message, "cfg.map.nullValue"));
             return this;
         }
 

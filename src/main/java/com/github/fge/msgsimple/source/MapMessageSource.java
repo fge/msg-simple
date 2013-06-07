@@ -43,8 +43,7 @@ public final class MapMessageSource
     @Deprecated
     public MapMessageSource(final Map<String, String> messages)
     {
-        checkMap(messages);
-        this.messages = new HashMap<String, String>(messages);
+        this.messages = new HashMap<String, String>(checkMap(messages));
     }
 
     private MapMessageSource(final Builder builder)
@@ -62,22 +61,7 @@ public final class MapMessageSource
         return messages.get(key);
     }
 
-    private static void checkMap(final Map<String, String> map)
-    {
-        if (map == null)
-            throw new NullPointerException(BUNDLE.getMessage("cfg.nullMap"));
-
-        for (final Map.Entry<String, String> entry: map.entrySet()) {
-            if (entry.getKey() == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.map.nullKey"));
-            if (entry.getValue() == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.map.nullValue"));
-        }
-    }
-
-    public static class Builder
+    public static final class Builder
     {
         private final Map<String, String> messages
             = new HashMap<String, String>();
@@ -88,7 +72,16 @@ public final class MapMessageSource
 
         public Builder put(final String key, final String message)
         {
-            BUNDLE.checkNotNull(key, "cfg.map.nullKey");
+            messages.put(
+                BUNDLE.checkNotNull(key, "cfg.map.nullKey"),
+                BUNDLE.checkNotNull(message, "cfg.map.nullValue")
+            );
+            return this;
+        }
+
+        public Builder putAll(final Map<String, String> map)
+        {
+            messages.putAll(checkMap(map));
             return this;
         }
 
@@ -96,5 +89,17 @@ public final class MapMessageSource
         {
             return new MapMessageSource(this);
         }
+    }
+
+    private static Map<String, String> checkMap(final Map<String, String> map)
+    {
+        BUNDLE.checkNotNull(map, "cfg.nullMap");
+
+        for (final Map.Entry<String, String> entry: map.entrySet()) {
+            BUNDLE.checkNotNull(entry.getKey(), "cfg.map.nullKey");
+            BUNDLE.checkNotNull(entry.getValue(), "cfg.map.nullValue");
+        }
+
+        return map;
     }
 }

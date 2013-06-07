@@ -26,8 +26,22 @@ href="http://fge.github.io/msg-simple/index.html">here</a>.</p>
 
 <h2>Features and roadmap</h2>
 
-<p>The list of features is, at this moment, quite small, but useful enough that this library is
-usable. See <a href="https://github.com/fge/msg-simple/wiki/Features">here</a>.</p>
+The list of features in 0.3 (out soon):
+
+<ul>
+    <li>automatic message bundle loading via <a
+    href="http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html">ServiceLoader</a>;</li>
+    <li>property files read using UTF-8;</li>
+    <li><tt>printf()</tt>-like message support;</li>
+    <li>i18n/locale support;</tt>
+    <li>stackable message sources;</li>
+    <li>bundles are reusable (using the <a
+    href="https://github.com/fge/btf/wiki/The-freeze-thaw-pattern">freeze/thaw pattern</a>);</li>
+    <li>builtin preconditions in bundles (<tt>checkNotNull()</tt>, <tt>checkArgument()</tt>);</li>
+    <li>no external library dependencies.</li>
+</ul>
+
+<p>For more details, see <a href="https://github.com/fge/msg-simple/wiki/Features">here</a>.</p>
 
 <p>The roadmap for future versions can be found <a
 href="https://github.com/fge/msg-simple/wiki/Roadmap">here</a>. Feature requests are of course
@@ -35,15 +49,14 @@ welcome!</p>
 
 <h2>Sample usage</h2>
 
-<p><i>Note: not up to date</i></p>
-
-<p>In order to use this library, you will need two things:</p>
+<p>In order to build a message bundle, you need two things:</p>
 
 <ul>
-    <li>build a set of `MessageSource`s;</li>
-    <li>build a set of `MessageSourceProvider`s;</li>
-    <li>build a `MessageBundle` out of these providers.</li>
+    <li>a set of <tt>MessageSource</tt>s;</li>
+    <li>a set of <tt>MessageSourceProvider</tt>s;</li>
 </ul>
+
+<p>then you can build a bundle out of these elements.</p>
 
 <p>Note that the examples below show shortcut methods to build a bundle only from sources. More
 complete examples will be added later on.</p>

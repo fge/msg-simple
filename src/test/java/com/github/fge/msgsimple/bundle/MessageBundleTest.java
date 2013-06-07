@@ -321,4 +321,102 @@ public final class MessageBundleTest
         builder.appendProvider(provider).freeze().printf("foo");
         verify(provider).getMessageSource(Locale.getDefault());
     }
+
+    @Test
+    public void checkNotNullBarfsOnNullButNotNonNull()
+    {
+        final Locale locale = Locale.GERMANY;
+        final String key = "key";
+        final String value = "hello";
+
+        when(source.getKey(key)).thenReturn(value);
+        when(provider.getMessageSource(locale)).thenReturn(source);
+
+        final MessageBundle bundle = builder.appendProvider(provider).freeze();
+        final String msg = bundle.getMessage(locale, key);
+
+        try {
+            bundle.checkNotNull(null, locale, key);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), msg);
+        }
+
+        bundle.checkNotNull(new Object(), locale, key);
+        assertTrue(true);
+    }
+
+    @Test
+    public void checkNotNullPrintfBarfsOnNullButNotNonNull()
+    {
+        final Locale locale = Locale.GERMANY;
+        final String key = "key";
+        final String format = "hello %s";
+        final String arg = "world";
+
+        when(source.getKey(key)).thenReturn(format);
+        when(provider.getMessageSource(locale)).thenReturn(source);
+
+        final MessageBundle bundle = builder.appendProvider(provider).freeze();
+        final String msg = bundle.printf(locale, key, arg);
+
+        try {
+            bundle.checkNotNullPrintf(null, locale, key, arg);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), msg);
+        }
+
+        bundle.checkNotNullPrintf(new Object(), locale, key, arg);
+        assertTrue(true);
+    }
+
+    @Test
+    public void checkArgumentBarfsOnFalseButNotOnTrue()
+    {
+        final Locale locale = Locale.GERMANY;
+        final String key = "key";
+        final String value = "hello";
+
+        when(source.getKey(key)).thenReturn(value);
+        when(provider.getMessageSource(locale)).thenReturn(source);
+
+        final MessageBundle bundle = builder.appendProvider(provider).freeze();
+        final String msg = bundle.getMessage(locale, key);
+
+        try {
+            bundle.checkArgument(false, locale, key);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), msg);
+        }
+
+        bundle.checkArgument(true, locale, key);
+        assertTrue(true);
+    }
+
+    @Test
+    public void checkArgumentPrintfBarfsOnNullButNotNonNull()
+    {
+        final Locale locale = Locale.GERMANY;
+        final String key = "key";
+        final String format = "hello %s";
+        final String arg = "world";
+
+        when(source.getKey(key)).thenReturn(format);
+        when(provider.getMessageSource(locale)).thenReturn(source);
+
+        final MessageBundle bundle = builder.appendProvider(provider).freeze();
+        final String msg = bundle.printf(locale, key, arg);
+
+        try {
+            bundle.checkArgumentPrintf(false, locale, key, arg);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), msg);
+        }
+
+        bundle.checkArgumentPrintf(true, locale, key, arg);
+        assertTrue(true);
+    }
 }

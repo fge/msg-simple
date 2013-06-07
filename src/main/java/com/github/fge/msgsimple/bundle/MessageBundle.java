@@ -168,6 +168,159 @@ public final class MessageBundle
         return printf(Locale.getDefault(), key,params);
     }
 
+    /**
+     * Check an object reference for {@code null} and return it
+     *
+     * <p>If the reference is null, a {@link NullPointerException} is thrown,
+     * with its message set according to the given locale and key.</p>
+     *
+     * @param reference the reference to check
+     * @param locale the locale to use
+     * @param key the key to use
+     * @param <T> type of the reference
+     * @return the reference
+     * @throws NullPointerException see description
+     * @see #getMessage(Locale, String)
+     */
+    public <T> T checkNotNull(final T reference, final Locale locale,
+        final String key)
+    {
+        if (reference == null)
+            throw new NullPointerException(getMessage(locale, key));
+        return reference;
+    }
+
+    /**
+     * Check a reference for {@code null} and return it
+     *
+     * <p>This calls {@link #checkNotNull(Object, Locale, String)} with the
+     * JVM's current locale.</p>
+     *
+     * @param reference the reference to check
+     * @param key the key
+     * @param <T> type of the reference
+     * @return the reference
+     * @throws NullPointerException see description
+     */
+    public <T> T checkNotNull(final T reference, final String key)
+    {
+        return checkNotNull(reference, Locale.getDefault(), key);
+    }
+
+    /**
+     * Check a reference for {@code null} and return it
+     *
+     * <p>Like {@link #checkNotNull(Object, Locale, String)}, except that this
+     * will use {@link #printf(Locale, String, Object...)}</p>
+     *
+     * @param reference the reference to check
+     * @param locale the locale to use
+     * @param key the key
+     * @param params arguments for the format string
+     * @param <T> type of the reference
+     * @return the reference
+     * @throws NullPointerException see description
+     * @see #printf(Locale, String, Object...)
+     */
+    public <T> T checkNotNullPrintf(final T reference, final Locale locale,
+        final String key, final Object... params)
+    {
+        if (reference == null)
+            throw new NullPointerException(printf(locale, key, params));
+        return reference;
+    }
+
+    /**
+     * Check a reference for {@code null} and return it
+     *
+     * <p>This calls {@link #checkNotNullPrintf(Object, Locale, String,
+     * Object...)} with the JVM's current locale.</p>
+     *
+     * @param reference the reference
+     * @param key the key
+     * @param params arguments for the format string
+     * @param <T> type of the reference
+     * @return the reference
+     * @throws NullPointerException see description
+     */
+    public <T> T checkNotNullPrintf(final T reference, final String key,
+        final Object... params)
+    {
+        return checkNotNullPrintf(reference, Locale.getDefault(), key, params);
+    }
+
+    /**
+     * Check for a condition
+     *
+     * <p>When the condition is false, an {@link IllegalArgumentException} is
+     * thrown with its message set using the given locale and key.</p>
+     *
+     * @param condition the condition to check
+     * @param locale the locale to use
+     * @param key the key
+     * @throws IllegalArgumentException see description
+     * @see #getMessage(Locale, String)
+     */
+    public void checkArgument(final boolean condition, final Locale locale,
+        final String key)
+    {
+        if (!condition)
+            throw new IllegalArgumentException(getMessage(locale, key));
+    }
+
+    /**
+     * Check for a condition
+     *
+     * <p>This calls {@link #checkArgument(boolean, Locale, String)} using the
+     * JVM's current locale.</p>
+     *
+     * @param condition the condition to check
+     * @param key the key
+     * @throws IllegalArgumentException see description
+     */
+    public void checkArgument(final boolean condition, final String key)
+    {
+        checkArgument(condition, Locale.getDefault(), key);
+    }
+
+    /**
+     * Check for a condition
+     *
+     * <p>Like {@link #checkArgument(boolean, Locale, String)}, except that
+     * {@link #printf(Locale, String, Object...)} is used to fill the message.
+     * </p>
+     *
+     * @param condition the condition to check
+     * @param locale the locale
+     * @param key the key
+     * @param params arguments for the format string
+     * @throws IllegalArgumentException see description
+     * @see #printf(Locale, String, Object...)
+     */
+    public void checkArgumentPrintf(final boolean condition,
+        final Locale locale, final String key, final Object... params)
+    {
+        if (!condition)
+            throw new IllegalArgumentException(printf(locale, key, params));
+    }
+
+    /**
+     * Check for a condition
+     *
+     * <p>This calls {@link #checkArgumentPrintf(boolean, Locale, String,
+     * Object...)} with the JVM's current locale.</p>
+     *
+     * @param condition the condition to check
+     * @param key the key
+     * @param params arguments for the format string
+     * @throws IllegalArgumentException see description
+     */
+    public void checkArgumentPrintf(final boolean condition, final String key,
+        final Object... params)
+    {
+        checkArgumentPrintf(condition, Locale.getDefault(), key, params);
+    }
+
     @Override
     public MessageBundleBuilder thaw()
     {

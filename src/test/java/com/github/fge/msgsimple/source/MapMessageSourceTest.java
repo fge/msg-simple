@@ -42,59 +42,6 @@ public final class MapMessageSourceTest
     }
 
     @Test
-    public void mapContentsAreCopiedCorrectly()
-    {
-        final String key = "foo";
-        final String value = "bar";
-
-        final Map<String, String> map = new HashMap<String, String>();
-        map.put(key, value);
-
-        final MessageSource source = new MapMessageSource(map);
-
-        assertEquals(source.getKey(key), value);
-    }
-
-    @Test
-    public void nullMapIsNotAllowed()
-    {
-        try {
-            new MapMessageSource(null);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullMap"));
-        }
-    }
-
-    @Test
-    public void nullKeysAreNotAllowedInMap()
-    {
-        final Map<String, String> map = new HashMap<String, String>();
-        map.put(null, null);
-
-        try {
-            new MapMessageSource(map);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.map.nullKey"));
-        }
-    }
-
-    @Test
-    public void nullValuesAreNotAllowedInMap()
-    {
-        final Map<String, String> map = new HashMap<String, String>();
-        map.put("a", null);
-
-        try {
-            new MapMessageSource(map);
-            fail("No exception thrown!");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.map.nullValue"));
-        }
-    }
-
-    @Test
     public void builderDoesNotAllowNullKeys()
     {
         try {
@@ -117,12 +64,14 @@ public final class MapMessageSourceTest
     }
 
     @Test
-    public void injectedValuesShowUpInBuiltSource()
+    public void injectedEntriesAreVisibleInBuiltValue()
     {
         final String key = "key";
-        final String value = "value";
-        final MessageSource source = builder.put(key, value).build();
-        assertEquals(source.getKey(key), value);
+        final String value = "whatever";
+
+        builder.put(key, value);
+
+        assertEquals(builder.build().getKey(key), value);
     }
 
     @Test
@@ -166,15 +115,13 @@ public final class MapMessageSourceTest
     }
 
     @Test
-    public void mapInjectedViaBuilderIsVisible()
+    public void injectMapsShowUpInBuiltValue()
     {
+        final String key = "key";
+        final String value = "value";
         final Map<String, String> map = new HashMap<String, String>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
+        map.put(key, value);
 
-        final MessageSource source = builder.putAll(map).build();
-
-        assertEquals(source.getKey("key1"), "value1");
-        assertEquals(source.getKey("key2"), "value2");
+        assertEquals(builder.putAll(map).build().getKey(key), value);
     }
 }

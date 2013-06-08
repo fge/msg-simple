@@ -41,7 +41,7 @@ dependency:</p>
 
 <h2>Features and roadmap</h2>
 
-The list of features in 0.3 (out soon):
+<p>This library currently has the following features:</p>
 
 <ul>
     <li>automatic message bundle loading via <a
@@ -55,8 +55,6 @@ The list of features in 0.3 (out soon):
     <li>builtin preconditions in bundles (<tt>checkNotNull()</tt>, <tt>checkArgument()</tt>);</li>
     <li>no external library dependencies.</li>
 </ul>
-
-<p>For more details, see <a href="https://github.com/fge/msg-simple/wiki/Features">here</a>.</p>
 
 <p>The roadmap for future versions can be found <a
 href="https://github.com/fge/msg-simple/wiki/Roadmap">here</a>. Feature requests are of course
@@ -73,7 +71,7 @@ welcome!</p>
 
 <p>then you can build a bundle out of these elements.</p>
 
-<p>Note that the examples below show shortcut methods to build a bundle only from sources. More
+<p>Note that the examples below use shortcut methods to build a bundle only from sources. More
 complete examples will be added later on.</p>
 
 <h3>Message sources</h3>

@@ -97,12 +97,6 @@
         </plugins>
     </build>
     <dependencies>
-        <!-- runtime -->
-        <dependency>
-            <groupId>net.sf.corn</groupId>
-            <artifactId>corn-cps</artifactId>
-            <version>1.0.3</version>
-        </dependency>
         <!-- provided -->
         <dependency>
             <groupId>com.github.fge</groupId>

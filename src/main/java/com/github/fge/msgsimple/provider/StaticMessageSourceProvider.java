@@ -33,8 +33,9 @@ import java.util.Map;
  * message source. You can define specific message sources for specific
  * locales too.</p>
  *
- * <p>You cannot instantiate this class directly: you must use a {@link Builder}
- * (using the {@link #newBuilder()} method).</p>
+ * <p>Convenience static factory methods exist for building a message source
+ * provider from a single message source; for more elaborage scenarios, you need
+ * to use a {@link Builder} (using the {@link #newBuilder()} method).</p>
  *
  * @see Builder
  */

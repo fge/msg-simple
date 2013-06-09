@@ -32,6 +32,11 @@ import java.util.Locale;
  *
  * <p>You cannot instantiate this class directly: use {@link
  * MessageBundle#newBuilder()}.</p>
+ *
+ * <p>This class is the {@link Thawed} counterpart of a {@link MessageBundle}.
+ * </p>
+ *
+ * @see MessageBundle
  */
 public final class MessageBundleBuilder
     implements Thawed<MessageBundle>

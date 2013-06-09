@@ -3,6 +3,9 @@ package com.github.fge.msgsimple;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class meant for internal use by the API. Don't use!
+ */
 public final class InternalBundle
 {
     private static final InternalBundle INSTANCE

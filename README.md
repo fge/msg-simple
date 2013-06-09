@@ -1,35 +1,29 @@
-<h2>Read me first</h2>
+## Read me first
 
-<p>The license of this project is LGPLv3 or later. See file src/main/resources/LICENSE for the full
-text.</p>
+The license of this project is LGPLv3 or later. See file src/main/resources/LICENSE for the full
+text.
 
-<h2>What this is</h2>
+## What this is
 
-<p>This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
-<span class="font-family: monospace;">ResourceBundle</span>. It has no external dependencies other
-than the JRE (1.6 or better).</p>
+This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
+`ResourceBundle`. It has no external dependencies other than the JRE (1.6 or better).
 
-<p>Among features that this library offers which <span class="font-family:
-monospace;">ResourceBundle</span> doesn't are:</p>
+Among features that this library offers which `ResourceBundle` doesn't are:
 
-<ul>
-    <li>UTF-8 support,</li>
-    <li><span class="font-family: monospace;">printf()</span>-like format for messages,</li>
-    <li>builtin assertions.</li>
-</ul>
+* UTF-8 support,
+* `printf()`-like format for messages,
+* builtin assertions.
 
-<p>See below for more.</p>
+See below for more.
 
-<h2>Versions</h2>
+## Versions
 
-<p>The current version is <b>0.3</b>. Javadoc <a
-href="http://fge.github.io/msg-simple/index.html">here</a>.</p>
+The current version is **0.3**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
 
-<h2>Downloads and Maven artifact</h2>
+## Downloads and Maven artifact
 
-<p>You can download the jar directly on <a
-href="https://bintray.com/fge/maven/msg-simple">Bintray</a>. If you use Maven, use the following
-dependency:</p>
+You can download the jar directly on [Bintray](https://bintray.com/fge/maven/msg-simple). If you use Maven, use the following
+dependency:
 
 ```xml
 <dependency>
@@ -39,47 +33,40 @@ dependency:</p>
 </dependency>
 ```
 
-<h2>Features and roadmap</h2>
+## Features and roadmap
 
-<p>This library currently has the following features:</p>
+This library currently has the following features:
 
-<ul>
-    <li>automatic message bundle loading via <a
-    href="http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html">ServiceLoader</a>;</li>
-    <li>property files read using UTF-8;</li>
-    <li><tt>printf()</tt>-like message support;</li>
-    <li>i18n/locale support;</tt>
-    <li>stackable message sources;</li>
-    <li>bundles are reusable (using the <a
-    href="https://github.com/fge/btf/wiki/The-freeze-thaw-pattern">freeze/thaw pattern</a>);</li>
-    <li>builtin preconditions in bundles (<tt>checkNotNull()</tt>, <tt>checkArgument()</tt>);</li>
-    <li>no external library dependencies.</li>
-</ul>
+* automatic message bundle loading via [ServiceLoader](http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html);
+* property files read using UTF-8;
+* `printf()`-like message support;
+* i18n/locale support;
+* stackable message sources;
+* bundles are reusable (using the [freeze/thaw pattern](https://github.com/fge/btf/wiki/The-freeze-thaw-pattern));
+* builtin preconditions in bundles (`checkNotNull()`, `checkArgument()`);
+* no external library dependencies.
 
-<p>The roadmap for future versions can be found <a
-href="https://github.com/fge/msg-simple/wiki/Roadmap">here</a>. Feature requests are of course
-welcome!</p>
+The roadmap for future versions can be found [here](https://github.com/fge/msg-simple/wiki/Roadmap). Feature requests are of course
+welcome!
 
-<h2>Sample usage</h2>
+## Sample usage
 
-<p>In order to build a message bundle, you need two things:</p>
+In order to build a message bundle, you need two things:
 
-<ul>
-    <li>a set of <tt>MessageSource</tt>s;</li>
-    <li>a set of <tt>MessageSourceProvider</tt>s;</li>
-</ul>
+* a set of `MessageSource`s;
+* a set of `MessageSourceProvider`s;
 
-<p>then you can build a bundle out of these elements.</p>
+then you can build a bundle out of these elements.
 
-<p>Note that the examples below use shortcut methods to build a bundle only from sources. More
-complete examples will be added later on.</p>
+Note that the examples below use shortcut methods to build a bundle only from sources. More
+complete examples will be added later on.
 
-<h3>Message sources</h3>
+### Message sources
 
-<p>This library provides two `MessageSource` implementations: one `Map`-based implementation, and
-another using Java property files. You will note that property files are read in UTF-8.</p>
+This library provides two `MessageSource` implementations: one `Map`-based implementation, and
+another using Java property files. You will note that property files are read in UTF-8.
 
-<p>Some examples:</p>
+Some examples:
 
 ```java
 final Map<String, String> map = new HashMap<String, String>();
@@ -96,10 +83,10 @@ propertySource = PropertiesMessageSource.fromPath("/path/to/messages.properties"
 // Others
 ```
 
-<h3>Build the message bundle</h3>
+### Build the message bundle
 
-<p>Once you are done building your set of sources, you can build a `MessageBundle`. For this, you
-use its builder class, and append or prepend message sources as you see fit:</p>
+Once you are done building your set of sources, you can build a `MessageBundle`. For this, you
+use its builder class, and append or prepend message sources as you see fit:
 
 ```java
 MessageBundleBuilder builder = MessageBundle.newBuilder();
@@ -113,11 +100,11 @@ builder = builder.prependSource(source3);
 final MessageBundle bundle = builder.freeze();
 ```
 
-<h3>Reusing a bundle</h3>
+### Reusing a bundle
 
-<p>You can also reuse a bundle and prepend/append other message sources to it.</p>
+You can also reuse a bundle and prepend/append other message sources to it.
 
-<p>For instance, here is how you would append another message source to the bundle created above:
+For instance, here is how you would append another message source to the bundle created above:
 
 ```java
 MessageBundleBuilder newBuilder = bundle.thaw();

@@ -48,32 +48,22 @@ import java.util.ServiceLoader;
  *
  *     // In your class:
  *     private static final MessageBundle BUNDLE
- *         = MessageBundles.forClass(MyMessageBundle.class);
+ *         = MessageBundleFactory.getBundle(MyMessageBundle.class);
  * </pre>
  *
  * <p>This will automatically load the bundle for you.</p>
- *
- * @deprecated use {@link MessageBundleFactory} instead. Will be removed in 0.5.
  */
-@Deprecated
-public final class MessageBundles
+public final class MessageBundleFactory
 {
-    /*
-     * FIXME: this sucks, but this is the only solution I have found to make
-     * this class work reliably. Static initialization does not work, and more
-     * annoyingly, neither does an enum... This is due to the fact that this
-     * library eats its own dog's food to the fullest (in classes used to
-     * generate bundles!).
-     *
-     * OK, it is not super clean (this is the very first time I use a
-     * "synchronized" method!!), but it works.
-     */
-    private static MessageBundles INSTANCE;
+    private static final MessageBundleFactory INSTANCE;
 
+    static {
+        INSTANCE = new MessageBundleFactory();
+    }
     private final Map<Class<? extends MessageBundleProvider>, MessageBundle>
         bundles = new IdentityHashMap<Class<? extends MessageBundleProvider>, MessageBundle>();
 
-    private MessageBundles()
+    private MessageBundleFactory()
     {
         final ServiceLoader<MessageBundleProvider> serviceLoader
             = ServiceLoader.load(MessageBundleProvider.class);
@@ -89,12 +79,9 @@ public final class MessageBundles
      * @return the matching bundle
      * @see ServiceLoader
      */
-    public static synchronized MessageBundle forClass(
+    public static MessageBundle getBundle(
         final Class<? extends MessageBundleProvider> c)
     {
-        // No choice... Bah, it's a one shot. And it's simple.
-        if (INSTANCE == null)
-            INSTANCE = new MessageBundles();
         return INSTANCE.bundles.get(c);
     }
 }

@@ -18,10 +18,9 @@
 package com.github.fge.msgsimple.bundle;
 
 import com.github.fge.Frozen;
+import com.github.fge.msgsimple.InternalBundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
-import com.github.fge.msgsimple.serviceloader.MessageBundles;
-import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -56,8 +55,8 @@ import java.util.MissingFormatArgumentException;
 public final class MessageBundle
     implements Frozen<MessageBundleBuilder>
 {
-    private static final MessageBundle BUNDLE
-        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
 
     final List<MessageSourceProvider> providers
         = new ArrayList<MessageSourceProvider>();

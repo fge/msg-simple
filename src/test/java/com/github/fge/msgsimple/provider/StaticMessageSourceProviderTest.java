@@ -17,10 +17,8 @@
 
 package com.github.fge.msgsimple.provider;
 
-import com.github.fge.msgsimple.bundle.MessageBundle;
+import com.github.fge.msgsimple.InternalBundle;
 import com.github.fge.msgsimple.source.MessageSource;
-import com.github.fge.msgsimple.serviceloader.MessageBundles;
-import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -31,8 +29,8 @@ import static org.testng.Assert.*;
 
 public final class StaticMessageSourceProviderTest
 {
-    private static final MessageBundle BUNDLE
-        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
 
     private MessageSource source;
     private MessageSource source2;

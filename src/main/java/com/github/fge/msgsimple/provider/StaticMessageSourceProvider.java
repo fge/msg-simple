@@ -17,10 +17,8 @@
 
 package com.github.fge.msgsimple.provider;
 
-import com.github.fge.msgsimple.bundle.MessageBundle;
+import com.github.fge.msgsimple.InternalBundle;
 import com.github.fge.msgsimple.source.MessageSource;
-import com.github.fge.msgsimple.serviceloader.MessageBundles;
-import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -44,8 +42,8 @@ import java.util.Map;
 public final class StaticMessageSourceProvider
     implements MessageSourceProvider
 {
-    private static final MessageBundle BUNDLE
-        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
 
     private final MessageSource defaultSource;
     private final Map<Locale, MessageSource> sources;

@@ -17,9 +17,7 @@
 
 package com.github.fge.msgsimple.source;
 
-import com.github.fge.msgsimple.bundle.MessageBundle;
-import com.github.fge.msgsimple.serviceloader.MessageBundles;
-import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
+import com.github.fge.msgsimple.InternalBundle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +33,8 @@ import java.util.Map;
 public final class MapMessageSource
     implements MessageSource
 {
-    private static final MessageBundle BUNDLE
-        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
 
     private final Map<String, String> messages;
 
@@ -72,8 +70,10 @@ public final class MapMessageSource
 
         public Builder put(final String key, final String message)
         {
-            messages.put(BUNDLE.checkNotNull(key, "cfg.map.nullKey"),
-                BUNDLE.checkNotNull(message, "cfg.map.nullValue"));
+            messages.put(
+                BUNDLE.checkNotNull(key, "cfg.map.nullKey"),
+                BUNDLE.checkNotNull(message, "cfg.map.nullValue")
+            );
             return this;
         }
 

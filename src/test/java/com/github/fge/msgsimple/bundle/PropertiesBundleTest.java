@@ -17,9 +17,8 @@
 
 package com.github.fge.msgsimple.bundle;
 
+import com.github.fge.msgsimple.InternalBundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
-import com.github.fge.msgsimple.serviceloader.MessageBundles;
-import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -32,8 +31,8 @@ import static org.testng.Assert.*;
 
 public final class PropertiesBundleTest
 {
-    private static final MessageBundle BUNDLE
-        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
     private static final MessageBundle TEST_BUNDLE
         = PropertiesBundle.forPath("/org/foobar/msg");
     private static final String KEY = "hello";

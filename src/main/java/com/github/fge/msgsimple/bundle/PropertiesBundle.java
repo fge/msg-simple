@@ -17,13 +17,12 @@
 
 package com.github.fge.msgsimple.bundle;
 
+import com.github.fge.msgsimple.InternalBundle;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import com.github.fge.msgsimple.provider.MessageSourceLoader;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
-import com.github.fge.msgsimple.serviceloader.MessageBundles;
-import com.github.fge.msgsimple.serviceloader.MsgSimpleMessageBundle;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -53,15 +52,10 @@ import java.util.regex.Pattern;
  */
 public final class PropertiesBundle
 {
-    /*
-     * Note that this variable MUST be initialized before we access the bundle
-     * below. Static initializers are run in order, and a bundle may well want
-     * to load an instance of this class!
-     */
-    private static final Pattern SUFFIX = Pattern.compile("\\.properties$");
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
 
-    private static final MessageBundle BUNDLE
-        = MessageBundles.forClass(MsgSimpleMessageBundle.class);
+    private static final Pattern SUFFIX = Pattern.compile("\\.properties$");
 
     private PropertiesBundle()
     {

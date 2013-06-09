@@ -102,7 +102,6 @@
             <groupId>com.github.fge</groupId>
             <artifactId>btf</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>

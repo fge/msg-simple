@@ -24,7 +24,7 @@ import java.util.ServiceLoader;
 /**
  * {@link ServiceLoader} implementation for this library
  *
- * @see MessageBundles
+ * @see MessageBundleFactory
  */
 public interface MessageBundleProvider
 {

@@ -87,10 +87,8 @@ public final class MessageBundle
      */
     public String getMessage(final Locale locale, final String key)
     {
-        if (key == null)
-            throw new NullPointerException(BUNDLE.getMessage("query.nullKey"));
-        if (locale == null)
-            throw new NullPointerException(BUNDLE.getMessage("query.nullLocale"));
+        BUNDLE.checkNotNull(key, "query.nullKey");
+        BUNDLE.checkNotNull(locale, "query.nullLocale");
 
         String ret;
         MessageSource source;

@@ -172,9 +172,7 @@ public final class LoadingMessageSourceProvider
          */
         public Builder setLoader(final MessageSourceLoader loader)
         {
-            if (loader == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.nullLoader"));
+            BUNDLE.checkNotNull(loader, "cfg.nullLoader");
             this.loader = loader;
             return this;
         }
@@ -188,9 +186,7 @@ public final class LoadingMessageSourceProvider
          */
         public Builder setDefaultSource(final MessageSource defaultSource)
         {
-            if (defaultSource == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.nullDefaultSource"));
+            BUNDLE.checkNotNull(defaultSource, "cfg.nullDefaultSource");
             this.defaultSource = defaultSource;
             return this;
         }
@@ -206,12 +202,8 @@ public final class LoadingMessageSourceProvider
          */
         public Builder setTimeout(final long nr, final TimeUnit unit)
         {
-            if (nr <= 0L)
-                throw new IllegalArgumentException(
-                    BUNDLE.getMessage("cfg.nonPositiveTimeout"));
-            if (unit == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.nullTimeUnit"));
+            BUNDLE.checkArgument(nr > 0L, "cfg.nonPositiveTimeout");
+            BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
             this.nr = nr;
             this.unit = unit;
             return this;
@@ -224,9 +216,7 @@ public final class LoadingMessageSourceProvider
          */
         public MessageSourceProvider build()
         {
-            if (loader == null)
-                throw new IllegalArgumentException(
-                    BUNDLE.getMessage("cfg.noLoader"));
+            BUNDLE.checkArgument(loader != null, "cfg.noLoader");
             return new LoadingMessageSourceProvider(this);
         }
     }

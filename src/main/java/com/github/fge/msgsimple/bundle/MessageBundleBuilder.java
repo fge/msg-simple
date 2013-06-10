@@ -66,8 +66,7 @@ public final class MessageBundleBuilder
     public MessageBundleBuilder appendProvider(
         final MessageSourceProvider provider)
     {
-        if (provider == null)
-            throw new NullPointerException(BUNDLE.getMessage("cfg.nullProvider"));
+        BUNDLE.checkNotNull(provider, "cfg.nullProvider");
         providers.add(provider);
         return this;
     }
@@ -82,8 +81,7 @@ public final class MessageBundleBuilder
     public MessageBundleBuilder prependProvider(
         final MessageSourceProvider provider)
     {
-        if (provider == null)
-            throw new NullPointerException(BUNDLE.getMessage("cfg.nullProvider"));
+        BUNDLE.checkNotNull(provider, "cfg.nullProvider");
         providers.add(0, provider);
         return this;
     }

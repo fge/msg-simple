@@ -79,9 +79,7 @@ public final class PropertiesBundle
      */
     public static MessageBundle forPath(final String resourcePath)
     {
-        if (resourcePath == null)
-            throw new NullPointerException(
-                BUNDLE.getMessage("cfg.nullResourcePath"));
+        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
 
         final String s = resourcePath.startsWith("/") ? resourcePath
             : '/' + resourcePath;

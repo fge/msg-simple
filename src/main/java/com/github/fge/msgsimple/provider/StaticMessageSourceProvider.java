@@ -127,11 +127,8 @@ public final class StaticMessageSourceProvider
         public Builder addSource(final Locale locale,
             final MessageSource source)
         {
-            if (locale == null)
-                throw new NullPointerException(BUNDLE.getMessage("cfg.nullKey"));
-            if (source == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.nullSource"));
+            BUNDLE.checkNotNull(locale, "cfg.nullKey");
+            BUNDLE.checkNotNull(source, "cfg.nullSource");
             sources.put(locale, source);
             return this;
         }
@@ -145,9 +142,7 @@ public final class StaticMessageSourceProvider
          */
         public Builder setDefaultSource(final MessageSource source)
         {
-            if (source == null)
-                throw new NullPointerException(
-                    BUNDLE.getMessage("cfg.nullDefaultSource"));
+            BUNDLE.checkNotNull(source, "cfg.nullDefaultSource");
             defaultSource = source;
             return this;
         }

@@ -96,19 +96,20 @@
         </plugins>
     </build>
     <dependencies>
-        <!-- provided -->
+        <!-- runtime -->
         <dependency>
             <groupId>com.github.fge</groupId>
             <artifactId>btf</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- provided -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>2.0.1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Test -->
+        <!-- test -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

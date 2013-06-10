@@ -30,6 +30,9 @@ public final class InternalBundle
         messages.put("cfg.nullKey", "null keys are not allowed");
         messages.put("cfg.nullSource", "null sources are not allowed");
         messages.put("cfg.nullMap", "null map is not allowed");
+        messages.put("cfg.nullFile", "file cannot be null");
+        messages.put("cfg.nullPath", "file path cannot be null");
+        messages.put("cfg.nullInputStream", "provided InputStream is null");
         messages.put("cfg.map.nullKey", "null keys not allowed in map");
         messages.put("cfg.map.nullValue", "null values not allowed in map");
     }

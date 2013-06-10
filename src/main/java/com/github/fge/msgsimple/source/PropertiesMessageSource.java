@@ -17,6 +17,8 @@
 
 package com.github.fge.msgsimple.source;
 
+import com.github.fge.msgsimple.InternalBundle;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +46,9 @@ import java.util.ResourceBundle;
 public final class PropertiesMessageSource
     implements MessageSource
 {
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
+
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private final Map<String, String> messages = new HashMap<String, String>();
@@ -60,8 +65,7 @@ public final class PropertiesMessageSource
     public static MessageSource fromResource(final String resourcePath)
         throws IOException
     {
-        if (resourcePath == null)
-            throw new NullPointerException("resource path is null");
+        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
 
         final URL url = PropertiesMessageSource.class.getResource(resourcePath);
 
@@ -89,8 +93,7 @@ public final class PropertiesMessageSource
     public static MessageSource fromFile(final File file)
         throws IOException
     {
-        if (file == null)
-            throw new NullPointerException("file is null");
+        BUNDLE.checkNotNull(file, "cfg.nullFile");
 
         final FileInputStream in = new FileInputStream(file);
 
@@ -114,17 +117,14 @@ public final class PropertiesMessageSource
     public static MessageSource fromPath(final String path)
         throws IOException
     {
-        if (path == null)
-            throw new NullPointerException("file path is null");
-
+        BUNDLE.checkNotNull(path, "cfg.nullPath");
         return fromFile(new File(path));
     }
 
     private static MessageSource fromInputStream(final InputStream in)
         throws IOException
     {
-        if (in == null)
-            throw new NullPointerException("input stream is null");
+        BUNDLE.checkNotNull(in, "cfg.nullInputStream");
 
         final Reader reader = new InputStreamReader(in, UTF8);
         try {

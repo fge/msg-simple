@@ -17,6 +17,7 @@
 
 package com.github.fge.msgsimple.source;
 
+import com.github.fge.msgsimple.InternalBundle;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -25,6 +26,9 @@ import static org.testng.Assert.*;
 
 public final class PropertiesMessageSourceTest
 {
+    private static final InternalBundle BUNDLE
+        = InternalBundle.getInstance();
+
     private static final String KEY = "mouton";
     private static final String VALUE = "bêêêê";
 
@@ -46,7 +50,8 @@ public final class PropertiesMessageSourceTest
             PropertiesMessageSource.fromResource(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "resource path is null");
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nullResourcePath"));
         }
     }
 
@@ -69,7 +74,7 @@ public final class PropertiesMessageSourceTest
             PropertiesMessageSource.fromFile(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "file is null");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullFile"));
         }
     }
 
@@ -81,7 +86,7 @@ public final class PropertiesMessageSourceTest
             PropertiesMessageSource.fromPath(null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "file path is null");
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullPath"));
         }
     }
 }

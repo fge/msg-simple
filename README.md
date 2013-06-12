@@ -18,7 +18,7 @@ See below for more.
 
 ## Versions
 
-The current version is **0.4**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
+The current version is **0.4.1**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
 
 See [here](https://github.com/fge/msg-simple/wiki/Examples) for sample API usage.
 

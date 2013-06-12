@@ -25,9 +25,10 @@ import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Locale;
-import java.util.MissingFormatArgumentException;
 
 /**
  * Base abstract class for message bundles
@@ -129,15 +130,16 @@ public final class MessageBundle
      * Object...)}.</p>
      *
      * <p>There is however one important difference: while {@code
-     * String.format()} will throw a {@link MissingFormatArgumentException} if
-     * an argument is missing, this method returns the format itself (or the
-     * key, like {@link #getMessage(Locale, String)}, if no match was found for
-     * that locale/key pair).</p>
+     * String.format()} will throw an {@link IllegalFormatException} if an
+     * argument is missing or a format specifier is incorrect,  this method
+     * returns the format itself (or the key, like {@link #getMessage(Locale,
+     * String)}, if no match was found for that locale/key pair).</p>
      *
      * @param locale the locale
      * @param key the key
      * @param params the format parameters
      * @return the formatted message
+     * @see Formatter
      */
     public String printf(final Locale locale, final String key,
         final Object... params)
@@ -145,7 +147,7 @@ public final class MessageBundle
         final String format = getMessage(locale, key);
         try {
             return String.format(locale, format, params);
-        } catch (MissingFormatArgumentException ignored) {
+        } catch (IllegalFormatException ignored) {
             return format;
         }
     }

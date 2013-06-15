@@ -58,17 +58,32 @@ import java.util.concurrent.TimeoutException;
 public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
 {
+    // TODO: use that instead?
+    /*
+    private static final ThreadFactory THREAD_FACTORY = new ThreadFactory()
+    {
+        @Override
+        public Thread newThread(final Runnable r)
+        {
+            final Thread ret = Executors.defaultThreadFactory().newThread(r);
+            ret.setDaemon(true);
+            return ret;
+        }
+    };
+    */
+
     private static final InternalBundle BUNDLE
         = InternalBundle.getInstance();
 
-    private static final int NTHREADS = 5;
+    private static final int NTHREADS = 10;
+    private static final ExecutorService EXECUTOR_SERVICE
+        = Executors.newFixedThreadPool(NTHREADS);
+        //= Executors.newFixedThreadPool(NTHREADS, THREAD_FACTORY);
 
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;
     private final long nr;
     private final TimeUnit unit;
-    private final ExecutorService service
-        = Executors.newFixedThreadPool(NTHREADS);
     private final Map<Locale, FutureTask<MessageSource>> sources
         = new HashMap<Locale, FutureTask<MessageSource>>();
 
@@ -112,7 +127,7 @@ public final class LoadingMessageSourceProvider
             if (task == null || task.isCancelled()) {
                 task = loadingTask(locale);
                 sources.put(locale, task);
-                service.execute(task);
+                EXECUTOR_SERVICE.execute(task);
             }
         }
 

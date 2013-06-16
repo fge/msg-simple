@@ -224,7 +224,7 @@ public final class LoadingMessageSourceProvider
         @Deprecated
         public Builder setTimeout(final long duration, final TimeUnit unit)
         {
-            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveTimeout");
+            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveDuration");
             BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
             timeoutDuration = duration;
             timeoutUnit = unit;
@@ -249,7 +249,7 @@ public final class LoadingMessageSourceProvider
          */
         public Builder setLoadTimeout(final long duration, final TimeUnit unit)
         {
-            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveTimeout");
+            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveDuration");
             BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
             timeoutDuration = duration;
             timeoutUnit = unit;

@@ -25,7 +25,7 @@ public final class InternalBundle
         messages.put("cfg.nullLoader", "loader cannot be null");
         messages.put("cfg.nullDefaultSource",
             "when provided, the default message source must not be null");
-        messages.put("cfg.nonPositiveTimeout", "timeout must be greater than 0");
+        messages.put("cfg.nonPositiveDuration", "timeout must be greater than 0");
         messages.put("cfg.nullTimeUnit", "time unit must not be null");
         messages.put("cfg.nullKey", "null keys are not allowed");
         messages.put("cfg.nullSource", "null sources are not allowed");

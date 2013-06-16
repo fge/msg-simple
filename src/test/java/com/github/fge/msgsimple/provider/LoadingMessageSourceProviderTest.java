@@ -164,14 +164,14 @@ public final class LoadingMessageSourceProviderTest
     }
 
     @Test
-    public void cannotSetZeroOrNegativeTimeout()
+    public void cannotSetNonsensicalTimeoutDuration()
     {
         try {
             builder.setLoadTimeout(0L, null);
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(),
-                BUNDLE.getMessage("cfg.nonPositiveTimeout"));
+                BUNDLE.getMessage("cfg.nonPositiveDuration"));
         }
 
         try {
@@ -179,12 +179,12 @@ public final class LoadingMessageSourceProviderTest
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(),
-                BUNDLE.getMessage("cfg.nonPositiveTimeout"));
+                BUNDLE.getMessage("cfg.nonPositiveDuration"));
         }
     }
 
-    @Test(dependsOnMethods = "cannotSetZeroOrNegativeTimeout")
-    public void cannotSetNullTimeUnit()
+    @Test(dependsOnMethods = "cannotSetNonsensicalTimeoutDuration")
+    public void cannotSetNullTimeoutUnit()
     {
         try {
             builder.setLoadTimeout(1L, null);
@@ -196,7 +196,7 @@ public final class LoadingMessageSourceProviderTest
 
     @Test(dependsOnMethods = {
         "loaderIsUsedWhenItIsSet",
-        "cannotSetNullTimeUnit"
+        "cannotSetNullTimeoutUnit"
     })
     public void whenLoadTimesOutDefaultSourceIsReturned()
         throws IOException

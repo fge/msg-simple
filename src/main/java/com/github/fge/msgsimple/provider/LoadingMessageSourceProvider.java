@@ -22,9 +22,7 @@ import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -66,14 +64,17 @@ public final class LoadingMessageSourceProvider
     /*
      * Use daemon threads. We don't give control to the user about the
      * ExecutorService, and we don't have a reliable way to shut it down (a JVM
-     * shutdown hook does not get involved on a webapp shutdown).
+     * shutdown hook does not get involved on a webapp shutdown, so we cannot
+     * use that...).
      */
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory()
     {
+        private final ThreadFactory factory = Executors.defaultThreadFactory();
+
         @Override
         public Thread newThread(final Runnable r)
         {
-            final Thread ret = Executors.defaultThreadFactory().newThread(r);
+            final Thread ret = factory.newThread(r);
             ret.setDaemon(true);
             return ret;
         }
@@ -144,11 +145,12 @@ public final class LoadingMessageSourceProvider
         /*
          * The algorithm is as follows:
          *
-         * - access the sources map in a synchronous manner;
+         * - access the sources map in a synchronous manner (the expiry task
+         *   also does this);
          * - grab the FutureTask matching the required locale:
          *     - if no task exists, create it;
          *     - if it exists but has been cancelled (in the event of a timeout,
-         *       see below), create it anew;
+         *       see below), create a new task;
          * - always within the synchronized access to sources, submit the task
          *   for immediate execution to our ExecutorService;
          * - to be followed...
@@ -164,8 +166,8 @@ public final class LoadingMessageSourceProvider
 
         /*
          * - try and get the result of the task, with a timeout;
-         * - if we get a result in time, return it, or the default source if
-         *   the result is null;
+         * - if we get a result in time, return it, or the default source (if
+         *   any) if the result is null;
          * - in the event of an error, return the default source; in addition,
          *   if this is a timeout, cancel the task.
          */
@@ -205,24 +207,26 @@ public final class LoadingMessageSourceProvider
                 /*
                  * We need to walk the list of current tasks and cancel them if
                  * they are still running.
-                 *
-                 * Create a list to grab all values from the sources, clear
-                 * sources, then take care of cancelling tasks.
                  */
-                final List<FutureTask<MessageSource>> tasks
-                    = new ArrayList<FutureTask<MessageSource>>();
                 synchronized (sources) {
-                    tasks.addAll(sources.values());
+                    /*
+                     * This MUST be done from within this block. If we don't do
+                     * this here, a task can "leak" from getMessageSource(), and
+                     * if the caller .get()s, it will be greeted with a
+                     * CancellationException. Not what we want!
+                     */
+                    for (final FutureTask<MessageSource> task: sources.values())
+                        task.cancel(true);
                     sources.clear();
                 }
-                for (final FutureTask<MessageSource> task: tasks)
-                    task.cancel(true);
             }
         };
         // Overkill?
         final ScheduledExecutorService scheduled
             = Executors.newScheduledThreadPool(1, THREAD_FACTORY);
-        scheduled.scheduleAtFixedRate(runnable, 0L, expiryDuration, expiryUnit);
+        final long initialDelay = expiryUnit.toMillis(expiryDuration);
+        scheduled.scheduleAtFixedRate(runnable, initialDelay, expiryDuration,
+            expiryUnit);
     }
 
     /**
@@ -316,6 +320,18 @@ public final class LoadingMessageSourceProvider
             return this;
         }
 
+        /**
+         * Set the source expiry time (10 minutes by default)
+         *
+         * <p>Do <b>not</b> use this method if you want no expiry at all; use
+         * {@link #neverExpires()} instead.</p>
+         *
+         * @param duration number of units
+         * @param unit the time unit
+         * @throws IllegalArgumentException {@code duration} is negative or zero
+         * @throws NullPointerException {@code unit} is null
+         * @return this
+         */
         public Builder setExpiryTime(final long duration, final TimeUnit unit)
         {
             BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveDuration");
@@ -325,6 +341,15 @@ public final class LoadingMessageSourceProvider
             return this;
         }
 
+        /**
+         * Set this loading provider so that entries never expire
+         *
+         * <p>Note that, as noted in the description, apart from loading
+         * timeouts, successes and failures are recorded permanently (see
+         * {@link FutureTask}).</p>
+         *
+         * @return this
+         */
         public Builder neverExpires()
         {
             expiryDuration = 0L;

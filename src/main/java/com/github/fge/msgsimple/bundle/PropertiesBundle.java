@@ -25,30 +25,43 @@ import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Formatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
  * Utility class to build a localized, UTF-8 {@link ResourceBundle}
  *
  * <p>This class only contains one method to return a {@link MessageBundle}
- * which operates nearly the same as a {@link ResourceBundle}, with the
- * difference that property files are read in UTF-8.</p>
+ * which operates nearly the same as a {@link ResourceBundle}, with two
+ * differences:</p>
  *
- * <p>This means that like a {@link ResourceBundle}, it will try and look up a
- * key in locale-enabled property files (for instance, {@code
- * foo_fr_FR.properties} for bundle {@code foo} and locale {@code fr_FR}).</p>
+ * <ul>
+ *     <li>property files are read in UTF-8, not ISO-8859-1;</li>
+ *     <li>formatted messages use {@link Formatter}, not {@link
+ *     MessageFormat}.</li>
+ * </ul>
  *
- * <p>Internally, this method creates a dedicated {@link MessageSourceLoader} to
- * load property files, wraps it into a {@link LoadingMessageSourceProvider},
- * and finally creates a {@link MessageBundle} with this only source.</p>
+ * <p>Similarly to a {@link ResourceBundle}, it will try and look up a key in
+ * "locale-enabled" property files (for instance, {@code foo_fr_FR.properties}
+ * for bundle {@code foo} and locale {@code fr_FR}), and "descend" to less
+ * specific locales (in this case, {@code fr} then {@link Locale#ROOT}) if an
+ * exact match is not found.</p>
  *
  * <p>As it is a {@link MessageBundle}, it means you can extend it further by
  * {@link MessageBundle#thaw()}ing it and appending/prepending other message
  * source providers etc.</p>
  *
+ * <p><b>IMPORTANT NOTE:</b> the default behaviour is to NOT expire if a load
+ * succeeds or fails, for backwards compatibility reasons. However, you can use
+ * the appropriate methods if you want expiry.</p>
+ *
  * @see PropertiesMessageSource
+ * @see MessageSourceLoader
+ * @see LoadingMessageSourceProvider
  */
 public final class PropertiesBundle
 {
@@ -104,6 +117,50 @@ public final class PropertiesBundle
         final MessageSourceProvider provider
             = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
                 .neverExpires().build();
+
+        return MessageBundle.newBuilder().appendProvider(provider).freeze();
+    }
+
+    /**
+     * Create a {@link ResourceBundle}-like {@link MessageBundle} with expiry
+     *
+     * @param resourcePath the resource path
+     * @param duration expiry duration
+     * @param timeUnit expiry time unit
+     * @throws NullPointerException resource path or duration is null
+     * @throws IllegalArgumentException duration is 0 or less
+     * @return a {@link MessageBundle}
+     *
+     * @see LoadingMessageSourceProvider
+     */
+    public static MessageBundle forPath(final String resourcePath,
+        final long duration, final TimeUnit timeUnit)
+    {
+        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
+
+        final String s = resourcePath.startsWith("/") ? resourcePath
+            : '/' + resourcePath;
+
+        final String realPath = SUFFIX.matcher(s).replaceFirst("");
+
+        final MessageSourceLoader loader = new MessageSourceLoader()
+        {
+            @Override
+            public MessageSource load(final Locale locale)
+                throws IOException
+            {
+                final StringBuilder sb = new StringBuilder(realPath);
+                if (!locale.equals(Locale.ROOT))
+                    sb.append('_').append(locale.toString());
+                sb.append(".properties");
+
+                return PropertiesMessageSource.fromResource(sb.toString());
+            }
+        };
+
+        final MessageSourceProvider provider
+            = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
+            .setExpiryTime(duration, timeUnit).build();
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }

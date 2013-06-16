@@ -36,22 +36,23 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * A caching, on-demand loading message source provider
+ * A caching, on-demand loading message source provider with configurable expiry
  *
  * <p>This class uses a {@link MessageSourceLoader} internally to look up
  * message sources. As is the case for {@link StaticMessageSourceProvider}, you
  * can also set a default source if the loader fails to grab a source.</p>
  *
- * <p>Important notes:</p>
+ * <p>Apart from the loader, you can customize two aspects of the provider:</p>
  *
  * <ul>
- *     <li>the default source is also returned if the load fails with an
- *     exception;</li>
- *     <li>when a source is loaded, it is permanently cached;</li>
- *     <li>there is also a timeout for loading (which is 5 seconds by default);
- *     if the timeout is reached, the loading is attempted again the next time
- *     the locale is asked for.</li>
+ *     <li>its load timeout (5 seconds by default);</li>
+ *     <li>its expiry time (10 minutes by default).</li>
  * </ul>
+ *
+ * <p>Note that the expiry time is periodic only, and not per source. The
+ * loading result (success or failure) is recorded permanently until the expiry
+ * time kicks in, <b>except</b> when the timeout kicks in; in this case, loading
+ * will be retried.</p>
  *
  * <p>You cannot instantiate that class directly; use {@link #newBuilder()} to
  * obtain a builder class and set up your provider.</p>

@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -58,8 +59,11 @@ import java.util.concurrent.TimeoutException;
 public final class LoadingMessageSourceProvider
     implements MessageSourceProvider
 {
-    // TODO: use that instead?
     /*
+     * Use daemon threads. We don't give control to the user about the
+     * ExecutorService, and we don't have a reliable way to shut it down (a JVM
+     * shutdown hook does not get involved on a webapp shutdown).
+     */
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory()
     {
         @Override
@@ -70,15 +74,13 @@ public final class LoadingMessageSourceProvider
             return ret;
         }
     };
-    */
 
     private static final InternalBundle BUNDLE
         = InternalBundle.getInstance();
 
     private static final int NTHREADS = 10;
     private static final ExecutorService EXECUTOR_SERVICE
-        = Executors.newFixedThreadPool(NTHREADS);
-        //= Executors.newFixedThreadPool(NTHREADS, THREAD_FACTORY);
+        = Executors.newFixedThreadPool(NTHREADS, THREAD_FACTORY);
 
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;

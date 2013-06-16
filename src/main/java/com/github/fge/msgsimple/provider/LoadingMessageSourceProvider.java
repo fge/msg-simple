@@ -22,7 +22,9 @@ import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -200,9 +202,21 @@ public final class LoadingMessageSourceProvider
             @Override
             public void run()
             {
+                /*
+                 * We need to walk the list of current tasks and cancel them if
+                 * they are still running.
+                 *
+                 * Create a list to grab all values from the sources, clear
+                 * sources, then take care of cancelling tasks.
+                 */
+                final List<FutureTask<MessageSource>> tasks
+                    = new ArrayList<FutureTask<MessageSource>>();
                 synchronized (sources) {
+                    tasks.addAll(sources.values());
                     sources.clear();
                 }
+                for (final FutureTask<MessageSource> task: tasks)
+                    task.cancel(true);
             }
         };
         // Overkill?

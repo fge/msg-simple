@@ -207,14 +207,14 @@ public final class LoadingMessageSourceProviderTest
             public MessageSource answer(final InvocationOnMock invocation)
                 throws IOException, InterruptedException
             {
-                TimeUnit.SECONDS.sleep(2L);
+                TimeUnit.SECONDS.sleep(1L);
                 return source;
             }
         }).thenReturn(source);
 
         final MessageSourceProvider provider
             = builder.setLoader(loader)
-            .setLoadTimeout(250L, TimeUnit.MILLISECONDS)
+            .setLoadTimeout(100L, TimeUnit.MILLISECONDS)
             .setDefaultSource(defaultSource).build();
 
         assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
@@ -250,5 +250,55 @@ public final class LoadingMessageSourceProviderTest
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullTimeUnit"));
         }
+    }
+
+    @Test
+    public void expiryWorksAsExpected()
+        throws IOException, InterruptedException
+    {
+        final MessageSource source2 = mock(MessageSource.class);
+        final MessageSource source3 = mock(MessageSource.class);
+
+        when(loader.load(any(Locale.class)))
+            .thenReturn(source)
+            .thenReturn(source2)
+            .thenReturn(source3);
+
+        final MessageSourceProvider provider = builder.setLoader(loader)
+            .setExpiryTime(10L, TimeUnit.MILLISECONDS).build();
+
+        final MessageSource first = provider.getMessageSource(Locale.ROOT);
+        TimeUnit.MILLISECONDS.sleep(50L);
+        final MessageSource second = provider.getMessageSource(Locale.ROOT);
+        TimeUnit.MILLISECONDS.sleep(50L);
+        final MessageSource third = provider.getMessageSource(Locale.ROOT);
+
+        verify(loader, times(3)).load(Locale.ROOT);
+
+        assertSame(first, source);
+        assertSame(second, source2);
+        assertSame(third, source3);
+    }
+
+    @Test
+    public void expiryCausesFailedLoadsToRetry()
+        throws IOException, InterruptedException
+    {
+        when(loader.load(any(Locale.class)))
+            .thenThrow(new IOException())
+            .thenReturn(source);
+
+        final MessageSourceProvider provider = builder.setLoader(loader)
+            .setExpiryTime(10L, TimeUnit.MILLISECONDS)
+            .setDefaultSource(defaultSource).build();
+
+        final MessageSource before = provider.getMessageSource(Locale.ROOT);
+        TimeUnit.MILLISECONDS.sleep(50L);
+        final MessageSource after = provider.getMessageSource(Locale.ROOT);
+
+        verify(loader, times(2)).load(Locale.ROOT);
+
+        assertSame(before, defaultSource);
+        assertSame(after, source);
     }
 }

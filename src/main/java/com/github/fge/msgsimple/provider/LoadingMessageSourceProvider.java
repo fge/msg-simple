@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -118,6 +119,8 @@ public final class LoadingMessageSourceProvider
         timeoutUnit = builder.timeoutUnit;
         expiryDuration = builder.expiryDuration;
         expiryUnit = builder.expiryUnit;
+        if (expiryDuration > 0L)
+            setupExpiry();
     }
 
     /**
@@ -191,6 +194,20 @@ public final class LoadingMessageSourceProvider
 
     private void setupExpiry()
     {
+        final Runnable runnable = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (sources) {
+                    sources.clear();
+                }
+            }
+        };
+        // Overkill?
+        final ScheduledExecutorService scheduled
+            = Executors.newScheduledThreadPool(1, THREAD_FACTORY);
+        scheduled.scheduleAtFixedRate(runnable, 0L, expiryDuration, expiryUnit);
     }
 
     /**

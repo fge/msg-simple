@@ -78,8 +78,9 @@ public final class LoadingMessageSourceProvider
     private static final InternalBundle BUNDLE
         = InternalBundle.getInstance();
 
-    private static final int NTHREADS = 10;
-    private static final ExecutorService EXECUTOR_SERVICE
+    private static final int NTHREADS = 3;
+
+    private final ExecutorService service
         = Executors.newFixedThreadPool(NTHREADS, THREAD_FACTORY);
 
     private final MessageSourceLoader loader;
@@ -129,7 +130,7 @@ public final class LoadingMessageSourceProvider
             if (task == null || task.isCancelled()) {
                 task = loadingTask(locale);
                 sources.put(locale, task);
-                EXECUTOR_SERVICE.execute(task);
+                service.execute(task);
             }
         }
 

@@ -190,8 +190,7 @@ public final class LoadingMessageSourceProviderTest
             builder.setLoadTimeout(1L, null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
-            assertEquals(e.getMessage(),
-                BUNDLE.getMessage("cfg.nullTimeUnit"));
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullTimeUnit"));
         }
     }
 

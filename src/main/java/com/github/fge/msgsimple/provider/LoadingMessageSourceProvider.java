@@ -232,13 +232,20 @@ public final class LoadingMessageSourceProvider
         }
 
         /**
-         * Set the load timeout
+         * Set the load timeout (5 seconds by default)
+         *
+         * <p>If the loader passed as an argument fails to load a message
+         * source after the specified timeout is elapsed, then the default
+         * messagesource will be returned (if any).</p>
          *
          * @param duration number of units
          * @param unit the time unit
          * @throws IllegalArgumentException {@code duration} is negative or zero
          * @throws NullPointerException {@code unit} is null
          * @return this
+         *
+         * @see {@link #setLoader(MessageSourceLoader)}
+         * @see {@link #setDefaultSource(MessageSource)}
          */
         public Builder setLoadTimeout(final long duration, final TimeUnit unit)
         {
@@ -253,6 +260,7 @@ public final class LoadingMessageSourceProvider
          * Build the provider
          *
          * @return a {@link LoadingMessageSourceProvider}
+         * @throws IllegalArgumentException no loader has been provided
          */
         public MessageSourceProvider build()
         {

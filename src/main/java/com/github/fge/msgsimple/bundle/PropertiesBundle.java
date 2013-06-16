@@ -124,6 +124,8 @@ public final class PropertiesBundle
     /**
      * Create a {@link ResourceBundle}-like {@link MessageBundle} with expiry
      *
+     * @since 0.5
+     *
      * @param resourcePath the resource path
      * @param duration expiry duration
      * @param timeUnit expiry time unit

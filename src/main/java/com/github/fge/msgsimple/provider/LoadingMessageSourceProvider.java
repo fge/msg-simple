@@ -326,6 +326,8 @@ public final class LoadingMessageSourceProvider
          * <p>Do <b>not</b> use this method if you want no expiry at all; use
          * {@link #neverExpires()} instead.</p>
          *
+         * @since 0.5
+         *
          * @param duration number of units
          * @param unit the time unit
          * @throws IllegalArgumentException {@code duration} is negative or zero
@@ -347,6 +349,8 @@ public final class LoadingMessageSourceProvider
          * <p>Note that, as noted in the description, apart from loading
          * timeouts, successes and failures are recorded permanently (see
          * {@link FutureTask}).</p>
+         *
+         * @since 0.5
          *
          * @return this
          */

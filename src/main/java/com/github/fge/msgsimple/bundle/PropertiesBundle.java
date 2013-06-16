@@ -103,7 +103,7 @@ public final class PropertiesBundle
 
         final MessageSourceProvider provider
             = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
-                .build();
+                .neverExpires().build();
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }

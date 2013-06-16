@@ -80,15 +80,35 @@ public final class LoadingMessageSourceProvider
 
     private static final int NTHREADS = 3;
 
+    /*
+     * Executor service for loading tasks
+     */
     private final ExecutorService service
         = Executors.newFixedThreadPool(NTHREADS, THREAD_FACTORY);
 
+    /*
+     * Loader and default source
+     */
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;
+
+    /*
+     * Timeout
+     */
     private final long timeoutDuration;
     private final TimeUnit timeoutUnit;
+
+    /*
+     * List of sources
+     */
     private final Map<Locale, FutureTask<MessageSource>> sources
         = new HashMap<Locale, FutureTask<MessageSource>>();
+
+    /*
+     * Expiry delay. Duration of 0 means no expiration.
+     */
+    private final long expiryDuration;
+    private final TimeUnit expiryUnit;
 
     private LoadingMessageSourceProvider(final Builder builder)
     {
@@ -96,6 +116,8 @@ public final class LoadingMessageSourceProvider
         defaultSource = builder.defaultSource;
         timeoutDuration = builder.timeoutDuration;
         timeoutUnit = builder.timeoutUnit;
+        expiryDuration = builder.expiryDuration;
+        expiryUnit = builder.expiryUnit;
     }
 
     /**
@@ -167,6 +189,10 @@ public final class LoadingMessageSourceProvider
         });
     }
 
+    private void setupExpiry()
+    {
+    }
+
     /**
      * Builder class for a {@link LoadingMessageSourceProvider}
      */
@@ -176,8 +202,8 @@ public final class LoadingMessageSourceProvider
         private MessageSource defaultSource;
         private long timeoutDuration = 5L;
         private TimeUnit timeoutUnit = TimeUnit.SECONDS;
-        private long expireDuration = 10L;
-        private TimeUnit expireUnit = TimeUnit.MINUTES;
+        private long expiryDuration = 10L;
+        private TimeUnit expiryUnit = TimeUnit.MINUTES;
 
         private Builder()
         {
@@ -262,14 +288,14 @@ public final class LoadingMessageSourceProvider
         {
             BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveDuration");
             BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
-            expireDuration = duration;
-            expireUnit = unit;
+            expiryDuration = duration;
+            expiryUnit = unit;
             return this;
         }
 
         public Builder neverExpires()
         {
-            expireDuration = 0L;
+            expiryDuration = 0L;
             return this;
         }
 

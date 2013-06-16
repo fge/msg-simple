@@ -109,22 +109,14 @@ public final class LoadingMessageSourceProvider
     private final Map<Locale, FutureTask<MessageSource>> sources
         = new HashMap<Locale, FutureTask<MessageSource>>();
 
-    /*
-     * Expiry delay. Duration of 0 means no expiration.
-     */
-    private final long expiryDuration;
-    private final TimeUnit expiryUnit;
-
     private LoadingMessageSourceProvider(final Builder builder)
     {
         loader = builder.loader;
         defaultSource = builder.defaultSource;
         timeoutDuration = builder.timeoutDuration;
         timeoutUnit = builder.timeoutUnit;
-        expiryDuration = builder.expiryDuration;
-        expiryUnit = builder.expiryUnit;
-        if (expiryDuration > 0L)
-            setupExpiry();
+        if (builder.expiryDuration > 0L)
+            setupExpiry(builder.expiryDuration, builder.expiryUnit);
     }
 
     /**
@@ -197,7 +189,7 @@ public final class LoadingMessageSourceProvider
         });
     }
 
-    private void setupExpiry()
+    private void setupExpiry(final long duration, final TimeUnit unit)
     {
         final Runnable runnable = new Runnable()
         {
@@ -224,9 +216,8 @@ public final class LoadingMessageSourceProvider
         // Overkill?
         final ScheduledExecutorService scheduled
             = Executors.newScheduledThreadPool(1, THREAD_FACTORY);
-        final long initialDelay = expiryUnit.toMillis(expiryDuration);
-        scheduled.scheduleAtFixedRate(runnable, initialDelay, expiryDuration,
-            expiryUnit);
+        final long initialDelay = unit.toMillis(duration);
+        scheduled.scheduleAtFixedRate(runnable, initialDelay, duration, unit);
     }
 
     /**

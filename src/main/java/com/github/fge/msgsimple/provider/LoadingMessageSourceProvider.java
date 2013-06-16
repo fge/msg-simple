@@ -176,6 +176,8 @@ public final class LoadingMessageSourceProvider
         private MessageSource defaultSource;
         private long timeoutDuration = 5L;
         private TimeUnit timeoutUnit = TimeUnit.SECONDS;
+        private long expireDuration = 10L;
+        private TimeUnit expireUnit = TimeUnit.MINUTES;
 
         private Builder()
         {
@@ -253,6 +255,21 @@ public final class LoadingMessageSourceProvider
             BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
             timeoutDuration = duration;
             timeoutUnit = unit;
+            return this;
+        }
+
+        public Builder setExpiryTime(final long duration, final TimeUnit unit)
+        {
+            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveDuration");
+            BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
+            expireDuration = duration;
+            expireUnit = unit;
+            return this;
+        }
+
+        public Builder neverExpires()
+        {
+            expireDuration = 0L;
             return this;
         }
 

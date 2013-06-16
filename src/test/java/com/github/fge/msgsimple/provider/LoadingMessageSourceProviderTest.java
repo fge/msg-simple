@@ -220,4 +220,35 @@ public final class LoadingMessageSourceProviderTest
         assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
         assertSame(provider.getMessageSource(Locale.ROOT), source);
     }
+
+    @Test
+    public void cannotSetNonsensicalExpiryDuration()
+    {
+        try {
+            builder.setExpiryTime(0L, null);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nonPositiveDuration"));
+        }
+
+        try {
+            builder.setLoadTimeout(-1L, null);
+            fail("No exception thrown!");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(),
+                BUNDLE.getMessage("cfg.nonPositiveDuration"));
+        }
+    }
+
+    @Test(dependsOnMethods = "cannotSetNonsensicalExpiryDuration")
+    public void cannotSetNullExpiryTimeUnit()
+    {
+        try {
+            builder.setExpiryTime(1L, null);
+            fail("No exception thrown!");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullTimeUnit"));
+        }
+    }
 }

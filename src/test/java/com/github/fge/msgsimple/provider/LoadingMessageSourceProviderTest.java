@@ -167,7 +167,7 @@ public final class LoadingMessageSourceProviderTest
     public void cannotSetZeroOrNegativeTimeout()
     {
         try {
-            builder.setTimeout(0L, null);
+            builder.setLoadTimeout(0L, null);
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(),
@@ -175,7 +175,7 @@ public final class LoadingMessageSourceProviderTest
         }
 
         try {
-            builder.setTimeout(-1L, null);
+            builder.setLoadTimeout(-1L, null);
             fail("No exception thrown!");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(),
@@ -187,7 +187,7 @@ public final class LoadingMessageSourceProviderTest
     public void cannotSetNullTimeUnit()
     {
         try {
-            builder.setTimeout(1L, null);
+            builder.setLoadTimeout(1L, null);
             fail("No exception thrown!");
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(),
@@ -214,7 +214,8 @@ public final class LoadingMessageSourceProviderTest
         }).thenReturn(source);
 
         final MessageSourceProvider provider
-            = builder.setLoader(loader).setTimeout(250L, TimeUnit.MILLISECONDS)
+            = builder.setLoader(loader)
+            .setLoadTimeout(250L, TimeUnit.MILLISECONDS)
             .setDefaultSource(defaultSource).build();
 
         assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);

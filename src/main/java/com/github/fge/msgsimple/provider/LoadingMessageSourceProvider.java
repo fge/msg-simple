@@ -85,8 +85,8 @@ public final class LoadingMessageSourceProvider
 
     private final MessageSourceLoader loader;
     private final MessageSource defaultSource;
-    private final long nr;
-    private final TimeUnit unit;
+    private final long timeoutDuration;
+    private final TimeUnit timeoutUnit;
     private final Map<Locale, FutureTask<MessageSource>> sources
         = new HashMap<Locale, FutureTask<MessageSource>>();
 
@@ -94,8 +94,8 @@ public final class LoadingMessageSourceProvider
     {
         loader = builder.loader;
         defaultSource = builder.defaultSource;
-        nr = builder.nr;
-        unit = builder.unit;
+        timeoutDuration = builder.timeoutDuration;
+        timeoutUnit = builder.timeoutUnit;
     }
 
     /**
@@ -142,7 +142,7 @@ public final class LoadingMessageSourceProvider
          *   if this is a timeout, cancel the task.
          */
         try {
-            final MessageSource source = task.get(nr, unit);
+            final MessageSource source = task.get(timeoutDuration, timeoutUnit);
             return source == null ? defaultSource : source;
         } catch (InterruptedException ignored) {
             return defaultSource;
@@ -174,8 +174,8 @@ public final class LoadingMessageSourceProvider
     {
         private MessageSourceLoader loader;
         private MessageSource defaultSource;
-        private long nr = 5L;
-        private TimeUnit unit = TimeUnit.SECONDS;
+        private long timeoutDuration = 5L;
+        private TimeUnit timeoutUnit = TimeUnit.SECONDS;
 
         private Builder()
         {
@@ -212,18 +212,40 @@ public final class LoadingMessageSourceProvider
         /**
          * Set the load timeout
          *
-         * @param nr number of units
+         * @param duration number of units
          * @param unit the time unit
-         * @throws IllegalArgumentException {@code nr} is negative or zero
-         * @throws NullPointerException time unit is null
+         * @throws IllegalArgumentException {@code duration} is negative or zero
+         * @throws NullPointerException {@code unit} is null
+         * @return this
+         *
+         * @deprecated use {@link #setLoadTimeout(long, TimeUnit)} instead.
+         * Will be removed in 0.6.
+         */
+        @Deprecated
+        public Builder setTimeout(final long duration, final TimeUnit unit)
+        {
+            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveTimeout");
+            BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
+            timeoutDuration = duration;
+            timeoutUnit = unit;
+            return this;
+        }
+
+        /**
+         * Set the load timeout
+         *
+         * @param duration number of units
+         * @param unit the time unit
+         * @throws IllegalArgumentException {@code duration} is negative or zero
+         * @throws NullPointerException {@code unit} is null
          * @return this
          */
-        public Builder setTimeout(final long nr, final TimeUnit unit)
+        public Builder setLoadTimeout(final long duration, final TimeUnit unit)
         {
-            BUNDLE.checkArgument(nr > 0L, "cfg.nonPositiveTimeout");
+            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveTimeout");
             BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
-            this.nr = nr;
-            this.unit = unit;
+            timeoutDuration = duration;
+            timeoutUnit = unit;
             return this;
         }
 

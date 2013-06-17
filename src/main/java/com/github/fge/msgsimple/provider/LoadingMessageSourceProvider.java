@@ -36,6 +36,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A caching, on-demand loading message source provider with configurable expiry
@@ -106,11 +107,17 @@ public final class LoadingMessageSourceProvider
     private final TimeUnit timeoutUnit;
 
     /*
-     * List of sources
+     * Expiry
      *
-     * TODO: there is the possibility, as mentioned on codereview, that sources
-     * may be null the first time we run the expiry thread... Note sure how to
-     * deal with that.
+     * Note that expiry is set up, if necessary, in the first call to
+     * .getMessage().
+     */
+    private final AtomicBoolean expiryEnabled;
+    private final long expiryDuration;
+    private final TimeUnit expiryUnit;
+
+    /*
+     * List of sources
      */
     private final Map<Locale, FutureTask<MessageSource>> sources
         = new HashMap<Locale, FutureTask<MessageSource>>();
@@ -119,10 +126,16 @@ public final class LoadingMessageSourceProvider
     {
         loader = builder.loader;
         defaultSource = builder.defaultSource;
+
         timeoutDuration = builder.timeoutDuration;
         timeoutUnit = builder.timeoutUnit;
-        if (builder.expiryDuration > 0L)
-            setupExpiry(builder.expiryDuration, builder.expiryUnit);
+
+        expiryDuration =  builder.expiryDuration;
+        expiryUnit = builder.expiryUnit;
+        /*
+         * Mimic an already enabled expiry if, in fact, there is none
+         */
+        expiryEnabled = new AtomicBoolean(expiryDuration == 0L);
     }
 
     /**
@@ -138,6 +151,12 @@ public final class LoadingMessageSourceProvider
     @Override
     public MessageSource getMessageSource(final Locale locale)
     {
+        /*
+         * Set up expiry, if necessary
+         */
+        if (!expiryEnabled.getAndSet(true))
+            setupExpiry(expiryDuration, expiryUnit);
+
         FutureTask<MessageSource> task;
 
         /*

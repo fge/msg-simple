@@ -57,8 +57,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * time kicks in, <b>except</b> when the timeout kicks in; in this case, loading
  * will be retried.</p>
  *
+ * <p>You can also configure a loader so that it never expires.</p>
+ *
  * <p>You cannot instantiate that class directly; use {@link #newBuilder()} to
  * obtain a builder class and set up your provider.</p>
+ *
+ * @see Builder
  */
 @ThreadSafe
 public final class LoadingMessageSourceProvider
@@ -192,7 +196,14 @@ public final class LoadingMessageSourceProvider
             final MessageSource source = task.get(timeoutDuration, timeoutUnit);
             return source == null ? defaultSource : source;
         } catch (InterruptedException ignored) {
-            // Restore interrupt state
+            /*
+             * Restore interrup state. We will not throw the exception here,
+             * since static providers exist, which do not throw it -- and how
+             * would a message provider API sound to you if you had to catch
+             * InterruptedException each time you try and fetch a message?
+             *
+             * Let the caller deal with that.
+             */
             Thread.currentThread().interrupt();
             return defaultSource;
         } catch (ExecutionException ignored) {
@@ -249,6 +260,11 @@ public final class LoadingMessageSourceProvider
      */
     public static final class Builder
     {
+        /*
+         * NOTE: apart from requiring them to be positive, we do no checks at
+         * all on what the user submits as timeout/expiry values; it could
+         * want a 1 ns expiry that we woudln't prevent it.
+         */
         private MessageSourceLoader loader;
         private MessageSource defaultSource;
         private long timeoutDuration = 5L;
@@ -323,8 +339,8 @@ public final class LoadingMessageSourceProvider
          * @throws NullPointerException {@code unit} is null
          * @return this
          *
-         * @see {@link #setLoader(MessageSourceLoader)}
-         * @see {@link #setDefaultSource(MessageSource)}
+         * @see #setLoader(MessageSourceLoader)
+         * @see #setDefaultSource(MessageSource)
          */
         public Builder setLoadTimeout(final long duration, final TimeUnit unit)
         {

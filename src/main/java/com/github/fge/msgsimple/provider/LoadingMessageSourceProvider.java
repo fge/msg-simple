@@ -192,6 +192,8 @@ public final class LoadingMessageSourceProvider
             final MessageSource source = task.get(timeoutDuration, timeoutUnit);
             return source == null ? defaultSource : source;
         } catch (InterruptedException ignored) {
+            // Restore interrupt state
+            Thread.currentThread().interrupt();
             return defaultSource;
         } catch (ExecutionException ignored) {
             return defaultSource;

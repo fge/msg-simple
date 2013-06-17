@@ -322,7 +322,7 @@ public final class LoadingMessageSourceProviderTest
                 throws IOException
             {
                 try {
-                    TimeUnit.SECONDS.sleep(1L);
+                    TimeUnit.MILLISECONDS.sleep(50L);
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                 }
@@ -334,6 +334,6 @@ public final class LoadingMessageSourceProviderTest
             .setExpiryTime(20L, TimeUnit.MILLISECONDS)
             .setDefaultSource(defaultSource).build();
 
-        assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
+        assertSame(provider.getMessageSource(Locale.ROOT), source);
     }
 }

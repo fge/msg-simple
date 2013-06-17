@@ -23,8 +23,10 @@ import com.github.fge.msgsimple.source.MessageSource;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -197,19 +199,16 @@ public final class LoadingMessageSourceProvider
             public void run()
             {
                 /*
-                 * We need to walk the list of current tasks and cancel them if
-                 * they are still running.
+                 * We remove all tasks for which Future's .isDone() returns
+                 * true. This method returns true either if the task has
+                 * completed one way or another, or has been cancelled.
                  */
+                final Set<Locale> set = new HashSet<Locale>();
                 synchronized (sources) {
-                    /*
-                     * This MUST be done from within this block. If we don't do
-                     * this here, a task can "leak" from getMessageSource(), and
-                     * if the caller .get()s, it will be greeted with a
-                     * CancellationException. Not what we want!
-                     */
-                    for (final FutureTask<MessageSource> task: sources.values())
-                        task.cancel(true);
-                    sources.clear();
+                    set.addAll(sources.keySet());
+                    for (final Locale locale: set)
+                        if (sources.get(locale).isDone())
+                            sources.remove(locale);
                 }
             }
         };

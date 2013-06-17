@@ -205,9 +205,13 @@ public final class LoadingMessageSourceProviderTest
         {
             @Override
             public MessageSource answer(final InvocationOnMock invocation)
-                throws IOException, InterruptedException
+                throws IOException
             {
-                TimeUnit.SECONDS.sleep(1L);
+                try {
+                    TimeUnit.SECONDS.sleep(1L);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
                 return source;
             }
         }).thenReturn(source);
@@ -300,5 +304,36 @@ public final class LoadingMessageSourceProviderTest
 
         assertSame(before, defaultSource);
         assertSame(after, source);
+    }
+
+    /*
+     * Adapted version of the test at the URL below:
+     *
+     *  http://codereview.stackexchange.com/questions/27452/review-custom-simple-cache-with-load-timeout-and-expiry-thread-safety-tests/27486?noredirect=1#27486
+     */
+    @Test
+    public void expiryDoesNotInterfereWithLongMessageLoad()
+        throws IOException
+    {
+        when(loader.load(any(Locale.class))).then(new Answer<MessageSource>()
+        {
+            @Override
+            public MessageSource answer(final InvocationOnMock invocation)
+                throws IOException
+            {
+                try {
+                    TimeUnit.SECONDS.sleep(1L);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
+                return source;
+            }
+        });
+
+        final MessageSourceProvider provider = builder.setLoader(loader)
+            .setExpiryTime(20L, TimeUnit.MILLISECONDS)
+            .setDefaultSource(defaultSource).build();
+
+        assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
     }
 }

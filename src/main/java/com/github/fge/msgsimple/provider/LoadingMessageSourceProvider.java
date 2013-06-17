@@ -107,6 +107,10 @@ public final class LoadingMessageSourceProvider
 
     /*
      * List of sources
+     *
+     * TODO: there is the possibility, as mentioned on codereview, that sources
+     * may be null the first time we run the expiry thread... Note sure how to
+     * deal with that.
      */
     private final Map<Locale, FutureTask<MessageSource>> sources
         = new HashMap<Locale, FutureTask<MessageSource>>();

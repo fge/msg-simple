@@ -27,6 +27,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -322,6 +324,90 @@ public final class MessageBundleTest
             .freeze();
 
         assertEquals(bundle.printf(locale, "key", params), ret);
+    }
+
+    @DataProvider
+    public Iterator<Object[]> msgFormatIllegal()
+    {
+        /*
+         * Examples lifted straight off the javadoc. I am not interested in
+         * neanderthal technology to research further.
+         */
+        return Arrays.asList(
+            new Object[] { "ab {0'}' de" },
+            new Object[] { "ab } de" },
+            new Object[] { "''{''" }
+        ).iterator();
+    }
+
+    @Test(dataProvider = "msgFormatIllegal")
+    public void illegalMessageFormatArgumentsAppearAsIs(final String format)
+    {
+        when(source.getKey("key")).thenReturn(format);
+        final MessageBundle bundle = builder.appendSource(source).freeze();
+
+        assertEquals(bundle.format("key"), format, "Hello world");
+    }
+
+    @DataProvider
+    public Iterator<Object[]> msgFormatData()
+    {
+        final List<Object[]> list = new ArrayList<Object[]>();
+
+        String format;
+        Object[] arguments;
+        String expected;
+
+        /*
+         * We need to build a date for the first Javadoc example... And we don't
+         * have Joda Time, so...
+         *
+         * For the first example, the time had to be updated.
+         */
+        final Calendar calendar = Calendar.getInstance(Locale.ROOT);
+        calendar.set(2053, Calendar.JULY, 3, 12, 30, 0);
+
+        format =  "At {1,time} on {1,date}, there was {2} on planet " +
+            "{0,number,integer}.";
+        arguments = new Object[] { 7, calendar.getTime(),
+            "a disturbance in the Force" };
+        expected = "At 12:30:00 PM on Jul 3, 2053, there was a disturbance in" +
+            " the Force on planet 7.";
+        list.add(new Object[] { format, arguments, expected });
+
+        format = "The disk \"{1}\" contains {0} file(s).";
+        arguments = new Object[] { 1273L, "MyDisk" };
+        expected = "The disk \"MyDisk\" contains 1,273 file(s).";
+        list.add(new Object[] { format, arguments, expected });
+
+        return list.iterator();
+    }
+
+    @Test(dataProvider = "msgFormatData")
+    public void messageFormatWorks(final String format, final Object[] args,
+        final String expected)
+    {
+        when(source.getKey("key")).thenReturn(format);
+        final MessageBundle bundle = builder.appendSource(source).freeze();
+        final String actual = bundle.format(Locale.ROOT, "key", args);
+
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    public void formatRespectsLocale()
+    {
+        final double testDouble = 0.125;
+        final String key = "key";
+        final String format = "{0}";
+
+        when(source.getKey(key)).thenReturn(format);
+
+        final MessageBundle bundle = builder.appendSource(source).freeze();
+
+        // Test root and French locales, number format differs
+        assertEquals("0.125", bundle.format(Locale.ROOT, key, testDouble));
+        assertEquals("0,125", bundle.format(Locale.FRANCE, key, testDouble));
     }
 
     @Test

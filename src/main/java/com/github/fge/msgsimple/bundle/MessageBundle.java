@@ -24,6 +24,7 @@ import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.IllegalFormatException;
@@ -165,6 +166,24 @@ public final class MessageBundle
     public String printf(final String key, final Object... params)
     {
         return printf(Locale.getDefault(), key,params);
+    }
+
+    public String format(final Locale locale, final String key,
+        final Object... params)
+    {
+        final String pattern = getMessage(locale, key);
+        try {
+            return new MessageFormat(pattern, locale)
+                .format(params, new StringBuffer(pattern.length()), null)
+                .toString();
+        } catch (IllegalArgumentException ignored) {
+            return pattern;
+        }
+    }
+
+    public String format(final String key, final Object... params)
+    {
+        return format(Locale.getDefault(), key, params);
     }
 
     /**

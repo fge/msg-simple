@@ -100,4 +100,20 @@ public final class PropertiesMessageSourceTest
             assertEquals(e.getMessage(), BUNDLE.getMessage("cfg.nullPath"));
         }
     }
+
+    /*
+     * Test prompted by http://stackoverflow.com/questions/17170248/enum-relating-to-a-string-array-that-was-read-from-file
+     *
+     * In fact, test that Properties' .stringPropertyNames() correctly swallows
+     * an input separated by semicolons.
+     */
+    @Test
+    public void PropertiesStringArrayAreReadAsStrings()
+        throws IOException
+    {
+        final MessageSource source
+            = PropertiesMessageSource.fromResource("/t.properties");
+
+        assertEquals(source.getKey("someStringArray"), "a;b;c;");
+    }
 }

@@ -70,8 +70,8 @@ public final class PropertiesMessageSource
         final URL url = PropertiesMessageSource.class.getResource(resourcePath);
 
         if (url == null)
-            throw new IOException("resource \"" + resourcePath
-                + "\" not found");
+            throw new IOException(
+                BUNDLE.printf("properties.resource.notFound", resourcePath));
 
         final InputStream in = url.openStream();
         try {

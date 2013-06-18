@@ -17,6 +17,7 @@
 
 package com.github.fge.msgsimple;
 
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +53,8 @@ public final class InternalBundle
         messages.put("cfg.nullInputStream", "provided InputStream is null");
         messages.put("cfg.map.nullKey", "null keys not allowed in map");
         messages.put("cfg.map.nullValue", "null values not allowed in map");
+        messages.put("properties.resource.notFound",
+            "resource \"%s\" not found");
     }
 
     public static InternalBundle getInstance()
@@ -62,6 +65,11 @@ public final class InternalBundle
     public String getMessage(final String key)
     {
         return messages.get(key);
+    }
+
+    public String printf(final String key, final Object... params)
+    {
+        return new Formatter().format(getMessage(key), params).toString();
     }
 
     public <T> T checkNotNull(final T reference, final String key)

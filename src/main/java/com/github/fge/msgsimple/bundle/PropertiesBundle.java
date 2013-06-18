@@ -100,12 +100,10 @@ public final class PropertiesBundle
 
         final String realPath = SUFFIX.matcher(s).replaceFirst("");
 
-        final MessageSourceLoader loader
-            = getLoader(realPath, Charset.forName("UTF-8"));
+        final LoadingMessageSourceProvider.Builder builder
+            = createBuilder(realPath, Charset.forName("UTF-8"));
 
-        final MessageSourceProvider provider
-            = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
-                .neverExpires().build();
+        final MessageSourceProvider provider = builder.neverExpires().build();
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }
@@ -134,20 +132,19 @@ public final class PropertiesBundle
 
         final String realPath = SUFFIX.matcher(s).replaceFirst("");
 
-        final MessageSourceLoader loader
-            = getLoader(realPath, Charset.forName("UTF-8"));
+        final LoadingMessageSourceProvider.Builder builder
+            = createBuilder(realPath, Charset.forName("UTF-8"));
 
-        final MessageSourceProvider provider
-            = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
-            .setExpiryTime(duration, timeUnit).build();
+        final MessageSourceProvider provider = builder.setExpiryTime(duration,
+            timeUnit).build();
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }
 
-    private static MessageSourceLoader getLoader(final String resourcePath,
-        final Charset charset)
+    private static LoadingMessageSourceProvider.Builder createBuilder(
+        final String resourcePath, final Charset charset)
     {
-        return new MessageSourceLoader()
+        final MessageSourceLoader loader = new MessageSourceLoader()
         {
             @Override
             public MessageSource load(final Locale locale)
@@ -158,9 +155,10 @@ public final class PropertiesBundle
                     sb.append('_').append(locale.toString());
                 sb.append(".properties");
 
-                return PropertiesMessageSource.fromResource(sb.toString(),
-                    charset);
+                return PropertiesMessageSource
+                    .fromResource(sb.toString(), charset);
             }
         };
+        return LoadingMessageSourceProvider.newBuilder().setLoader(loader);
     }
 }

@@ -25,6 +25,7 @@ import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Formatter;
 import java.util.Locale;
@@ -99,20 +100,8 @@ public final class PropertiesBundle
 
         final String realPath = SUFFIX.matcher(s).replaceFirst("");
 
-        final MessageSourceLoader loader = new MessageSourceLoader()
-        {
-            @Override
-            public MessageSource load(final Locale locale)
-                throws IOException
-            {
-                final StringBuilder sb = new StringBuilder(realPath);
-                if (!locale.equals(Locale.ROOT))
-                    sb.append('_').append(locale.toString());
-                sb.append(".properties");
-
-                return PropertiesMessageSource.fromResource(sb.toString());
-            }
-        };
+        final MessageSourceLoader loader
+            = getLoader(realPath, Charset.forName("UTF-8"));
 
         final MessageSourceProvider provider
             = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
@@ -145,25 +134,33 @@ public final class PropertiesBundle
 
         final String realPath = SUFFIX.matcher(s).replaceFirst("");
 
-        final MessageSourceLoader loader = new MessageSourceLoader()
-        {
-            @Override
-            public MessageSource load(final Locale locale)
-                throws IOException
-            {
-                final StringBuilder sb = new StringBuilder(realPath);
-                if (!locale.equals(Locale.ROOT))
-                    sb.append('_').append(locale.toString());
-                sb.append(".properties");
-
-                return PropertiesMessageSource.fromResource(sb.toString());
-            }
-        };
+        final MessageSourceLoader loader
+            = getLoader(realPath, Charset.forName("UTF-8"));
 
         final MessageSourceProvider provider
             = LoadingMessageSourceProvider.newBuilder().setLoader(loader)
             .setExpiryTime(duration, timeUnit).build();
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
+    }
+
+    private static MessageSourceLoader getLoader(final String resourcePath,
+        final Charset charset)
+    {
+        return new MessageSourceLoader()
+        {
+            @Override
+            public MessageSource load(final Locale locale)
+                throws IOException
+            {
+                final StringBuilder sb = new StringBuilder(resourcePath);
+                if (!locale.equals(Locale.ROOT))
+                    sb.append('_').append(locale.toString());
+                sb.append(".properties");
+
+                return PropertiesMessageSource.fromResource(sb.toString(),
+                    charset);
+            }
+        };
     }
 }

@@ -54,11 +54,28 @@ public final class PropertiesMessageSource
     private final Map<String, String> messages = new HashMap<String, String>();
 
     /**
-     * Create a message source from a classpath resource
+     * Create a message source from a classpath resource using UTF-8
+     *
+     * @param resourcePath the path to the properties file
+     * @return a newly created source
+     * @throws NullPointerException resource path is null
+     * @throws IOException no such resource, or an I/O error occurred while
+     * reading the file
+     */
+    public static MessageSource fromResource(final String resourcePath)
+        throws IOException
+    {
+        return fromResource(resourcePath, UTF8);
+    }
+
+    /**
+     * Create a message source from a classpath resource using the specified
+     * charset
      *
      * @since 0.5
      *
      * @param resourcePath the path to the properties file
+     * @param charset the character set to use
      * @return a newly created source
      * @throws NullPointerException resource path is null
      * @throws IOException no such resource, or an I/O error occurred while
@@ -85,22 +102,8 @@ public final class PropertiesMessageSource
     }
 
     /**
-     * Create a message source from a classpath resource using UTF-8
-     *
-     * @param resourcePath the path to the properties file
-     * @return a newly created source
-     * @throws NullPointerException resource path is null
-     * @throws IOException no such resource, or an I/O error occurred while
-     * reading the file
-     */
-    public static MessageSource fromResource(final String resourcePath)
-        throws IOException
-    {
-        return fromResource(resourcePath, UTF8);
-    }
-
-    /**
-     * Create a message source from a file object
+     * Create a message source from a properties file on the filesystem using
+     * UTF-8
      *
      * @param file the file to read from
      * @return a newly created message source
@@ -111,21 +114,16 @@ public final class PropertiesMessageSource
     public static MessageSource fromFile(final File file)
         throws IOException
     {
-        BUNDLE.checkNotNull(file, "cfg.nullFile");
-
-        final FileInputStream in = new FileInputStream(file);
-
-        try {
-            return fromInputStream(in);
-        } finally {
-            closeQuietly(in);
-        }
+        return fromFile(file, UTF8);
     }
 
     /**
-     * Create a message source from a file path
+     * Create a message source from a properties file on the filesystem using
+     * the specified encoding
      *
      * <p>This essentially calls {@link #fromFile(File)}.</p>
+     *
+     * @since 0.5
      *
      * @param path the file path
      * @return a newly created message source
@@ -136,13 +134,70 @@ public final class PropertiesMessageSource
         throws IOException
     {
         BUNDLE.checkNotNull(path, "cfg.nullPath");
-        return fromFile(new File(path));
+        return fromFile(new File(path), UTF8);
     }
 
+    /**
+     * Create a message source from a properties file on the filesystem using
+     * the specified charset
+     *
+     * @since 0.5
+     *
+     * @param file the file to read from
+     * @param charset the character set to use
+     * @return a newly created message source
+     * @throws NullPointerException file is null
+     * @throws FileNotFoundException file does not exist, or cannot access file
+     * @throws IOException failed to read from file
+     */
+    public static MessageSource fromFile(final File file, final Charset charset)
+        throws IOException
+    {
+        BUNDLE.checkNotNull(file, "cfg.nullFile");
+
+        final FileInputStream in = new FileInputStream(file);
+
+        try {
+            return fromInputStream(in, charset);
+        } finally {
+            closeQuietly(in);
+        }
+    }
+
+    /**
+     * Create a message source from a properties file on the filesystem using
+     * the specified charset
+     *
+     * <p>This essentially calls {@link #fromFile(File, Charset)}.</p>
+     *
+     * @since 0.5
+     *
+     * @param path the file path
+     * @param charset the character set
+     * @return a newly created message source
+     * @throws NullPointerException path is null
+     * @throws IOException see {@link #fromFile(File)}
+     */
+    public static MessageSource fromPath(final String path,
+        final Charset charset)
+        throws IOException
+    {
+        BUNDLE.checkNotNull(path, "cfg.nullPath");
+        return fromFile(new File(path), charset);
+    }
+
+    /*
+     * The method by which every static factory method of this class passes to
+     * load the actual properties file.
+     *
+     * It is the caller's responsibility to close the InputStream as an
+     * argument.
+     */
     private static MessageSource fromInputStream(final InputStream in,
         final Charset charset)
         throws IOException
     {
+        // can it ever happen?
         BUNDLE.checkNotNull(in, "cfg.nullInputStream");
 
         final Reader reader = new InputStreamReader(in, charset);
@@ -156,14 +211,10 @@ public final class PropertiesMessageSource
         }
     }
 
-    private static MessageSource fromInputStream(final InputStream in)
-        throws IOException
-    {
-        return fromInputStream(in, UTF8);
-    }
-
     private PropertiesMessageSource(final Properties properties)
     {
+        // I have yet to see an example for which the full keyset of a
+        // Properties object is not returned by keySet(), but...
         for (final String key: properties.stringPropertyNames())
             messages.put(key, properties.getProperty(key));
     }

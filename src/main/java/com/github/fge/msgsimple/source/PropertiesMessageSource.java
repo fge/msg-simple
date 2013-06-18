@@ -56,13 +56,16 @@ public final class PropertiesMessageSource
     /**
      * Create a message source from a classpath resource
      *
+     * @since 0.5
+     *
      * @param resourcePath the path to the properties file
      * @return a newly created source
      * @throws NullPointerException resource path is null
      * @throws IOException no such resource, or an I/O error occurred while
      * reading the file
      */
-    public static MessageSource fromResource(final String resourcePath)
+    public static MessageSource fromResource(final String resourcePath,
+        final Charset charset)
         throws IOException
     {
         BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
@@ -75,10 +78,25 @@ public final class PropertiesMessageSource
 
         final InputStream in = url.openStream();
         try {
-            return fromInputStream(in);
+            return fromInputStream(in, charset);
         } finally {
             closeQuietly(in);
         }
+    }
+
+    /**
+     * Create a message source from a classpath resource using UTF-8
+     *
+     * @param resourcePath the path to the properties file
+     * @return a newly created source
+     * @throws NullPointerException resource path is null
+     * @throws IOException no such resource, or an I/O error occurred while
+     * reading the file
+     */
+    public static MessageSource fromResource(final String resourcePath)
+        throws IOException
+    {
+        return fromResource(resourcePath, UTF8);
     }
 
     /**
@@ -121,12 +139,13 @@ public final class PropertiesMessageSource
         return fromFile(new File(path));
     }
 
-    private static MessageSource fromInputStream(final InputStream in)
+    private static MessageSource fromInputStream(final InputStream in,
+        final Charset charset)
         throws IOException
     {
         BUNDLE.checkNotNull(in, "cfg.nullInputStream");
 
-        final Reader reader = new InputStreamReader(in, UTF8);
+        final Reader reader = new InputStreamReader(in, charset);
         try {
             final Properties properties = new Properties();
             // This method is available only since 1.6+
@@ -135,6 +154,12 @@ public final class PropertiesMessageSource
         } finally {
             closeQuietly(reader);
         }
+    }
+
+    private static MessageSource fromInputStream(final InputStream in)
+        throws IOException
+    {
+        return fromInputStream(in, UTF8);
     }
 
     private PropertiesMessageSource(final Properties properties)

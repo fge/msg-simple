@@ -21,6 +21,7 @@ import com.github.fge.msgsimple.InternalBundle;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import static org.testng.Assert.*;
 
@@ -33,11 +34,21 @@ public final class PropertiesMessageSourceTest
     private static final String VALUE = "bêêêê";
 
     @Test
-    public void propertyFilesAreReadAsUTF8()
+    public void propertyFilesAreReadAsUTF8ByDefault()
         throws IOException
     {
         final MessageSource source
             = PropertiesMessageSource.fromResource("/t.properties");
+
+        assertEquals(source.getKey(KEY), VALUE);
+    }
+
+    @Test
+    public void propertyFilesAreLoadedUsingTheRequiredEncoding()
+        throws IOException
+    {
+        final MessageSource source = PropertiesMessageSource
+            .fromResource("/t_iso.properties", Charset.forName("ISO-8859-1"));
 
         assertEquals(source.getKey(KEY), VALUE);
     }

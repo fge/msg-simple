@@ -150,6 +150,7 @@ public final class PropertiesBundle
         @Nullable final TimeUnit unit)
     {
         BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
+        BUNDLE.checkNotNull(charset, "cfg.nullCharset");
 
         /*
          * Calculate the real path of the resource

@@ -53,8 +53,8 @@ public final class InternalBundle
         messages.put("cfg.nullInputStream", "provided InputStream is null");
         messages.put("cfg.map.nullKey", "null keys not allowed in map");
         messages.put("cfg.map.nullValue", "null values not allowed in map");
-        messages.put("properties.resource.notFound",
-            "resource \"%s\" not found");
+        messages.put("properties.resource.notFound", "resource \"%s\" not found");
+        messages.put("cfg.nullCharset", "charset cannot be null");
     }
 
     public static InternalBundle getInstance()

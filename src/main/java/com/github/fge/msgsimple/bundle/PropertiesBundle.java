@@ -95,10 +95,7 @@ public final class PropertiesBundle
     {
         BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
 
-        final String s = resourcePath.startsWith("/") ? resourcePath
-            : '/' + resourcePath;
-
-        final String realPath = SUFFIX.matcher(s).replaceFirst("");
+        final String realPath = toRealPath(resourcePath);
 
         final LoadingMessageSourceProvider.Builder builder
             = createBuilder(realPath, Charset.forName("UTF-8"));
@@ -127,10 +124,7 @@ public final class PropertiesBundle
     {
         BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
 
-        final String s = resourcePath.startsWith("/") ? resourcePath
-            : '/' + resourcePath;
-
-        final String realPath = SUFFIX.matcher(s).replaceFirst("");
+        final String realPath = toRealPath(resourcePath);
 
         final LoadingMessageSourceProvider.Builder builder
             = createBuilder(realPath, Charset.forName("UTF-8"));
@@ -160,5 +154,13 @@ public final class PropertiesBundle
             }
         };
         return LoadingMessageSourceProvider.newBuilder().setLoader(loader);
+    }
+
+    private static String toRealPath(final String input)
+    {
+        final String s = input.startsWith("/") ? input
+            : '/' + input;
+
+        return SUFFIX.matcher(s).replaceFirst("");
     }
 }

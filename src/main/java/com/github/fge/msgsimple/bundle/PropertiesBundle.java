@@ -24,6 +24,7 @@ import com.github.fge.msgsimple.provider.MessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 import com.github.fge.msgsimple.source.PropertiesMessageSource;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
@@ -96,16 +97,7 @@ public final class PropertiesBundle
      */
     public static MessageBundle forPath(final String resourcePath)
     {
-        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
-
-        final String realPath = toRealPath(resourcePath);
-
-        final LoadingMessageSourceProvider.Builder builder
-            = createBuilder(realPath, Charset.forName("UTF-8"));
-
-        final MessageSourceProvider provider = builder.neverExpires().build();
-
-        return MessageBundle.newBuilder().appendProvider(provider).freeze();
+        return createBundle(resourcePath, UTF8, 0L, null);
     }
 
     /**
@@ -125,8 +117,6 @@ public final class PropertiesBundle
     public static MessageBundle forPath(final String resourcePath,
         final long duration, final TimeUnit timeUnit)
     {
-        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
-
         return createBundle(resourcePath, UTF8, duration, timeUnit);
     }
 
@@ -151,18 +141,23 @@ public final class PropertiesBundle
      */
     public static MessageBundle legacyResourceBundle(final String resourcePath)
     {
-        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
-
         return createBundle(resourcePath, ISO, 0L, null);
     }
 
+    // Note: "unit" nullable only if "duration" is 0L
     private static MessageBundle createBundle(final String resourcePath,
-        final Charset charset, final long duration, final TimeUnit unit)
+        final Charset charset, final long duration,
+        @Nullable final TimeUnit unit)
     {
+        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
+
         /*
          * Calculate the real path of the resource
          */
-        final String realPath = toRealPath(resourcePath);
+        final String s = resourcePath.startsWith("/") ? resourcePath
+            : '/' + resourcePath;
+
+        final String realPath = SUFFIX.matcher(s).replaceFirst("");
 
         /*
          * Create the loader implementation
@@ -189,7 +184,7 @@ public final class PropertiesBundle
         final LoadingMessageSourceProvider.Builder builder
             = LoadingMessageSourceProvider.newBuilder().setLoader(loader);
 
-        if (duration == 0)
+        if (duration == 0L)
             builder.neverExpires();
         else
             builder.setLoadTimeout(duration, unit);
@@ -199,32 +194,4 @@ public final class PropertiesBundle
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }
 
-    private static LoadingMessageSourceProvider.Builder createBuilder(
-        final String resourcePath, final Charset charset)
-    {
-        final MessageSourceLoader loader = new MessageSourceLoader()
-        {
-            @Override
-            public MessageSource load(final Locale locale)
-                throws IOException
-            {
-                final StringBuilder sb = new StringBuilder(resourcePath);
-                if (!locale.equals(Locale.ROOT))
-                    sb.append('_').append(locale.toString());
-                sb.append(".properties");
-
-                return PropertiesMessageSource
-                    .fromResource(sb.toString(), charset);
-            }
-        };
-        return LoadingMessageSourceProvider.newBuilder().setLoader(loader);
-    }
-
-    private static String toRealPath(final String input)
-    {
-        final String s = input.startsWith("/") ? input
-            : '/' + input;
-
-        return SUFFIX.matcher(s).replaceFirst("");
-    }
 }

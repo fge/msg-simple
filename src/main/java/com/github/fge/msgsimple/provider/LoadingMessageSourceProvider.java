@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -210,6 +211,20 @@ public final class LoadingMessageSourceProvider
             return defaultSource;
         } catch (TimeoutException ignored) {
             task.cancel(true);
+            return defaultSource;
+        } catch (CancellationException ignored) {
+            /*
+             * Ugly :( Unfortunately this can happen. Scenario:
+             *
+             * thread1            thread2
+             * --------           --------
+             * grabs task
+             *                    grabs task
+             *                    get()s
+             * get()s
+             * timeout, cancels
+             *                    BOOM: CancellationException
+             */
             return defaultSource;
         }
     }

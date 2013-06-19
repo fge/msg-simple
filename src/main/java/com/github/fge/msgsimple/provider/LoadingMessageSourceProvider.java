@@ -197,7 +197,7 @@ public final class LoadingMessageSourceProvider
             return source == null ? defaultSource : source;
         } catch (InterruptedException ignored) {
             /*
-             * Restore interrup state. We will not throw the exception here,
+             * Restore interrupt state. We will not throw the exception here,
              * since static providers exist, which do not throw it -- and how
              * would a message provider API sound to you if you had to catch
              * InterruptedException each time you try and fetch a message?

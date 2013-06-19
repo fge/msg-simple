@@ -314,6 +314,39 @@ public final class LoadingMessageSourceProviderTest
         assertSame(provider.getMessageSource(Locale.ROOT), source);
     }
 
+    @Test
+    public void cancelledTasksDoNotBreakLoading()
+        throws IOException, InterruptedException, ExecutionException
+    {
+        when(loader.load(any(Locale.class)))
+            .then(answerWithDelay(source, 1L, TimeUnit.MINUTES));
+
+        final MessageSourceProvider provider = builder.setLoader(loader)
+            .setLoadTimeout(50L, TimeUnit.MILLISECONDS).build();
+
+        final int nThreads = 30;
+        final ExecutorService service = Executors.newFixedThreadPool(nThreads);
+        final List<Callable<MessageSource>> callables
+            = new ArrayList<Callable<MessageSource>>();
+
+        for (int i = 0; i < nThreads; i++)
+            callables.add(new Callable<MessageSource>()
+            {
+                @Override
+                public MessageSource call()
+                    throws IOException
+                {
+                    return provider.getMessageSource(Locale.ROOT);
+                }
+            });
+
+        for (final Future<MessageSource> future: service.invokeAll(callables))
+            future.get();
+        service.shutdown();
+
+        assertTrue(true);
+    }
+
     private static Answer<MessageSource> answerWithDelay(
         final MessageSource source, final long duration, final TimeUnit unit)
     {

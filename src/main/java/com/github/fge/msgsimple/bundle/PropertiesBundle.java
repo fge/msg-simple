@@ -69,6 +69,9 @@ public final class PropertiesBundle
     private static final InternalBundle BUNDLE
         = InternalBundle.getInstance();
 
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset ISO = Charset.forName("ISO-8859-1");
+
     private static final Pattern SUFFIX = Pattern.compile("\\.properties$");
 
     private PropertiesBundle()
@@ -124,13 +127,74 @@ public final class PropertiesBundle
     {
         BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
 
+        return createBundle(resourcePath, UTF8, duration, timeUnit);
+    }
+
+    /**
+     * Create a message bundle mimicking a {@link ResourceBundle}
+     *
+     * <p>Using this method will provide a {@link MessageBundle} with the
+     * following characteristics:</p>
+     *
+     * <ul>
+     *     <li>property files will be read using the ISO-8859-1 encoding,</li>
+     *     <li>no expiry time defined.</li>
+     * </ul>
+     *
+     * <p>This method is only there for legacy reasons. Ultimately, you should
+     * choose to use a more modern (ie, UTF-8) message bundle instead.</p>
+     *
+     * @param resourcePath the resource path
+     * @return the matching bundle
+     *
+     * @see PropertiesMessageSource#fromResource(String, Charset)
+     */
+    public static MessageBundle legacyResourceBundle(final String resourcePath)
+    {
+        BUNDLE.checkNotNull(resourcePath, "cfg.nullResourcePath");
+
+        return createBundle(resourcePath, ISO, 0L, null);
+    }
+
+    private static MessageBundle createBundle(final String resourcePath,
+        final Charset charset, final long duration, final TimeUnit unit)
+    {
+        /*
+         * Calculate the real path of the resource
+         */
         final String realPath = toRealPath(resourcePath);
 
-        final LoadingMessageSourceProvider.Builder builder
-            = createBuilder(realPath, Charset.forName("UTF-8"));
+        /*
+         * Create the loader implementation
+         */
+        final MessageSourceLoader loader = new MessageSourceLoader()
+        {
+            @Override
+            public MessageSource load(final Locale locale)
+                throws IOException
+            {
+                final StringBuilder sb = new StringBuilder(realPath);
+                if (!locale.equals(Locale.ROOT))
+                    sb.append('_').append(locale.toString());
+                sb.append(".properties");
 
-        final MessageSourceProvider provider = builder.setExpiryTime(duration,
-            timeUnit).build();
+                return PropertiesMessageSource
+                    .fromResource(sb.toString(), charset);
+            }
+        };
+
+        /*
+         * Create the MessageSourceProvider
+         */
+        final LoadingMessageSourceProvider.Builder builder
+            = LoadingMessageSourceProvider.newBuilder().setLoader(loader);
+
+        if (duration == 0)
+            builder.neverExpires();
+        else
+            builder.setLoadTimeout(duration, unit);
+
+        final MessageSourceProvider provider = builder.build();
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }

@@ -88,8 +88,7 @@ public final class LoadingMessageSourceProvider
         }
     };
 
-    private static final InternalBundle BUNDLE
-        = InternalBundle.getInstance();
+    private static final InternalBundle BUNDLE = InternalBundle.getInstance();
 
     private static final int NTHREADS = 3;
 
@@ -210,6 +209,11 @@ public final class LoadingMessageSourceProvider
         } catch (ExecutionException ignored) {
             return defaultSource;
         } catch (TimeoutException ignored) {
+            /*
+             * Cancel the task here; other potential users of this locale will
+             * be greeted with a CancellationException, until one enters this
+             * method and resets the task.
+             */
             task.cancel(true);
             return defaultSource;
         } catch (CancellationException ignored) {
@@ -391,10 +395,6 @@ public final class LoadingMessageSourceProvider
 
         /**
          * Set this loading provider so that entries never expire
-         *
-         * <p>Note that, as noted in the description, apart from loading
-         * timeouts, successes and failures are recorded permanently (see
-         * {@link FutureTask}).</p>
          *
          * @since 0.5
          *

@@ -27,48 +27,41 @@ import com.github.fge.msgsimple.source.PropertiesMessageSource;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
-import java.util.Formatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
- * Utility class to build a localized, UTF-8 {@link ResourceBundle}
+ * Utility class to instantiate message bundles from Java property files
  *
- * <p>This class only contains one method to return a {@link MessageBundle}
- * which operates nearly the same as a {@link ResourceBundle}, with two
- * differences:</p>
+ * <p>This is the class you will use if you want to load a legay {@link
+ * ResourceBundle} (using {@link #legacyResourceBundle(String)}).</p>
+ *
+ * <p>The generic method is {@link #forPath(String, Charset, long, TimeUnit)}.
+ * You can therefore specify the character set and timeout. When no character
+ * set is specified, the default is UTF-8, except for {@link
+ * #legacyResourceBundle(String)} which will read property files as {@link
+ * ResourceBundle} does: in ISO-8859-1.</p>
+ *
+ * <p>All constructors have a {@code resourcePath} argument; in the same vein
+ * as {@link ResourceBundle}, the following inputs are allowed:</p>
  *
  * <ul>
- *     <li>property files are read in UTF-8, not ISO-8859-1;</li>
- *     <li>formatted messages use {@link Formatter}, not {@link
- *     MessageFormat}.</li>
+ *     <li>{@code org/foobar/message.properties};</li>
+ *     <li>{@code org/foobar/message};</li>
+ *     <li>{@code /org/foobar/message.properties};</li>
+ *     <li>{@code /org/foobar/message}.</li>
  * </ul>
  *
- * <p>Similarly to a {@link ResourceBundle}, it will try and look up a key in
- * "locale-enabled" property files (for instance, {@code foo_fr_FR.properties}
- * for bundle {@code foo} and locale {@code fr_FR}), and "descend" to less
- * specific locales (in this case, {@code fr} then {@link Locale#ROOT}) if an
- * exact match is not found.</p>
- *
- * <p>As it is a {@link MessageBundle}, it means you can extend it further by
- * {@link MessageBundle#thaw()}ing it and appending/prepending other message
- * source providers etc.</p>
- *
- * <p><b>IMPORTANT NOTE:</b> the default behaviour is to NOT expire if a load
- * succeeds or fails, for backwards compatibility reasons. However, you can use
- * the appropriate methods if you want expiry.</p>
- *
+ * @see MessageBundle
  * @see PropertiesMessageSource
  * @see MessageSourceLoader
  * @see LoadingMessageSourceProvider
  */
 public final class PropertiesBundle
 {
-    private static final InternalBundle BUNDLE
-        = InternalBundle.getInstance();
+    private static final InternalBundle BUNDLE = InternalBundle.getInstance();
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final Charset ISO = Charset.forName("ISO-8859-1");
@@ -80,16 +73,8 @@ public final class PropertiesBundle
     }
 
     /**
-     * Create a {@link ResourceBundle}-like {@link MessageBundle}
-     *
-     * <p>The path given as an argument can be any of the following:</p>
-     *
-     * <ul>
-     *     <li>{@code org/foobar/message.properties};</li>
-     *     <li>{@code org/foobar/message};</li>
-     *     <li>{@code /org/foobar/message.properties};</li>
-     *     <li>{@code /org/foobar/message}.</li>
-     * </ul>
+     * Create a message bundle from a set of property files, using the UTF-8
+     * character set
      *
      * @param resourcePath the resource path
      * @throws NullPointerException resource path is null
@@ -101,7 +86,8 @@ public final class PropertiesBundle
     }
 
     /**
-     * Create a {@link ResourceBundle}-like {@link MessageBundle} with expiry
+     * Create a message bundle from a set of property files, using the UTF-8
+     * character set, and an expiry delay
      *
      * @since 0.5
      *
@@ -118,6 +104,28 @@ public final class PropertiesBundle
         final long duration, final TimeUnit timeUnit)
     {
         return createBundle(resourcePath, UTF8, duration, timeUnit);
+    }
+
+    /**
+     * Create a message bundle from a set of property files, with a defined
+     * charset and expiry time
+     *
+     * @since 0.5
+     *
+     * @param resourcePath the resource path
+     * @param charset the character set
+     * @param duration expiry duration
+     * @param unit expiry time unit
+     * @throws NullPointerException resource path or duration is null
+     * @throws IllegalArgumentException duration is 0 or less
+     * @return a {@link MessageBundle}
+     *
+     * @see LoadingMessageSourceProvider
+     */
+    public static MessageBundle forPath(final String resourcePath,
+        final Charset charset, final long duration, final TimeUnit unit)
+    {
+        return createBundle(resourcePath, charset, duration, unit);
     }
 
     /**
@@ -194,5 +202,4 @@ public final class PropertiesBundle
 
         return MessageBundle.newBuilder().appendProvider(provider).freeze();
     }
-
 }

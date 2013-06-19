@@ -201,20 +201,9 @@ public final class LoadingMessageSourceProviderTest
     public void whenLoadTimesOutDefaultSourceIsReturned()
         throws IOException
     {
-        when(loader.load(Locale.ROOT)).then(new Answer<MessageSource>()
-        {
-            @Override
-            public MessageSource answer(final InvocationOnMock invocation)
-                throws IOException
-            {
-                try {
-                    TimeUnit.SECONDS.sleep(1L);
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                }
-                return source;
-            }
-        }).thenReturn(source);
+        when(loader.load(Locale.ROOT))
+            .then(answerWithDelay(source, 1L, TimeUnit.MINUTES))
+            .thenReturn(source);
 
         final MessageSourceProvider provider
             = builder.setLoader(loader)
@@ -315,25 +304,32 @@ public final class LoadingMessageSourceProviderTest
     public void expiryDoesNotInterfereWithLongMessageLoad()
         throws IOException
     {
-        when(loader.load(any(Locale.class))).then(new Answer<MessageSource>()
-        {
-            @Override
-            public MessageSource answer(final InvocationOnMock invocation)
-                throws IOException
-            {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(50L);
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                }
-                return source;
-            }
-        });
+        when(loader.load(any(Locale.class)))
+            .then(answerWithDelay(source, 50L, TimeUnit.MILLISECONDS));
 
         final MessageSourceProvider provider = builder.setLoader(loader)
             .setExpiryTime(20L, TimeUnit.MILLISECONDS)
             .setDefaultSource(defaultSource).build();
 
         assertSame(provider.getMessageSource(Locale.ROOT), source);
+    }
+
+    private static Answer<MessageSource> answerWithDelay(
+        final MessageSource source, final long duration, final TimeUnit unit)
+    {
+        return new Answer<MessageSource>()
+        {
+            @Override
+            public MessageSource answer(final InvocationOnMock invocation)
+                throws IOException
+            {
+                try {
+                    unit.sleep(duration);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
+                return source;
+            }
+        };
     }
 }

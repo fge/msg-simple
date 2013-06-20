@@ -1,3 +1,10 @@
+## 0.5
+
+* Complete Javadoc.
+* Read property files using any encoding.
+* New static factory method to load a legacy `ResourceBundle`.
+* Implement loading expiry and timeout.
+
 ## 0.4.1
 
 * Fix bug wih .printf() not capturing all possible exceptions thrown by Formatter.

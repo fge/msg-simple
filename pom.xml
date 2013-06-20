@@ -22,7 +22,7 @@
     <groupId>com.github.fge</groupId>
     <artifactId>msg-simple</artifactId>
     <name>msg-simple</name>
-    <version>0.5</version>
+    <version>0.6-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle</description>
     <url>https://github.com/fge/msg-simple</url>

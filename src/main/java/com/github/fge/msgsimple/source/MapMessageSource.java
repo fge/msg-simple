@@ -48,21 +48,6 @@ public final class MapMessageSource
 
     private final Map<String, String> messages;
 
-    /**
-     * Build a message source from a map directly
-     *
-     * @param messages the message map
-     * @throws NullPointerException the map is null; or at least one key or
-     * value is null
-     * @deprecated use {@link #newBuilder()} instead. Will be removed in 0.5.
-     * @see Builder
-     */
-    @Deprecated
-    public MapMessageSource(final Map<String, String> messages)
-    {
-        this.messages = new HashMap<String, String>(checkMap(messages));
-    }
-
     private MapMessageSource(final Builder builder)
     {
         messages = new HashMap<String, String>(builder.messages);
@@ -140,18 +125,5 @@ public final class MapMessageSource
         {
             return new MapMessageSource(this);
         }
-    }
-
-    // TODO: remove when public constructor is removed
-    private static Map<String, String> checkMap(final Map<String, String> map)
-    {
-        BUNDLE.checkNotNull(map, "cfg.nullMap");
-
-        for (final Map.Entry<String, String> entry: map.entrySet()) {
-            BUNDLE.checkNotNull(entry.getKey(), "cfg.map.nullKey");
-            BUNDLE.checkNotNull(entry.getValue(), "cfg.map.nullValue");
-        }
-
-        return map;
     }
 }

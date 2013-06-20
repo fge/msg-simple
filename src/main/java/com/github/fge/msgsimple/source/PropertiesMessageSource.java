@@ -32,14 +32,13 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * A message source built from a properties files
  *
- * <p>This can be viewed as a "single locale equivalent" of a {@link
- * ResourceBundle}, with the key difference that the property file is read
- * using UTF-8 instead of ISO-8859-1.</p>
+ * <p>You can load property files from the classpath or from files on your
+ * filesystem. You can also specify the character set used to read the file;
+ * methods without a character set as an argument use UTF-8.</p>
  *
  * @see Properties#load(Reader)
  */

@@ -1,0 +1,143 @@
+<!--
+  ~ Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the Lesser GNU General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ Lesser GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>msg-simple: a better ResourceBundle</title>
+</head>
+
+<body>
+
+<h2>What is it</h2>
+
+<p>This package is an alternative to the JDK's {@link java.util.ResourceBundle}
+with the following characteristics:</p>
+
+<ul>
+    <li>extensible API;</li>
+    <li>can read property files using any character set;</li>
+    <li>full backwards-compatibility with {@link java.util.ResourceBundle};</li>
+    <li>i18n/locale support;</li>
+    <li>stackable message sources; can prepend as well as append;</li>
+    <li>static message sources or on-demand loading message sources, with
+    configurable timeout and expiry;</li>
+    <li>{@link java.util.Formatter} support, in addition to {@link
+    java.text.MessageFormat} support;</li>
+    <li>error-proof: missing messages or bad format arguments won't throw
+    exceptions (only null arguments will, with appropriate error messages);</li>
+    <li>builtin assertions into message bundles (null checks, condition checks);
+    </li>
+    <li>registration of message bundles using the {@link
+    java.util.ServiceLoader} API.</li>
+</ul>
+
+<h2>Quick start</h2>
+
+<p>If you wish to reuse an existing {@link java.util.ResourceBundle}, the class
+you will use is {@link com.github.fge.msgsimple.bundle.PropertiesBundle}. It
+contains static factory methods to provide a ready-to-use {@link
+com.github.fge.msgsimple.bundle.MessageBundle}:</p>
+
+<pre>
+    // Load a properties bundle using UTF-8 and no expiry
+    final MessageBundle bundle = PropertiesBundle.forPath("path/to/messages");
+    // Load a properties bundle using UTF-8 and an expiry of 15 minutes
+    final MessageBundle bundle = PropertiesBundle.forPath("path/to/messages",
+        15L, TimeUnit.MINUTES);
+    // Load a legacy resource bundle (ISO-8859-1 charset, no expiry)
+    final MessageBundle bundle
+        = PropertiesBundle.legacyResourceBundle("path/to/messages");
+</pre>
+
+<p>You are now ready to print out messages:</p>
+
+<pre>
+    // Message using the default locale
+    bundle.getMessage("message.key");
+    // Message using an alternative locale
+    bundle.getMessage(Locale.CANADA, "message.key");
+    bundle.getMessage(LocaleUtils.parseLocale("it_IT_sicily", "message.key");
+    // message using a Formatter
+    bundle.printf("message.key", arg1, arg2);
+    // message using MessageFormat
+    bundle.format("message.key", arg1, arg2);
+    // etc etc
+</pre>
+
+<p>You can also use preconditions:</p>
+
+<pre>
+    // Checks the reference for null; throws NullPointerException if it is;
+    final MyClass obj = bundle.checkForNull(ref, "err.nullMyClass");
+    // Checks whether the condition is true; throws IllegalArgumentException
+    // otherwise
+    bundle.checkArgumentPrintf(something.isOk(), "err.something.notOk", arg1,
+        arg2);
+</pre>
+
+<h2>Extending the API</h2>
+
+<p>The API is very simple to extend. There are two interfaces:</p>
+
+<ul>
+    <li>{@link com.github.fge.msgsimple.source.MessageSource} represents a
+    message source;</li>
+    <li>{@link com.github.fge.msgsimple.provider.MessageSourceProvider}
+    represents a related set of message sources;</li>
+    <li>{@link com.github.fge.msgsimple.provider.MessageSourceLoader} represents
+    an on-demand loader for dynamic message sources.</li>
+</ul>
+
+<p>This library provides two message source implementations: {@link
+com.github.fge.msgsimple.source.MapMessageSource} is a "quickpatch" source
+backed by a {@link java.util.Map}, and {@link
+com.github.fge.msgsimple.source.PropertiesMessageSource} reads a property file
+using the encoding of your choice.</p>
+
+<p>It also provides two implementations of message source providers: {@link
+com.github.fge.msgsimple.provider.StaticMessageSourceProvider} (static,
+unchanging message sources) and {@link
+com.github.fge.msgsimple.provider.LoadingMessageSourceProvider} (on-demand
+loading). Using the latter, you can specify an expiry time and a loading
+timeout.</p>
+
+<h2>Using {@link java.util.ServiceLoader}</h2>
+
+<p>In order to use the service loader capability of the JDK, you need two
+elements:</p>
+
+<ul>
+    <li>one or more implementation(s) of {@link
+    com.github.fge.msgsimple.serviceloader.MessageBundleProvider};</li>
+    <li>a file in your classpath, named {@code
+    META-INF/services/com.github.fge.msgsimple.serviceloader.MessageBundleProvider}
+    listing your implementations (one per line).</li>
+</ul>
+
+<p>Once this is done, you can get a bundle using:</p>
+
+<pre>
+    final MessageBundle bundle = MessageBundleFactory.getBundle(MyBundle.class);
+</pre>
+
+<h2>More information</h2>
+
+<p>See <a href="https://github.com/fge/msg-simple/wiki/Examples">here</a>
+for more complete usage examples.</p>
+
+</body>
+</html>

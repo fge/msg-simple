@@ -36,7 +36,9 @@ import java.util.regex.Pattern;
  * Utility class to instantiate message bundles from Java property files
  *
  * <p>This is the class you will use if you want to load a legay {@link
- * ResourceBundle} (using {@link #legacyResourceBundle(String)}).</p>
+ * ResourceBundle} (using {@link #legacyResourceBundle(String)}). However, if
+ * you are starting a new bundle, it is recommended to use the other methods.
+ * </p>
  *
  * <p>The generic method is {@link #forPath(String, Charset, long, TimeUnit)}.
  * You can therefore specify the character set and timeout. When no character
@@ -116,7 +118,7 @@ public final class PropertiesBundle
      * @param charset the character set
      * @param duration expiry duration
      * @param unit expiry time unit
-     * @throws NullPointerException resource path or duration is null
+     * @throws NullPointerException resource path, charset or duration is null
      * @throws IllegalArgumentException duration is 0 or less
      * @return a {@link MessageBundle}
      *

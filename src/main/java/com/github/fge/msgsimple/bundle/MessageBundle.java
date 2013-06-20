@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Base abstract class for message bundles
+ * A message bundle
  *
  * <p>A bundle is a list of {@link MessageSourceProvider}s. When a message is
  * looked up, providers are queried in order for a {@link MessageSource} for
@@ -168,6 +168,17 @@ public final class MessageBundle
         return printf(Locale.getDefault(), key, params);
     }
 
+    /**
+     * Get a locale-dependent message formatted using {@link MessageFormat}
+     *
+     * <p>You should really consider using {@link #printf(Locale, String,
+     * Object...)} instead.</p>
+     *
+     * @param locale the locale
+     * @param key the key
+     * @param params the format parameters
+     * @return the formatted message
+     */
     public String format(final Locale locale, final String key,
         final Object... params)
     {
@@ -181,6 +192,17 @@ public final class MessageBundle
         }
     }
 
+    /**
+     * Get a {@link MessageFormat} formatted message with the current default
+     * locale
+     *
+     * <p>You should really consider using {@link #printf(String, Object...)}
+     * instead.</p>
+     *
+     * @param key the key
+     * @param params the format parameters
+     * @return the formatted message
+     */
     public String format(final String key, final Object... params)
     {
         return format(Locale.getDefault(), key, params);

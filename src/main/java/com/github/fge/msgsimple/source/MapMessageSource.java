@@ -106,7 +106,8 @@ public final class MapMessageSource
          *
          * @param map the map
          * @return this
-         * @throws NullPointerException map is null, or either one
+         * @throws NullPointerException the map is null; or a key, or value, is
+         * null
          */
         public Builder putAll(final Map<String, String> map)
         {

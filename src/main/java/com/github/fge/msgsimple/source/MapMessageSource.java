@@ -108,10 +108,9 @@ public final class MapMessageSource
          */
         public Builder put(final String key, final String message)
         {
-            messages.put(
-                BUNDLE.checkNotNull(key, "cfg.map.nullKey"),
-                BUNDLE.checkNotNull(message, "cfg.map.nullValue")
-            );
+            BUNDLE.checkNotNull(key, "cfg.map.nullKey");
+            BUNDLE.checkNotNull(message, "cfg.map.nullValue");
+            messages.put(key, message);
             return this;
         }
 
@@ -126,8 +125,8 @@ public final class MapMessageSource
          */
         public Builder putAll(final Map<String, String> map)
         {
-            for (final Map.Entry<String, String> entry:
-                BUNDLE.checkNotNull(map, "cfg.nullMap").entrySet())
+            BUNDLE.checkNotNull(map, "cfg.nullMap");
+            for (final Map.Entry<String, String> entry: map.entrySet())
                 put(entry.getKey(), entry.getValue());
             return this;
         }

@@ -26,11 +26,9 @@ import java.util.Map;
  */
 public final class InternalBundle
 {
-    private static final InternalBundle INSTANCE
-        = new InternalBundle();
+    private static final InternalBundle INSTANCE = new InternalBundle();
 
-    private final Map<String, String> messages
-        = new HashMap<String, String>();
+    private final Map<String, String> messages = new HashMap<String, String>();
 
     private InternalBundle()
     {

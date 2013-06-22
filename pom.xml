@@ -28,6 +28,52 @@
     <url>https://github.com/fge/msg-simple</url>
     <build>
         <plugins>
+            <!--
+                Ensure that the sources, binary and javadoc jars are generated
+                on the package phase
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <!--
+                                It is necessary to call this target instead of "jar". See here:
+                                http://stackoverflow.com/questions/10567551/difference-between-maven-source-plugin-jar-and-jar-no-fork-goal
+                            -->
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <links>
+                        <link>http://docs.oracle.com/javase/6/docs/api</link>
+                        <link>http://jsr-305.googlecode.com/svn/trunk/javadoc</link>
+                        <link>http://fge.github.com/btf</link>
+                    </links>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -55,28 +101,11 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <links>
-                        <link>http://docs.oracle.com/javase/6/docs/api</link>
-                        <link>http://jsr-305.googlecode.com/svn/trunk/javadoc</link>
-                        <link>http://fge.github.com/btf</link>
-                    </links>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>javadoc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.4</version>
+                <!--
+                    Remove! It causes gpg:sign to be run on mvn install...
+                    Note: originally inherited from Sonatype's parent pom
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -86,6 +115,7 @@
                         </goals>
                     </execution>
                 </executions>
+                -->
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>

@@ -139,3 +139,42 @@ uploadArchives {
         }
     }
 }
+
+/*
+ * TEST CODE
+ */
+
+final int CLASS_SUFFIX = ".class".length();
+final URLClassLoader classLoader = this.class.classLoader;
+// Where the classes are: OK
+final File classesDir = sourceSets.main.output.classesDir;
+final String basePath = classesDir.getCanonicalPath();
+
+// Add them to the classloader: OK
+classLoader.addURL(classesDir.toURI().toURL())
+
+// Recurse over each file
+classesDir.eachFileRecurse {
+    // You "return" from a closure, you do not "continue"...
+    if (!isPotentialClass(it))
+        return;
+
+    // Transform into a class name
+    final String path = it.getAbsolutePath();
+    final String name = path.substring(basePath.length() + 1);
+    final String className = name.substring(0, name.length() - CLASS_SUFFIX)
+        .replace('/', '.');
+
+    // Try and load it
+    try {
+        classLoader.loadClass(className);
+        println(className);
+    } catch (NoClassDefFoundError ignored) {
+        println("failed to load " + className + ": " + ignored);
+    }
+}
+
+boolean isPotentialClass(final File file)
+{
+    return file.isFile() && file.name.endsWith(".class")
+}

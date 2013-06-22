@@ -3,6 +3,8 @@
 The license of this project is LGPLv3 or later. See file src/main/resources/LICENSE for the full
 text.
 
+**NOTE**: from version 0.6 on, this project uses [Gradle](http://gradle.org) as a build system.
+
 ## What this is
 
 This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
@@ -19,7 +21,7 @@ See below for more.
 
 ## Versions
 
-The current version is **0.5**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
+The current version is **0.6**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
 
 See [here](https://github.com/fge/msg-simple/wiki/Examples) for sample API usage.
 

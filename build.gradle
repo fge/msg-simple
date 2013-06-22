@@ -22,7 +22,7 @@ apply(plugin: "signing")
  * Base variables. Note: project name is in settings.gradle
  */
 group = "com.github.fge"
-version = "0.6"
+version = "0.7-SNAPSHOT"
 
 /*
  * Compiler guidance

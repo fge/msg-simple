@@ -100,7 +100,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment {
-                MavenDeployment deployment -> signPom(deployment)
+                MavenDeployment deployment -> signing.signPom(deployment)
             }
 
             repository(url: sonatypeRepoURI) {
@@ -133,7 +133,6 @@ uploadArchives {
                         id "fge"
                         name "Francis Galiegue"
                         email "fgaliegue@gmail.com"
-                        role "Initial developer"
                     }
                 }
             }

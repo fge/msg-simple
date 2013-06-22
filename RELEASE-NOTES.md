@@ -1,3 +1,8 @@
+## 0.6
+
+* Fix a stupid error in LoadingMessageSourceProvider with regards to initial expiration delay.
+* Migrate to gradle for build.
+
 ## 0.5
 
 * Complete Javadoc.

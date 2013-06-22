@@ -1,17 +1,51 @@
+/*
+ * Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Lesser GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Lesser GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 apply plugin: 'java'
 
-sourceCompatibility = 1.6
+/*
+ * Base variables. Note: project name is in settings.gradle
+ */
+group = 'com.github.fge'
+version = '0.6-SNAPSHOT'
 
+/*
+ * Compiler guidance
+ */
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+/*
+ * Repositories to use
+ */
 repositories {
     mavenCentral()
 }
 
-
+/*
+ * List of dependencies
+ *
+ * Transitive is sort of like Maven's provided, except it won't find its way
+ * into runtime dependencies
+ */
 dependencies {
     compile(group: 'com.github.fge', name: 'btf', version: '1.0')
     compile(group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1')
     {
-        transitive: true
+        transitive = true
     }
     testCompile(group: 'org.testng', name: 'testng', version: '6.8')
     {
@@ -20,4 +54,33 @@ dependencies {
         exclude(group: 'org.yaml', module: 'snakeyaml')
     }
     testCompile(group: 'org.mockito', name: 'mockito-core', version: '1.9.5')
+}
+
+jar {
+    manifest.attributes(provider: 'gradle')
+}
+
+/*
+ * Necessary! Otherwise TestNG will not be used...
+ */
+test {
+    useTestNG()
+}
+
+/*
+ * Necessary to generate the source and javadoc jars
+ */
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }

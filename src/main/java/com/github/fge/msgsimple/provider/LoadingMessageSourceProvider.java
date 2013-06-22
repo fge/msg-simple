@@ -270,8 +270,7 @@ public final class LoadingMessageSourceProvider
         // Overkill?
         final ScheduledExecutorService scheduled
             = Executors.newScheduledThreadPool(1, THREAD_FACTORY);
-        final long initialDelay = unit.toMillis(duration);
-        scheduled.scheduleAtFixedRate(runnable, initialDelay, duration, unit);
+        scheduled.scheduleAtFixedRate(runnable, duration, duration, unit);
     }
 
     /**

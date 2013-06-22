@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-apply(plugin: 'java')
-apply(plugin: 'maven')
-apply(plugin: 'signing')
+apply(plugin: "java")
+apply(plugin: "maven")
+apply(plugin: "signing")
 
 /*
  * Base variables. Note: project name is in settings.gradle
  */
-group = 'com.github.fge'
-version = '0.6-SNAPSHOT'
+group = "com.github.fge"
+version = "0.6-SNAPSHOT"
 
 /*
  * Compiler guidance
@@ -33,39 +33,43 @@ targetCompatibility = 1.6
 /*
  * Repositories to use
  */
-repositories {
+repositories
+{
     mavenCentral()
 }
 
 /*
  * List of dependencies
  *
- * Transitive is sort of like Maven's provided, except it won't find its way
+ * Transitive is sort of like Maven"s provided, except it won"t find its way
  * into runtime dependencies
  */
-dependencies {
-    compile(group: 'com.github.fge', name: 'btf', version: '1.0')
-    compile(group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1')
+dependencies
+{
+    compile(group: "com.github.fge", name: "btf", version: "1.0")
+    compile(group: "com.google.code.findbugs", name: "jsr305", version: "2.0.1")
     {
         transitive = true
     }
-    testCompile(group: 'org.testng', name: 'testng', version: '6.8')
+    testCompile(group: "org.testng", name: "testng", version: "6.8")
     {
-        exclude(group: 'junit', module: 'junit')
-        exclude(group: 'org.beanshell', module: 'bsh')
-        exclude(group: 'org.yaml', module: 'snakeyaml')
+        exclude(group: "junit", module: "junit")
+        exclude(group: "org.beanshell", module: "bsh")
+        exclude(group: "org.yaml", module: "snakeyaml")
     }
-    testCompile(group: 'org.mockito', name: 'mockito-core', version: '1.9.5')
+    testCompile(group: "org.mockito", name: "mockito-core", version: "1.9.5")
 }
 
-jar {
-    manifest.attributes(provider: 'gradle')
+jar
+{
+    manifest.attributes(provider: "gradle")
 }
 
 /*
  * Necessary! Otherwise TestNG will not be used...
  */
-test {
+test
+{
     useTestNG()
 }
 
@@ -73,12 +77,12 @@ test {
  * Necessary to generate the source and javadoc jars
  */
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    classifier = "sources"
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    classifier = "javadoc"
     from javadoc.destinationDir
 }
 
@@ -90,4 +94,49 @@ artifacts {
 
 signing {
     sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signPom(deployment)
+            }
+
+            repository(url: sonatypeRepoURI) {
+                authentication(userName: sonatypeUsername,
+                    password: sonatypePassword)
+            }
+
+            pom.project {
+                name rootProject.name
+                packaging "jar"
+                description "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle"
+                url "http://github.com/fge/msg-simple"
+
+                scm {
+                    url "scm:git@github.com:fge/msg-simple.git"
+                    connection "scm:git@github.com:fge/msg-simple.git"
+                    developerConnection "scm:git@github.com:fge/msg-simple.git"
+                }
+
+                licenses {
+                    license {
+                        name "Lesser General Public License, version 3 or greater"
+                        url "http://www.gnu.org/licenses/lgpl.html"
+                        distribution "repo"
+                    }
+                }
+
+                developers {
+                    developer {
+                        id "fge"
+                        name "Francis Galiegue"
+                        email "fgaliegue@gmail.com"
+                        role "Initial developer"
+                    }
+                }
+            }
+        }
+    }
 }

@@ -2,3 +2,6 @@
 target
 .idea
 META-INF
+build
+.gradle
+

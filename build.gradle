@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-apply plugin: 'java'
+apply(plugin: 'java')
+apply(plugin: 'maven')
+apply(plugin: 'signing')
 
 /*
  * Base variables. Note: project name is in settings.gradle
@@ -81,6 +83,11 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
+    archives jar
     archives sourcesJar
     archives javadocJar
+}
+
+signing {
+    sign configurations.archives
 }

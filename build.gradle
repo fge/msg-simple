@@ -1,4 +1,4 @@
-import java.lang.reflect.Modifier
+import java.lang.reflect.Modifier;
 
 /*
  * Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
@@ -35,10 +35,7 @@ targetCompatibility = 1.6;
 project.ext {
     dotClass = ".class";
     classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();
-    serviceClasses = [
-        "com.github.fge.msgsimple.source.MessageSource",
-        "com.github.fge.msgsimple.provider.MessageSourceProvider"
-    ];
+//    serviceClasses = [];
     serviceMap = new HashMap<Class<?>, List<String>>();
     tree = fileTree(classpathURI.path)
         .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
@@ -61,12 +58,10 @@ repositories {
  */
 dependencies {
     compile(group: "com.github.fge", name: "btf", version: "1.0");
-    compile(group: "com.google.code.findbugs", name: "jsr305", version: "2.0.1")
-    {
+    compile(group: "com.google.code.findbugs", name: "jsr305", version: "2.0.1") {
         transitive = true
     };
-    testCompile(group: "org.testng", name: "testng", version: "6.8")
-    {
+    testCompile(group: "org.testng", name: "testng", version: "6.8") {
         exclude(group: "junit", module: "junit")
         exclude(group: "org.beanshell", module: "bsh")
         exclude(group: "org.yaml", module: "snakeyaml")
@@ -95,6 +90,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task generateServiceFiles(dependsOn: classes) << {
+    if (!project.hasProperty("serviceClasses"))
+        return;
+    if (serviceClasses.empty)
+        return;
     project.ext({
         runtimeURLs = sourceSets.main.runtimeClasspath.collect({
             it.toURI().toURL()

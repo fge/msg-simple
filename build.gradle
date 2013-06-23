@@ -32,6 +32,20 @@ version = "0.7-SNAPSHOT"
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
+project.ext({
+    dotClass = ".class";
+    classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();
+    serviceClasses = [
+        "com.github.fge.msgsimple.source.MessageSource",
+        "com.github.fge.msgsimple.provider.MessageSourceProvider"
+    ];
+    serviceMap = new HashMap<Class<?>, List<String>>();
+    tree = fileTree(classpathURI.path)
+        .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
+    resourceURI = sourceSets.main.output.resourcesDir.canonicalFile.toURI()
+        .resolve("META-INF/services/"); // Ending '/' is critical!
+})
+
 /*
  * Repositories to use
  */
@@ -86,6 +100,36 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = "javadoc"
     from javadoc.destinationDir
+}
+
+task generateServiceFiles(dependsOn: classes) << {
+    project.ext({
+        runtimeURLs = sourceSets.main.runtimeClasspath.collect({
+            it.toURI().toURL()
+        }) as URL[];
+        classLoader = URLClassLoader.newInstance(runtimeURLs);
+    });
+    fillServiceMap();
+    tree.each() {
+        File candidate ->
+            serviceMap.each() {
+                key, value ->
+                    final String className = toClassName(candidate);
+                    if (isImplementationOf(key, className))
+                        value.add(className);
+            }
+    };
+    createServicesDirectory();
+    serviceMap.each() {
+        name, list ->
+            if (list.empty)
+                return;
+            final String path = resourceURI.resolve(name.canonicalName)
+                .getPath();
+            new File(path).withWriter {
+                out -> list.each() { out.writeLine(it); }
+            };
+    }
 }
 
 artifacts {
@@ -143,58 +187,7 @@ uploadArchives {
 }
 
 /*
- * TEST CODE
- */
-
-project.ext({
-    dotClass = ".class";
-    runtimeURLs = sourceSets.main.runtimeClasspath.collect({
-        it.toURI().toURL()
-    }) as URL[];
-    classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();
-    classLoader = URLClassLoader.newInstance(runtimeURLs);
-    serviceClasses = [
-        "com.github.fge.msgsimple.source.MessageSource",
-        "com.github.fge.msgsimple.provider.MessageSourceProvider"
-    ];
-    serviceMap = new HashMap<Class<?>, List<String>>();
-    tree = fileTree(classpathURI.path)
-        .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
-    resourceURI = sourceSets.main.output.resourcesDir.canonicalFile.toURI()
-        .resolve("META-INF/services/"); // Ending '/' is critical!
-})
-
-/*
- * Action!
- */
-fillServiceMap();
-tree.each() {
-    File candidate ->
-        serviceMap.each() {
-            key, value ->
-                final String className = toClassName(candidate);
-                if (isImplementationOf(key, className))
-                    value.add(className);
-        }
-};
-
-println(serviceMap);
-println(resourceURI);
-
-
-createServicesDirectory();
-
-serviceMap.each() {
-    name, list ->
-        if (list.empty)
-            return;
-        final String path = resourceURI.resolve(name.canonicalName).getPath();
-        new File(path).withWriter {
-            out -> list.each() { out.writeLine(it); }
-        };
-}
-/*
- * Methods
+ * Methods used by the generateServiceFiles() task
  */
 
 void createServicesDirectory()

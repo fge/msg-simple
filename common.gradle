@@ -1,4 +1,4 @@
-import java.lang.reflect.Modifier
+import java.lang.reflect.Modifier;
 
 /*
  * Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
@@ -32,6 +32,10 @@ project.ext {
 apply(plugin: "java");
 apply(plugin: "maven");
 apply(plugin: "signing");
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "1.6";
+}
 
 /*
  * Project-specific settings. Unfortunately we cannot put the name in there!

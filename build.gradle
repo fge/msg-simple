@@ -151,16 +151,15 @@ project.ext({
     runtimeURLs = sourceSets.main.runtimeClasspath.collect({
         it.toURI().toURL()
     }) as URL[];
-    basePathLength = sourceSets.main.output.classesDir.getCanonicalPath()
-        .length();
+    classpathURI = sourceSets.main.output.classesDir.getCanonicalFile().toURI();
     classLoader = URLClassLoader.newInstance(runtimeURLs);
     serviceClasses = [
         "com.github.fge.msgsimple.source.MessageSource",
         "com.github.fge.msgsimple.provider.MessageSourceProvider"
     ];
     serviceMap = new HashMap<Class<?>, List<String>>();
-    tree = fileTree(sourceSets.main.output.classesDir.getCanonicalPath())
-        .include("**/*.class").filter({ it.isFile(); }); // FileTree
+    tree = fileTree(classpathURI.getPath()).include("**/*.class")
+        .filter({ it.isFile(); }); // FileTree
 })
 
 /*
@@ -178,15 +177,16 @@ tree.each() {
 };
 
 println(serviceMap);
+println(sourceSets.main.output.resourcesDir);
 
 /*
  * Methods
  */
-String toClassName(final File path)
+String toClassName(final File file)
 {
-    final String fullPath = path.getCanonicalPath();
-    return fullPath
-        .substring(basePathLength + 1, fullPath.length() - dotClass.length())
+    final URI uri = file.getCanonicalFile().toURI();
+    final String path = classpathURI.relativize(uri).getPath();
+    return path.substring(0, path.length() - dotClass.length())
         .replace("/", ".");
 }
 

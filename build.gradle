@@ -1,5 +1,3 @@
-import java.lang.reflect.Modifier;
-
 /*
  * Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
  *
@@ -17,17 +15,6 @@ import java.lang.reflect.Modifier;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply(from: "common.gradle");
-
-project.ext {
-    dotClass = ".class";
-    classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();
-//    serviceClasses = [];
-    serviceMap = new HashMap<Class<?>, List<String>>();
-    tree = fileTree(classpathURI.path)
-        .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
-    resourceURI = sourceSets.main.output.resourcesDir.canonicalFile.toURI()
-        .resolve("META-INF/services/"); // Ending '/' is critical!
-}
 
 /*
  * Repositories to use
@@ -73,42 +60,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = "javadoc";
     from javadoc.destinationDir;
-}
-
-task generateServiceFiles(dependsOn: compileJava) << {
-    if (!project.hasProperty("serviceClasses"))
-        return;
-    if (serviceClasses.empty)
-        return;
-    project.ext({
-        runtimeURLs = sourceSets.main.runtimeClasspath.collect({
-            it.toURI().toURL()
-        }) as URL[];
-        classLoader = URLClassLoader.newInstance(runtimeURLs);
-    });
-    serviceClasses.each() {
-        serviceMap.put(classLoader.loadClass(it), new ArrayList<String>());
-    };
-    tree.each() {
-        File candidate ->
-            serviceMap.each() {
-                key, value ->
-                    final String className = toClassName(candidate);
-                    if (isImplementationOf(key, className))
-                        value.add(className);
-            }
-    };
-    createServicesDirectory();
-    serviceMap.each() {
-        name, list ->
-            if (list.empty)
-                return;
-            final String path = resourceURI.resolve(name.canonicalName)
-                .getPath();
-            new File(path).withWriter {
-                out -> list.each() { out.writeLine(it); }
-            };
-    };
 }
 
 jar {
@@ -171,43 +122,4 @@ uploadArchives {
             }
         }
     }
-}
-
-/*
- * Methods used by the generateServiceFiles() task
- */
-
-void createServicesDirectory()
-{
-    final File file = new File(resourceURI.getPath());
-    if (file.exists()) {
-        if (!file.directory)
-            throw new IOException("file " + file + " exists but is not a directory");
-        return;
-    }
-    if (!file.mkdirs())
-        throw new IOException("failed to create META-INF/services directory");
-}
-
-String toClassName(final File file)
-{
-    final URI uri = file.canonicalFile.toURI();
-    final String path = classpathURI.relativize(uri).getPath();
-    return path.substring(0, path.length() - dotClass.length())
-        .replace("/", ".");
-}
-
-boolean isImplementationOf(final Class<?> baseClass, final String className)
-{
-    final Class<?> c = classLoader.loadClass(className);
-    final int modifiers = c.modifiers;
-    if (c.anonymousClass)
-        return false;
-    if (c.interface)
-        return false;
-    if (c.enum)
-        return false;
-    if (Modifier.isAbstract(modifiers))
-        return false;
-    return Modifier.isPublic(modifiers) && baseClass.isAssignableFrom(c);
 }

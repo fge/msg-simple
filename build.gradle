@@ -132,6 +132,8 @@ task generateServiceFiles(dependsOn: classes) << {
     }
 }
 
+jar.dependsOn(generateServiceFiles);
+
 artifacts {
     archives jar
     archives sourcesJar

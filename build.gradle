@@ -146,13 +146,11 @@ uploadArchives {
 
 project.ext({
     dotClass = ".class";
-    dotClassLength = dotClass.length();
     classesDir = sourceSets.main.output.classesDir; // File
     runtimeURLs = sourceSets.main.runtimeClasspath.collect({
         it.toURI().toURL()
     }) as URL[];
-    basePath = classesDir.getCanonicalPath();
-    basePathLength = basePath.length();
+    basePathLength = classesDir.getCanonicalPath().length();
     classLoader = URLClassLoader.newInstance(runtimeURLs);
 })
 
@@ -188,6 +186,16 @@ String toClassName(final File path)
 {
     final String fullPath = path.getCanonicalPath();
     return fullPath
-        .substring(basePathLength + 1, fullPath.length() - dotClassLength)
+        .substring(basePathLength + 1, fullPath.length() - dotClass.length())
         .replace("/", ".");
 }
+
+boolean isImplementationOf(final Class<?> baseClass, final String className)
+{
+    final Class<?> c = classLoader.findClass(className);
+    final int modifiers = c.modifiers;
+    if (c.synthetic)
+        return false;
+    return !c.interface;
+}
+

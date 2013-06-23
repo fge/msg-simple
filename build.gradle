@@ -62,9 +62,9 @@ dependencies {
         transitive = true
     };
     testCompile(group: "org.testng", name: "testng", version: "6.8") {
-        exclude(group: "junit", module: "junit")
-        exclude(group: "org.beanshell", module: "bsh")
-        exclude(group: "org.yaml", module: "snakeyaml")
+        exclude(group: "junit", module: "junit");
+        exclude(group: "org.beanshell", module: "bsh");
+        exclude(group: "org.yaml", module: "snakeyaml");
     };
     testCompile(group: "org.mockito", name: "mockito-core", version: "1.9.5");
 }

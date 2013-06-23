@@ -39,6 +39,17 @@ task wrapper(type: Wrapper) {
 }
 
 /*
+ * We have to redefine these for compatibility with IDEA: unfortunately it
+ * cannot include separate directories for classes and resources...
+ */
+project.ext {
+    sourceSets.main.output.classesDir = "build/classes";
+    sourceSets.main.output.resourcesDir = "build/classes";
+    sourceSets.test.output.classesDir = "build/test-classes";
+    sourceSets.test.output.resourcesDir = "build/test-classes";
+}
+
+/*
  * Project-specific settings. Unfortunately we cannot put the name in there!
  */
 version = "0.7-SNAPSHOT";

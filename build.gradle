@@ -144,32 +144,25 @@ uploadArchives {
  * TEST CODE
  */
 
-final int CLASS_SUFFIX = ".class".length();
-// Where the classes are: OK
-final File classesDir = sourceSets.main.output.classesDir;
-final String basePath = classesDir.getCanonicalPath();
+project.ext({
+    dotClass = ".class";
+    dotClassLength = dotClass.length();
+    classesDir = sourceSets.main.output.classesDir; // File
+    runtimeURLs = sourceSets.main.runtimeClasspath.collect({
+        it.toURI().toURL()
+    }) as URL[];
+    basePath = classesDir.getCanonicalPath();
+    basePathLength = basePath.length();
+    classLoader = URLClassLoader.newInstance(runtimeURLs);
+})
 
-/*
- * runtimeClasspath contains all jars used to run the program, plus the compiled
- * classes directory. compileClasspath does not contain the latter and we need
- * it!
- */
-final FileCollection classpath = sourceSets.main.runtimeClasspath;
-
-final URLClassLoader classLoader = URLClassLoader.newInstance(
-    classpath.collect({it.toURI().toURL()}) as URL[]
-)
 // Recurse over each file
 classesDir.eachFileRecurse({
-    // You "return" from a closure, you do not "continue"...
+    // You "return" from a closure, you do not "continue"
     if (!isPotentialClass(it))
         return;
 
-    // Transform into a class name
-    final String path = it.getAbsolutePath();
-    final String name = path.substring(basePath.length() + 1);
-    final String className = name.substring(0, name.length() - CLASS_SUFFIX)
-        .replace('/', '.');
+    final String className = toClassName(it);
 
     // Try and load it
     try {
@@ -188,6 +181,13 @@ classesDir.eachFileRecurse({
 
 boolean isPotentialClass(final File file)
 {
-    return file.isFile() && file.name.endsWith(".class")
+    return file.isFile() && file.name.endsWith(dotClass);
 }
 
+String toClassName(final File path)
+{
+    final String fullPath = path.getCanonicalPath();
+    return fullPath
+        .substring(basePathLength + 1, fullPath.length() - dotClassLength)
+        .replace("/", ".");
+}

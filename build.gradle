@@ -16,23 +16,23 @@ import java.lang.reflect.Modifier
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-apply(plugin: "java")
-apply(plugin: "maven")
-apply(plugin: "signing")
+apply(plugin: "java");
+apply(plugin: "maven");
+apply(plugin: "signing");
 
 /*
  * Base variables. Note: project name is in settings.gradle
  */
-group = "com.github.fge"
-version = "0.7-SNAPSHOT"
+group = "com.github.fge";
+version = "0.7-SNAPSHOT";
 
 /*
  * Compiler guidance
  */
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.6;
+targetCompatibility = 1.6;
 
-project.ext({
+project.ext {
     dotClass = ".class";
     classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();
     serviceClasses = [
@@ -44,14 +44,13 @@ project.ext({
         .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
     resourceURI = sourceSets.main.output.resourcesDir.canonicalFile.toURI()
         .resolve("META-INF/services/"); // Ending '/' is critical!
-})
+}
 
 /*
  * Repositories to use
  */
-repositories
-{
-    mavenCentral()
+repositories {
+    mavenCentral();
 }
 
 /*
@@ -60,46 +59,39 @@ repositories
  * Transitive is sort of like Maven"s provided, except it won"t find its way
  * into runtime dependencies
  */
-dependencies
-{
-    compile(group: "com.github.fge", name: "btf", version: "1.0")
+dependencies {
+    compile(group: "com.github.fge", name: "btf", version: "1.0");
     compile(group: "com.google.code.findbugs", name: "jsr305", version: "2.0.1")
     {
         transitive = true
-    }
+    };
     testCompile(group: "org.testng", name: "testng", version: "6.8")
     {
         exclude(group: "junit", module: "junit")
         exclude(group: "org.beanshell", module: "bsh")
         exclude(group: "org.yaml", module: "snakeyaml")
-    }
-    testCompile(group: "org.mockito", name: "mockito-core", version: "1.9.5")
-}
-
-jar
-{
-    manifest.attributes(provider: "gradle")
+    };
+    testCompile(group: "org.mockito", name: "mockito-core", version: "1.9.5");
 }
 
 /*
  * Necessary! Otherwise TestNG will not be used...
  */
-test
-{
-    useTestNG()
+test {
+    useTestNG();
 }
 
 /*
  * Necessary to generate the source and javadoc jars
  */
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
+    classifier = "sources";
+    from sourceSets.main.allSource;
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
-    from javadoc.destinationDir
+    classifier = "javadoc";
+    from javadoc.destinationDir;
 }
 
 task generateServiceFiles(dependsOn: classes) << {
@@ -129,58 +121,61 @@ task generateServiceFiles(dependsOn: classes) << {
             new File(path).withWriter {
                 out -> list.each() { out.writeLine(it); }
             };
-    }
+    };
 }
 
-jar.dependsOn(generateServiceFiles);
+jar {
+    manifest.attributes(provider: "gradle");
+    dependsOn(generateServiceFiles);
+}
 
 artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
+    archives jar;
+    archives sourcesJar;
+    archives javadocJar;
 }
 
 signing {
-    sign configurations.archives
+    sign configurations.archives;
 }
 
 uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment {
-                MavenDeployment deployment -> signing.signPom(deployment)
+                MavenDeployment deployment -> signing.signPom(deployment);
             }
 
             repository(url: sonatypeRepoURI) {
                 authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+                    password: sonatypePassword);
             }
 
             pom.project {
-                name rootProject.name
-                packaging "jar"
-                description "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle"
-                url "http://github.com/fge/msg-simple"
+                name rootProject.name;
+                packaging "jar";
+                description "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
+                url "http://github.com/fge/msg-simple";
 
                 scm {
-                    url "scm:git@github.com:fge/msg-simple.git"
-                    connection "scm:git@github.com:fge/msg-simple.git"
-                    developerConnection "scm:git@github.com:fge/msg-simple.git"
+                    url "scm:git@github.com:fge/msg-simple.git";
+                    connection "scm:git@github.com:fge/msg-simple.git";
+                    developerConnection "scm:git@github.com:fge/msg-simple.git";
                 }
 
                 licenses {
                     license {
-                        name "Lesser General Public License, version 3 or greater"
-                        url "http://www.gnu.org/licenses/lgpl.html"
-                        distribution "repo"
+                        name "Lesser General Public License, version 3 or greater";
+                        url "http://www.gnu.org/licenses/lgpl.html";
+                        distribution "repo";
                     }
                 }
 
                 developers {
                     developer {
-                        id "fge"
-                        name "Francis Galiegue"
-                        email "fgaliegue@gmail.com"
+                        id "fge";
+                        name "Francis Galiegue";
+                        email "fgaliegue@gmail.com";
                     }
                 }
             }

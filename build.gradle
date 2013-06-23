@@ -145,16 +145,22 @@ uploadArchives {
  */
 
 final int CLASS_SUFFIX = ".class".length();
-final URLClassLoader classLoader = this.class.classLoader;
 // Where the classes are: OK
 final File classesDir = sourceSets.main.output.classesDir;
 final String basePath = classesDir.getCanonicalPath();
 
-// Add them to the classloader: OK
-classLoader.addURL(classesDir.toURI().toURL())
+/*
+ * runtimeClasspath contains all jars used to run the program, plus the compiled
+ * classes directory. compileClasspath does not contain the latter and we need
+ * it!
+ */
+final FileCollection classpath = sourceSets.main.runtimeClasspath;
 
+final URLClassLoader classLoader = URLClassLoader.newInstance(
+    classpath.collect({it.toURI().toURL()}) as URL[]
+)
 // Recurse over each file
-classesDir.eachFileRecurse {
+classesDir.eachFileRecurse({
     // You "return" from a closure, you do not "continue"...
     if (!isPotentialClass(it))
         return;
@@ -167,14 +173,21 @@ classesDir.eachFileRecurse {
 
     // Try and load it
     try {
-        classLoader.loadClass(className);
+        final Class<?> c = classLoader.loadClass(className);
+        if (c.isSynthetic())
+            return;
+        if (c.isAnonymousClass())
+            return;
+        if (c.isInterface())
+            return;
         println(className);
     } catch (NoClassDefFoundError ignored) {
         println("failed to load " + className + ": " + ignored);
     }
-}
+})
 
 boolean isPotentialClass(final File file)
 {
     return file.isFile() && file.name.endsWith(".class")
 }
+

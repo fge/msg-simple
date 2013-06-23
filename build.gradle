@@ -17,6 +17,24 @@
 apply(from: "common.gradle");
 
 /*
+ * This has to be here... It will not be taken into account in common.gradle!
+ *
+ * Looks like a serious bug... See also:
+ *
+ * http://forums.gradle.org/gradle/topics/buildscript_in_subprojects_ignored
+ */
+buildscript {
+    repositories {
+        mavenCentral();
+    }
+    dependencies {
+        classpath(group: "eu.appsatori", name: "gradle-fatjar-plugin",
+            version: "0.2-rc2");
+    }
+};
+apply(plugin: "fatjar");
+
+/*
  * Repositories to use
  */
 repositories {
@@ -62,6 +80,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir;
 }
 
+fatJar {
+    classifier = "full";
+}
+
 jar {
     manifest {
         version = "${version}";
@@ -77,6 +99,7 @@ artifacts {
     archives jar;
     archives sourcesJar;
     archives javadocJar;
+    archives fatJar;
 }
 
 signing {

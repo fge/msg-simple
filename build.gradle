@@ -16,21 +16,7 @@ import java.lang.reflect.Modifier;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-apply(plugin: "java");
-apply(plugin: "maven");
-apply(plugin: "signing");
-
-/*
- * Base variables. Note: project name is in settings.gradle
- */
-group = "com.github.fge";
-version = "0.7-SNAPSHOT";
-
-/*
- * Compiler guidance
- */
-sourceCompatibility = 1.6;
-targetCompatibility = 1.6;
+apply(from: "common.gradle");
 
 project.ext {
     dotClass = ".class";
@@ -100,7 +86,9 @@ task generateServiceFiles(dependsOn: compileJava) << {
         }) as URL[];
         classLoader = URLClassLoader.newInstance(runtimeURLs);
     });
-    fillServiceMap();
+    serviceClasses.each() {
+        serviceMap.put(classLoader.loadClass(it), new ArrayList<String>());
+    };
     tree.each() {
         File candidate ->
             serviceMap.each() {
@@ -156,13 +144,13 @@ uploadArchives {
             pom.project {
                 name rootProject.name;
                 packaging "jar";
-                description "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
-                url "http://github.com/fge/msg-simple";
+                description "${description}";
+                url "${projectURL}";
 
                 scm {
-                    url "scm:git@github.com:fge/msg-simple.git";
-                    connection "scm:git@github.com:fge/msg-simple.git";
-                    developerConnection "scm:git@github.com:fge/msg-simple.git";
+                    url "${gitrwscm}";
+                    connection "${gitrwscm}";
+                    developerConnection "${gitroscm}";
                 }
 
                 licenses {
@@ -222,11 +210,4 @@ boolean isImplementationOf(final Class<?> baseClass, final String className)
     if (Modifier.isAbstract(modifiers))
         return false;
     return Modifier.isPublic(modifiers) && baseClass.isAssignableFrom(c);
-}
-
-void fillServiceMap()
-{
-    serviceClasses.each() {
-        serviceMap.put(classLoader.loadClass(it), new ArrayList<String>());
-    };
 }

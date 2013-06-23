@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Lesser GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Lesser GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * Common settings for all projects
+ */
+
+group = "com.github.fge";
+
+project.ext {
+    gitrwscm = sprintf("git@github.com:fge/%s", name);
+    gitroscm = sprintf("https://github.com/fge/%s.git", name);
+    projectURL = sprintf("https://github.com/fge/%s", name);
+};
+
+apply(plugin: "java");
+apply(plugin: "maven");
+apply(plugin: "signing");
+
+/*
+ * Project-specific settings. Unfortunately we cannot put the name in there!
+ */
+version = "0.7-SNAPSHOT";
+sourceCompatibility = "1.6";
+targetCompatibility = "1.6"; // defaults to sourceCompatibility
+
+project.ext {
+    description = "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
+    serviceClasses = [
+        "com.github.fge.msgsimple.source.MessageSource"
+    ];
+}

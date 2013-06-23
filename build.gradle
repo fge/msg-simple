@@ -151,15 +151,17 @@ project.ext({
     runtimeURLs = sourceSets.main.runtimeClasspath.collect({
         it.toURI().toURL()
     }) as URL[];
-    classpathURI = sourceSets.main.output.classesDir.getCanonicalFile().toURI();
+    classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();
     classLoader = URLClassLoader.newInstance(runtimeURLs);
     serviceClasses = [
         "com.github.fge.msgsimple.source.MessageSource",
         "com.github.fge.msgsimple.provider.MessageSourceProvider"
     ];
     serviceMap = new HashMap<Class<?>, List<String>>();
-    tree = fileTree(classpathURI.getPath()).include("**/*.class")
-        .filter({ it.isFile(); }); // FileTree
+    tree = fileTree(classpathURI.path)
+        .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
+    resourceURI = sourceSets.main.output.resourcesDir.canonicalFile.toURI()
+        .resolve("META-INF/services/"); // Ending '/' is critical!
 })
 
 /*
@@ -177,14 +179,39 @@ tree.each() {
 };
 
 println(serviceMap);
-println(sourceSets.main.output.resourcesDir);
+println(resourceURI);
 
+
+createServicesDirectory();
+
+serviceMap.each() {
+    name, list ->
+        if (list.empty)
+            return;
+        final String path = resourceURI.resolve(name.canonicalName).getPath();
+        new File(path).withWriter {
+            out -> list.each() { out.writeLine(it); }
+        };
+}
 /*
  * Methods
  */
+
+void createServicesDirectory()
+{
+    final File file = new File(resourceURI.getPath());
+    if (file.exists()) {
+        if (!file.directory)
+            throw new IOException("file " + file + " exists but is not a directory");
+        return;
+    }
+    if (!file.mkdirs())
+        throw new IOException("failed to create META-INF/services directory");
+}
+
 String toClassName(final File file)
 {
-    final URI uri = file.getCanonicalFile().toURI();
+    final URI uri = file.canonicalFile.toURI();
     final String path = classpathURI.relativize(uri).getPath();
     return path.substring(0, path.length() - dotClass.length())
         .replace("/", ".");

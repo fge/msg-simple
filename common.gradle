@@ -29,10 +29,23 @@ project.ext {
     projectURL = sprintf("https://github.com/fge/%s", name);
 };
 
+/* Does not work :/
+buildscript {
+    repositories {
+        mavenCentral();
+    }
+    dependencies {
+        classpath(group: "eu.appsatori", name: "gradle-fatjar-plugin",
+            version: "0.2-rc2");
+    }
+};
+*/
+
 apply(plugin: "java");
 apply(plugin: "maven");
 apply(plugin: "signing");
 apply(plugin: "osgi");
+//apply(plugin: "fatjar");
 
 task wrapper(type: Wrapper) {
     gradleVersion = "1.6";

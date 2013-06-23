@@ -27,8 +27,15 @@ See [here](https://github.com/fge/msg-simple/wiki/Examples) for sample API usage
 
 ## Downloads and Maven artifact
 
-You can download the jar directly on [Bintray](https://bintray.com/fge/maven/msg-simple) (note: jar
-with full dependencies is provided). If you use Maven, use the following dependency:
+You can download the jar directly on [Bintray](https://bintray.com/fge/maven/msg-simple).
+
+For Gradle:
+
+```gradle
+compile(group: "com.github.fge", name: "msg-simple", version: "yourVersionHere");
+```
+
+For Maven:
 
 ```xml
 <dependency>
@@ -37,6 +44,20 @@ with full dependencies is provided). If you use Maven, use the following depende
     <version>your-version-here</version>
 </dependency>
 ```
+
+## Building
+
+If you want to build from source, use the `gradlew` script (this will be `gradlew.bat` if you use
+Windows):
+
+```
+# build the jar
+./gradlew jar
+# run tests
+./gradlew test
+```
+
+**DO NOT** use `mvn`. It is deprecated and will be removed.
 
 ## Features and roadmap
 

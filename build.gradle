@@ -154,10 +154,17 @@ project.ext({
     }) as URL[];
     basePathLength = classesDir.getCanonicalPath().length();
     classLoader = URLClassLoader.newInstance(runtimeURLs);
-    baseClass = classLoader
-        .loadClass("com.github.fge.msgsimple.source.MessageSource");
+    serviceClasses = [
+        "com.github.fge.msgsimple.source.MessageSource",
+        "com.github.fge.msgsimple.provider.MessageSourceProvider"
+    ];
+    serviceMap = new HashMap<Class<?>, List<String>>();
 })
 
+/*
+ * Action!
+ */
+fillServiceMap();
 // Recurse over each file
 classesDir.eachFileRecurse({
     // You "return" from a closure, you do not "continue"
@@ -166,10 +173,18 @@ classesDir.eachFileRecurse({
 
     final String className = toClassName(it);
 
-    if (isImplementationOf(baseClass, className))
-        println(className);
+    serviceMap.each() {
+        key, value ->
+            if (isImplementationOf(key, className))
+                value.add(className)
+    }
 })
 
+println(serviceMap);
+
+/*
+ * Methods
+ */
 boolean isPotentialClass(final File file)
 {
     return file.isFile() && file.name.endsWith(dotClass);
@@ -198,3 +213,9 @@ boolean isImplementationOf(final Class<?> baseClass, final String className)
     return Modifier.isPublic(modifiers) && baseClass.isAssignableFrom(c);
 }
 
+void fillServiceMap()
+{
+    serviceClasses.each() {
+        serviceMap.put(classLoader.loadClass(it), new ArrayList<String>());
+    };
+}

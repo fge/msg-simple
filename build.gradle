@@ -1,3 +1,5 @@
+import java.lang.reflect.Modifier
+
 /*
  * Copyright (c) 2013, Francis Galiegue <fgaliegue@gmail.com>
  *
@@ -152,6 +154,8 @@ project.ext({
     }) as URL[];
     basePathLength = classesDir.getCanonicalPath().length();
     classLoader = URLClassLoader.newInstance(runtimeURLs);
+    baseClass = classLoader
+        .loadClass("com.github.fge.msgsimple.source.MessageSource");
 })
 
 // Recurse over each file
@@ -162,19 +166,8 @@ classesDir.eachFileRecurse({
 
     final String className = toClassName(it);
 
-    // Try and load it
-    try {
-        final Class<?> c = classLoader.loadClass(className);
-        if (c.isSynthetic())
-            return;
-        if (c.isAnonymousClass())
-            return;
-        if (c.isInterface())
-            return;
+    if (isImplementationOf(baseClass, className))
         println(className);
-    } catch (NoClassDefFoundError ignored) {
-        println("failed to load " + className + ": " + ignored);
-    }
 })
 
 boolean isPotentialClass(final File file)
@@ -192,10 +185,16 @@ String toClassName(final File path)
 
 boolean isImplementationOf(final Class<?> baseClass, final String className)
 {
-    final Class<?> c = classLoader.findClass(className);
+    final Class<?> c = classLoader.loadClass(className);
     final int modifiers = c.modifiers;
-    if (c.synthetic)
+    if (c.anonymousClass)
         return false;
-    return !c.interface;
+    if (c.interface)
+        return false;
+    if (c.enum)
+        return false;
+    if (Modifier.isAbstract(modifiers))
+        return false;
+    return Modifier.isPublic(modifiers) && baseClass.isAssignableFrom(c);
 }
 

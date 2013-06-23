@@ -89,7 +89,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir;
 }
 
-task generateServiceFiles(dependsOn: classes) << {
+task generateServiceFiles(dependsOn: compileJava) << {
     if (!project.hasProperty("serviceClasses"))
         return;
     if (serviceClasses.empty)
@@ -125,6 +125,9 @@ task generateServiceFiles(dependsOn: classes) << {
 
 jar {
     manifest.attributes(provider: "gradle");
+}
+
+processResources {
     dependsOn(generateServiceFiles);
 }
 

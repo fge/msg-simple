@@ -148,48 +148,40 @@ uploadArchives {
 
 project.ext({
     dotClass = ".class";
-    classesDir = sourceSets.main.output.classesDir; // File
     runtimeURLs = sourceSets.main.runtimeClasspath.collect({
         it.toURI().toURL()
     }) as URL[];
-    basePathLength = classesDir.getCanonicalPath().length();
+    basePathLength = sourceSets.main.output.classesDir.getCanonicalPath()
+        .length();
     classLoader = URLClassLoader.newInstance(runtimeURLs);
     serviceClasses = [
         "com.github.fge.msgsimple.source.MessageSource",
         "com.github.fge.msgsimple.provider.MessageSourceProvider"
     ];
     serviceMap = new HashMap<Class<?>, List<String>>();
+    tree = fileTree(sourceSets.main.output.classesDir.getCanonicalPath())
+        .include("**/*.class").filter({ it.isFile(); }); // FileTree
 })
 
 /*
  * Action!
  */
 fillServiceMap();
-// Recurse over each file
-classesDir.eachFileRecurse({
-    // You "return" from a closure, you do not "continue"
-    if (!isPotentialClass(it))
-        return;
-
-    final String className = toClassName(it);
-
-    serviceMap.each() {
-        key, value ->
-            if (isImplementationOf(key, className))
-                value.add(className)
-    }
-})
+tree.each() {
+    File candidate ->
+        serviceMap.each() {
+            key, value ->
+                final String className = toClassName(candidate);
+                if (isImplementationOf(key, className))
+                    value.add(className);
+        }
+};
 
 println(serviceMap);
 
 /*
  * Methods
  */
-boolean isPotentialClass(final File file)
-{
-    return file.isFile() && file.name.endsWith(dotClass);
-}
-
 String toClassName(final File path)
 {
     final String fullPath = path.getCanonicalPath();

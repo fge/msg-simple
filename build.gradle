@@ -63,7 +63,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 jar {
-    manifest.attributes(provider: "gradle");
+    manifest {
+        version = "${version}";
+        symbolicName = "${name}";
+    }
 }
 
 processResources {
@@ -93,8 +96,8 @@ uploadArchives {
             }
 
             pom.project {
-                name rootProject.name;
-                packaging "jar";
+                name "${name}";
+                packaging "bundle";
                 description "${description}";
                 url "${projectURL}";
 

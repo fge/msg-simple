@@ -47,7 +47,7 @@ project.ext {
     sourceSets.main.output.resourcesDir = "build/classes";
     sourceSets.test.output.classesDir = "build/test-classes";
     sourceSets.test.output.resourcesDir = "build/test-classes";
-}
+};
 
 /*
  * Project-specific settings. Unfortunately we cannot put the name in there!
@@ -58,7 +58,7 @@ targetCompatibility = "1.6"; // defaults to sourceCompatibility
 
 project.ext {
     description = "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
-}
+};
 
 /*
  * ServiceLoader support
@@ -67,7 +67,7 @@ project.ext {
 project.ext {
     // Uncomment and fill the array below as appropriate.
     // serviceClasses = [];
-}
+};
 
 project.ext {
     dotClass = ".class";
@@ -77,7 +77,7 @@ project.ext {
         .filter({ it.isFile() && it.name.endsWith(dotClass); }); // FileTree
     resourceURI = sourceSets.main.output.resourcesDir.canonicalFile.toURI()
         .resolve("META-INF/services/"); // Ending '/' is critical!
-}
+};
 
 task generateServiceFiles(dependsOn: compileJava) << {
     if (!project.hasProperty("serviceClasses"))

@@ -35,6 +35,6 @@ such a pom.xml will not work reliably because of the dependency of this package
 on the correct generation of META-INF/services/ files. See legacy/pom.xml for
 details.
 
-While you can adapt this file to work for you, please beware that it is _not_
+While you can adapt this file to work for you, please be aware that it is _not_
 supported by the author anymore.
 

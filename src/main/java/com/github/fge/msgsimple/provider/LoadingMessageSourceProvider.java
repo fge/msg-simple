@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>Apart from the loader, you can customize two aspects of the provider:</p>
  *
  * <ul>
- *     <li>its load timeout (5 seconds by default);</li>
+ *     <li>its load timeout (1 second by default);</li>
  *     <li>its expiry time (10 minutes by default).</li>
  * </ul>
  *
@@ -285,7 +285,7 @@ public final class LoadingMessageSourceProvider
          */
         private MessageSourceLoader loader;
         private MessageSource defaultSource;
-        private long timeoutDuration = 5L;
+        private long timeoutDuration = 1L;
         private TimeUnit timeoutUnit = TimeUnit.SECONDS;
         private long expiryDuration = 10L;
         private TimeUnit expiryUnit = TimeUnit.MINUTES;
@@ -323,29 +323,7 @@ public final class LoadingMessageSourceProvider
         }
 
         /**
-         * Set the load timeout
-         *
-         * @param duration number of units
-         * @param unit the time unit
-         * @throws IllegalArgumentException {@code duration} is negative or zero
-         * @throws NullPointerException {@code unit} is null
-         * @return this
-         *
-         * @deprecated use {@link #setLoadTimeout(long, TimeUnit)} instead.
-         * Will be removed in 0.6.
-         */
-        @Deprecated
-        public Builder setTimeout(final long duration, final TimeUnit unit)
-        {
-            BUNDLE.checkArgument(duration > 0L, "cfg.nonPositiveDuration");
-            BUNDLE.checkNotNull(unit, "cfg.nullTimeUnit");
-            timeoutDuration = duration;
-            timeoutUnit = unit;
-            return this;
-        }
-
-        /**
-         * Set the load timeout (5 seconds by default)
+         * Set the load timeout (1 second by default)
          *
          * <p>If the loader passed as an argument fails to load a message
          * source after the specified timeout is elapsed, then the default

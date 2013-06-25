@@ -114,13 +114,6 @@ fatJar {
     classifier = "full";
 }
 
-jar {
-    manifest {
-        version = "${version}";
-        symbolicName = "${name}";
-    }
-}
-
 processResources {
     dependsOn(generateServiceFiles);
 }

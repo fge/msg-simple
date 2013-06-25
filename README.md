@@ -9,20 +9,21 @@ the `BUILD.md` file for more details.
 ## What this is
 
 This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
-`ResourceBundle`. Since 0.5, it is also able to load legacy `ResourceBundle`s as well. Its only
+`ResourceBundle`. Since 0.5, it is able to load legacy `ResourceBundle`s as well. Its only
 dependency is [btf](https://github.com/fge/btf).
 
 Among features that this library offers which `ResourceBundle` doesn't are:
 
 * UTF-8 support,
 * `printf()`-like format for messages,
-* builtin assertions.
+* builtin assertions,
+* error resistance.
 
 See below for more.
 
 ## Versions
 
-The current version is **0.6**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
+The current version is **0.7**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
 
 See [here](https://github.com/fge/msg-simple/wiki/Examples) for sample API usage.
 

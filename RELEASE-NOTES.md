@@ -1,18 +1,28 @@
+## 0.7
+
+* `LoadingMessageSourceProvider`: lower default timeout from 5 seconds to 1
+  second.
+* Add a convenience static factory method in `MessageBundle` to build a bundle
+  from a single message source.
+
 ## 0.6
 
-* Fix a stupid error in LoadingMessageSourceProvider with regards to initial expiration delay.
+* Fix a stupid error in LoadingMessageSourceProvider with regards to initial
+  expiration delay.
 * Migrate to gradle for build.
 
 ## 0.5
 
 * Complete Javadoc.
 * Read property files using any encoding.
+* `MessageFormat` support.
 * New static factory method to load a legacy `ResourceBundle`.
 * Implement loading expiry and timeout.
 
 ## 0.4.1
 
-* Fix bug wih .printf() not capturing all possible exceptions thrown by Formatter.
+* Fix bug wih .printf() not capturing all possible exceptions thrown by
+  Formatter.
 
 ## 0.4
 

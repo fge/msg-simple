@@ -3,7 +3,8 @@
 The license of this project is LGPLv3 or later. See file src/main/resources/LICENSE for the full
 text.
 
-**NOTE**: from version 0.6 on, this project uses [Gradle](http://gradle.org) as a build system.
+**NOTE**: from version 0.6 on, this project uses [Gradle](http://gradle.org) as a build system. See
+the `BUILD.md` file for more details.
 
 ## What this is
 
@@ -32,7 +33,9 @@ You can download the jar directly on [Bintray](https://bintray.com/fge/maven/msg
 For Gradle:
 
 ```gradle
-compile(group: "com.github.fge", name: "msg-simple", version: "yourVersionHere");
+dependencies {
+    compile(group: "com.github.fge", name: "msg-simple", version: "yourVersionHere");
+}
 ```
 
 For Maven:
@@ -44,20 +47,6 @@ For Maven:
     <version>your-version-here</version>
 </dependency>
 ```
-
-## Building
-
-If you want to build from source, use the `gradlew` script (this will be `gradlew.bat` if you use
-Windows):
-
-```
-# build the jar
-./gradlew jar
-# run tests
-./gradlew test
-```
-
-**DO NOT** use `mvn`. It is deprecated and will be removed.
 
 ## Features and roadmap
 

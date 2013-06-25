@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./gradlew --recompile-scripts clean uploadArtifacts
+./gradlew --recompile-scripts clean uploadArchives
 

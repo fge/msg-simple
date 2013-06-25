@@ -53,26 +53,6 @@ project.ext {
     sourceSets.test.output.resourcesDir = "build/test-classes";
 };
 
-/*
- * Project-specific settings. Unfortunately we cannot put the name in there!
- */
-version = "0.7-SNAPSHOT";
-sourceCompatibility = "1.6";
-targetCompatibility = "1.6"; // defaults to sourceCompatibility
-
-project.ext {
-    description = "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
-};
-
-/*
- * ServiceLoader support
- */
-
-project.ext {
-    // Uncomment and fill the array below as appropriate.
-    // serviceClasses = [];
-};
-
 project.ext {
     dotClass = ".class";
     classpathURI = sourceSets.main.output.classesDir.canonicalFile.toURI();

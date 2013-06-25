@@ -40,6 +40,26 @@ apply(plugin: "fatjar");
 repositories {
     mavenCentral();
 }
+/*
+ * Project-specific settings. Unfortunately we cannot put the name in there!
+ */
+version = "0.7-SNAPSHOT";
+sourceCompatibility = "1.6";
+targetCompatibility = "1.6"; // defaults to sourceCompatibility
+
+project.ext {
+    description = "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
+};
+
+/*
+ * ServiceLoader support
+ */
+
+project.ext {
+    // Uncomment and fill the array below as appropriate.
+    // serviceClasses = [];
+};
+
 
 /*
  * List of dependencies
@@ -59,6 +79,10 @@ dependencies {
     };
     testCompile(group: "org.mockito", name: "mockito-core", version: "1.9.5");
 }
+
+javadoc.options.links("http://docs.oracle.com/javase/6/docs/api");
+javadoc.options.links("http://jsr-305.googlecode.com/svn/trunk/javadoc");
+javadoc.options.links("http://fge.github.com/btf");
 
 /*
  * Necessary! Otherwise TestNG will not be used...

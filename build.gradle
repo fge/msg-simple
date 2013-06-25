@@ -43,7 +43,7 @@ repositories {
 /*
  * Project-specific settings. Unfortunately we cannot put the name in there!
  */
-version = "0.7";
+version = "0.8-SNAPSHOT";
 sourceCompatibility = "1.6";
 targetCompatibility = "1.6"; // defaults to sourceCompatibility
 

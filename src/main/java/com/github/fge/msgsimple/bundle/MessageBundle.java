@@ -21,6 +21,7 @@ import com.github.fge.Frozen;
 import com.github.fge.msgsimple.InternalBundle;
 import com.github.fge.msgsimple.locale.LocaleUtils;
 import com.github.fge.msgsimple.provider.MessageSourceProvider;
+import com.github.fge.msgsimple.provider.StaticMessageSourceProvider;
 import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -45,10 +46,12 @@ import java.util.Locale;
  * <p>Finally, if no match was found for any provider/source, the key itself is
  * returned.</p>
  *
- * <p>You cannot instantiate this class directly: use {@link #newBuilder()} to
- * obtain a builder, then that builder's {@link MessageBundleBuilder#freeze()}
- * method to obtain the bundle; alternatively, you can reuse an existing bundle
- * and {@link #thaw()} it, modify it and freeze it again.</p>
+ * <p>You can generate a bundle from a single source using the {@link
+ * #withSingleSource(MessageSource)} convenience static factory method; for more
+ * elaborate bundles, use {@link #newBuilder()} to obtain a builder, then that
+ * builder's {@link MessageBundleBuilder#freeze()} method to obtain the bundle;
+ * alternatively, you can reuse an existing bundle and {@link #thaw()} it,
+ * modify it and freeze it again.</p>
  *
  * @see LocaleUtils#getApplicable(Locale)
  * @see MessageSourceProvider
@@ -71,6 +74,23 @@ public final class MessageBundle
     public static MessageBundleBuilder newBuilder()
     {
         return new MessageBundleBuilder();
+    }
+
+    /**
+     * Convenience static factory method to create a bundle with a single
+     * message source
+     *
+     * @since 0.7
+     *
+     * @param source the message source
+     * @return a new bundle
+     * @see StaticMessageSourceProvider#withSingleSource(MessageSource)
+     */
+    public static MessageBundle withSingleSource(final MessageSource source)
+    {
+        final MessageSourceProvider provider
+            = StaticMessageSourceProvider.withSingleSource(source);
+        return newBuilder().appendProvider(provider).freeze();
     }
 
     MessageBundle(final MessageBundleBuilder builder)

@@ -2,12 +2,12 @@
  * Project-specific settings. Unfortunately we cannot put the name in there!
  */
 group = "com.github.fge";
-version = "1.1.8-SNAPSHOT";
+version = "0.8-SNAPSHOT";
 sourceCompatibility = "1.6";
 targetCompatibility = "1.6"; // defaults to sourceCompatibility
 
 project.ext {
-    description = "Core processing architecture for json-schema-validator";
+    description = "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
 };
 
 project.ext {

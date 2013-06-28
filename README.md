@@ -3,27 +3,27 @@
 The license of this project is LGPLv3 or later. See file src/main/resources/LICENSE for the full
 text.
 
-**NOTE**: from version 0.6 on, this project uses [Gradle](http://gradle.org) as a build system. See
-the `BUILD.md` file for more details.
+**NOTE**: this project uses [Gradle](http://gradle.org) as a build system. See the `BUILD.md` file
+for more details.
 
 ## What this is
 
 This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
-`ResourceBundle`. Since 0.5, it is able to load legacy `ResourceBundle`s as well. Its only
-dependency is [btf](https://github.com/fge/btf).
+`ResourceBundle`. It is able to load legacy `ResourceBundle`s. Its only dependency is
+[btf](https://github.com/fge/btf).
 
 Among features that this library offers which `ResourceBundle` doesn't are:
 
 * UTF-8 support,
-* `printf()`-like format for messages,
+* `printf()`-like format for messages (in addition to the antique `MessageFormat`),
 * builtin assertions,
-* error resistance.
+* error resistant.
 
 See below for more.
 
 ## Versions
 
-The current version is **0.7**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
+The current version is **0.8**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
 
 See [here](https://github.com/fge/msg-simple/wiki/Examples) for sample API usage.
 
@@ -59,7 +59,8 @@ This library currently has the following features:
 * i18n/locale support;
 * stackable message sources;
 * bundles are reusable (using the [freeze/thaw pattern](https://github.com/fge/btf/wiki/The-freeze-thaw-pattern));
-* builtin preconditions in bundles (`checkNotNull()`, `checkArgument()`, plus their `printf()`/`MessageFormat` equivalents).
+* builtin preconditions in bundles (`checkNotNull()`, `checkArgument()`, plus their `printf()`/`MessageFormat` equivalents);
+* static, or loading-on-demand, message sources.
 
 The roadmap for future versions can be found [here](https://github.com/fge/msg-simple/wiki/Roadmap). Feature requests are of course
 welcome!

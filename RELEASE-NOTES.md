@@ -1,3 +1,19 @@
+## 0.8
+
+* Build file updates, now much easier to use.
+* Change timeout policy: a timed out task stays there, but default source is
+  returned if the time out is reached.
+* Add method to inject message sources from a full bundle in
+  `MessageBundleBuilder`.
+
+Francis Galiegue (6):
+      Announce 0.7
+      Gradle build files update
+      LoadingMessageSourceProvider: change timeout handling completely
+      MessageBundleBuilder: allow injection of providers from another bundle
+      dorelease.sh: add test before uploadArchives
+      project.gradle: fix misgivings :/
+
 ## 0.7
 
 * `LoadingMessageSourceProvider`: lower default timeout from 5 seconds to 1

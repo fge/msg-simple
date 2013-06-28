@@ -15,9 +15,9 @@ below:
 # List the list of tasks
 ./gradlew tasks
 # Build, test the package
-./gradlew clean test
-# Build a full jar -- will be generated in build/libs/*-full.jar
-./gradlew clean fatjar
+./gradlew test
+# Install in your local maven repository
+./gradlew clean install
 ```
 
 If you try and play around with Gradle configuration files, in order to be

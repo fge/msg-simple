@@ -22,11 +22,11 @@ import com.github.fge.msgsimple.source.MessageSource;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -55,8 +55,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <p>Note that the expiry time is periodic only, and not per source. The
  * loading result (success or failure) is recorded permanently until the expiry
- * time kicks in, <b>except</b> when the timeout kicks in; in this case, loading
- * will be retried.</p>
+ * time kicks in.</p>
+ *
+ * <p>In the event of a timeout, the task remains active until it gets a result;
+ * this means, for instance, that if you set up a timeout of 500 milliseconds,
+ * but the task takes 2 seconds to complete, during these two seconds, the
+ * default source will be returned instead.</p>
  *
  * <p>You can also configure a loader so that it never expires.</p>
  *
@@ -178,7 +182,7 @@ public final class LoadingMessageSourceProvider
          */
         synchronized (sources) {
             task = sources.get(locale);
-            if (task == null || task.isCancelled()) {
+            if (task == null) {
                 task = loadingTask(locale);
                 sources.put(locale, task);
                 service.execute(task);
@@ -214,7 +218,6 @@ public final class LoadingMessageSourceProvider
              * be greeted with a CancellationException, until one enters this
              * method and resets the task.
              */
-            task.cancel(true);
             return defaultSource;
         } catch (CancellationException ignored) {
             /*
@@ -223,11 +226,9 @@ public final class LoadingMessageSourceProvider
              * thread1            thread2
              * --------           --------
              * grabs task
-             *                    grabs task
-             *                    get()s
+             *                    cleanup: cancel task
              * get()s
-             * timeout, cancels
-             *                    BOOM: CancellationException
+             * BOOM: CancellationException
              */
             return defaultSource;
         }
@@ -253,18 +254,14 @@ public final class LoadingMessageSourceProvider
             @Override
             public void run()
             {
-                /*
-                 * We remove all tasks for which Future's .isDone() returns
-                 * true. This method returns true either if the task has
-                 * completed one way or another, or has been cancelled.
-                 */
-                final Set<Locale> set = new HashSet<Locale>();
+                final List<FutureTask<MessageSource>> tasks;
                 synchronized (sources) {
-                    set.addAll(sources.keySet());
-                    for (final Locale locale: set)
-                        if (sources.get(locale).isDone())
-                            sources.remove(locale);
+                    tasks = new ArrayList<FutureTask<MessageSource>>(
+                        sources.values());
+                    sources.clear();
                 }
+                for (final FutureTask<MessageSource> task: tasks)
+                    task.cancel(true);
             }
         };
         // Overkill?

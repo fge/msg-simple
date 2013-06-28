@@ -199,11 +199,10 @@ public final class LoadingMessageSourceProviderTest
         "cannotSetNullTimeoutUnit"
     })
     public void whenLoadTimesOutDefaultSourceIsReturned()
-        throws IOException
+        throws IOException, InterruptedException
     {
         when(loader.load(Locale.ROOT))
-            .then(answerWithDelay(source, 1L, TimeUnit.MINUTES))
-            .thenReturn(source);
+            .then(answerWithDelay(source, 150L, TimeUnit.MILLISECONDS));
 
         final MessageSourceProvider provider
             = builder.setLoader(loader)
@@ -211,6 +210,7 @@ public final class LoadingMessageSourceProviderTest
             .setDefaultSource(defaultSource).build();
 
         assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
+        TimeUnit.MILLISECONDS.sleep(200L);
         assertSame(provider.getMessageSource(Locale.ROOT), source);
     }
 
@@ -311,7 +311,7 @@ public final class LoadingMessageSourceProviderTest
             .setExpiryTime(20L, TimeUnit.MILLISECONDS)
             .setDefaultSource(defaultSource).build();
 
-        assertSame(provider.getMessageSource(Locale.ROOT), source);
+        assertSame(provider.getMessageSource(Locale.ROOT), defaultSource);
     }
 
     @Test

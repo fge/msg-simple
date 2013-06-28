@@ -31,7 +31,8 @@ import java.util.Locale;
  * Builder class for a message bundle
  *
  * <p>You cannot instantiate this class directly: use {@link
- * MessageBundle#newBuilder()}.</p>
+ * MessageBundle#newBuilder()}, or {@link MessageBundle#thaw() thaw} another
+ * bundle.</p>
  *
  * <p>This class is the {@link Thawed} counterpart of a {@link MessageBundle}.
  * </p>
@@ -145,6 +146,39 @@ public final class MessageBundleBuilder
         final MessageSourceProvider provider
             = StaticMessageSourceProvider.withSingleSource(locale, source);
         providers.add(0, provider);
+        return this;
+    }
+
+    /**
+     * Append all message source providers from another bundle
+     *
+     * @param bundle the bundle
+     * @return this
+     * @throws NullPointerException bundle is null
+     */
+    public MessageBundleBuilder appendBundle(final MessageBundle bundle)
+    {
+        BUNDLE.checkNotNull(bundle, "cfg.nullBundle");
+        providers.addAll(bundle.providers);
+        return this;
+    }
+
+    /**
+     * Prepend all message source providers from another bundle
+     *
+     * @param bundle the bundle
+     * @return this
+     * @throws NullPointerException bundle is null
+     */
+    public MessageBundleBuilder prependBundle(final MessageBundle bundle)
+    {
+        BUNDLE.checkNotNull(bundle, "cfg.nullBundle");
+        final List<MessageSourceProvider> list
+            = new ArrayList<MessageSourceProvider>();
+        list.addAll(bundle.providers);
+        list.addAll(providers);
+        providers.clear();
+        providers.addAll(list);
         return this;
     }
 

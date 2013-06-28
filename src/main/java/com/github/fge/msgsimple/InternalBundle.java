@@ -53,6 +53,7 @@ public final class InternalBundle
         messages.put("cfg.map.nullValue", "null values not allowed in map");
         messages.put("properties.resource.notFound", "resource \"%s\" not found");
         messages.put("cfg.nullCharset", "charset cannot be null");
+        messages.put("cfg.nullBundle", "bundle cannot be null");
     }
 
     public static InternalBundle getInstance()

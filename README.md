@@ -23,7 +23,7 @@ See below for more.
 
 ## Versions
 
-The current version is **0.8**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
+The current version is **0.9**. Javadoc [here](http://fge.github.io/msg-simple/index.html).
 
 See [here](https://github.com/fge/msg-simple/wiki/Examples) for sample API usage.
 
@@ -53,7 +53,7 @@ For Maven:
 
 This library currently has the following features:
 
-* automatic message bundle loading via [ServiceLoader](http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html);
+* on-demand, cached message bundle loading;
 * property files read using UTF-8, ISO-8859-1 or any other encoding of your choice;
 * `printf()`-like message support, `MessageFormat` support;
 * i18n/locale support;

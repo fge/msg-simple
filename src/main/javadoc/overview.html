@@ -115,7 +115,84 @@ com.github.fge.msgsimple.provider.LoadingMessageSourceProvider} (on-demand
 loading). Using the latter, you can specify an expiry time and a loading
 timeout.</p>
 
-<h2>Using {@link java.util.ServiceLoader}</h2>
+<h2>Automatic loading</h2>
+
+<p>If you have several message bundles and don't want to create a singleton just
+to distribute them across several classes, you can instead provide an
+implementation of {@link com.github.fge.msgsimple.load.MessageBundleLoader}.
+When you need to access this bundle, from anywhere in your code, you can then
+use the {@link com.github.fge.msgsimple.load.MessageBundles} class, which will
+take care of instantiating the loader and provide you with the bundle:</p>
+
+<pre>
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getBundle(MyBundleLoader.class);
+</pre>
+
+<h2>Migrating from {@link java.util.ServiceLoader}</h2>
+
+<p>ServiceLoader support is now deprecated and discouraged. Fortunately,
+migrating from ServiceLoader is an easy three-step process:</p>
+
+<h3>Make your {@link
+com.github.fge.msgsimple.serviceloader.MessageBundleProvider} implementations
+also implement {@link com.github.fge.msgsimple.load.MessageBundleLoader}</h3>
+
+<p>That is, turn:</p>
+
+<pre>
+    public final class MyBundle
+        implements MessageBundleProvider
+</pre>
+
+<p>into:</p>
+
+<pre>
+    public final class MyBundle
+        implements MessageBundleLoader, MessageBundleProvider
+</pre>
+
+<p>Those two interfaces are ultimately the same.</p>
+
+<h3>Turn all your calls to {@link
+com.github.fge.msgsimple.serviceloader.MessageBundleFactory} into calls to
+{@link com.github.fge.msgsimple.load.MessageBundles}
+</h3>
+
+<p>That is, turn:</p>
+
+<pre>
+    private static final MessageBundle BUNDLE
+        = MessageBundleFactory.getBundle(MyBundle.class);
+</pre>
+
+<p>into:</p>
+
+<pre>
+    private static final MessageBundle BUNDLE
+        = MessageBundles.getBundle(MyBundle.class);
+</pre>
+
+<h3>Unimplement {@link
+com.github.fge.msgsimple.serviceloader.MessageBundleProvider} on all your
+message bundle loaders</h3>
+
+<p>That is, turn:</p>
+
+<pre>
+    public final class MyBundle
+        implements MessageBundleLoader, MessageBundleProvider
+</pre>
+
+<p>into:</p>
+<pre>
+    public final class MyBundle
+        implements MessageBundleLoader
+</pre>
+
+<p>And you're done!</p>
+
+<h2>Using {@link java.util.ServiceLoader} (OBSOLETE!)</h2>
 
 <p>In order to use the service loader capability of the JDK, you need two
 elements:</p>

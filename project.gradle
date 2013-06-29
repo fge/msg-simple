@@ -10,17 +10,12 @@ project.ext {
     description = "A lightweight, fully compatible, UTF-8/printf() capable alternative to Java's ResourceBundle";
 };
 
-project.ext {
-    serviceClasses = [
-        // none
-    ];
-};
-
 /*
  * List of dependencies
  */
 dependencies {
     compile(group: "com.github.fge", name: "btf", version: "1.0");
+    // FIXME: need to make this "provided" eventually, when gradle supports it
     compile(group: "com.google.code.findbugs", name: "jsr305", version: "2.0.1");
     testCompile(group: "org.testng", name: "testng", version: "6.8.5") {
         exclude(group: "junit", module: "junit");

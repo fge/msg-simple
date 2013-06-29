@@ -16,7 +16,7 @@
  */
 
 /**
- * {@link java.util.ServiceLoader} support
+ * {@link java.util.ServiceLoader} support - DEPRECATED
  *
  * <p>In order to use the service loader support, you will need to implement
  * {@link com.github.fge.msgsimple.serviceloader.MessageBundleProvider}, then
@@ -35,5 +35,8 @@
  *     final MessageBundle bundle
  *         = MessageBundleFactory.getBundle(MyFirstBundle.class);
  * </pre>
+ *
+ * @deprecated use {@link com.github.fge.msgsimple.load} instead, which does the
+ * same but does not require a dedicated file.
  */
 package com.github.fge.msgsimple.serviceloader;

@@ -15,22 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.fge.msgsimple.serviceloader;
+package com.github.fge.msgsimple.load;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
-import com.github.fge.msgsimple.load.MessageBundleLoader;
-
-import java.util.ServiceLoader;
 
 /**
- * {@link ServiceLoader} implementation for this library
+ * Interface for a {@link MessageBundle} provider
  *
- * @see MessageBundleFactory
+ * <p>Note that implementations must have a no-arg constructor.</p>
  *
- * @deprecated use {@link MessageBundleLoader} instead. Will disappear in 1.0.
+ * @see MessageBundles
  */
-@Deprecated
-public interface MessageBundleProvider
+public interface MessageBundleLoader
 {
     /**
      * Get a message bundle

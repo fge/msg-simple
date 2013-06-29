@@ -11,9 +11,9 @@ public final class MessageBundlesTest
     public void bundleLoadOnlyHappensOnce()
     {
         final MessageBundle bundle1
-            = MessageBundles.getBundle(DummyProvider.class);
+            = MessageBundles.getBundle(DummyLoader.class);
         final MessageBundle bundle2
-            = MessageBundles.getBundle(DummyProvider.class);
+            = MessageBundles.getBundle(DummyLoader.class);
 
         assertSame(bundle1, bundle2);
     }

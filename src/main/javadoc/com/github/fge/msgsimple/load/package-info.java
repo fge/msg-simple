@@ -15,23 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.fge.msgsimple.load;
-
-import com.github.fge.msgsimple.bundle.MessageBundle;
-
 /**
- * Interface for a {@link MessageBundle} provider
+ * Automatic message bundle loading support
  *
- * <p>Note that implementations must have a no-arg constructor.</p>
+ * <p>In order to use the loading support, all you need to do is provide an
+ * implementation of
+ * {@link com.github.fge.msgsimple.load.MessageBundleLoader}. Then, to load
+ * (and cache) the message bundle, it is as simple as:</p>
  *
- * @see MessageBundles
+ * <pre>
+ *     final MessageBundle bundle
+ *         = MessageBundles.getBundle(MyFirstBundle.class);
+ * </pre>
  */
-public interface MessageBundleProvider
-{
-    /**
-     * Get a message bundle
-     *
-     * @return the generated bundle
-     */
-    MessageBundle getBundle();
-}
+package com.github.fge.msgsimple.load;

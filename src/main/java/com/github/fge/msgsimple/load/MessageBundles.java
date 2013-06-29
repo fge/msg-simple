@@ -29,11 +29,11 @@ import java.util.Map;
  * Centralized access point for bundles
  *
  * <p>In order to register your bundle, you simply need to have an
- * implementation of {@link MessageBundleProvider}. The first time you call this
+ * implementation of {@link MessageBundleLoader}. The first time you call this
  * factory's {@link #getBundle(Class)} with the class of this implementation,
  * it will create a cached instance of this provider and return the bundle.</p>
  *
- * <p>Say your {@link MessageBundleProvider} implementation is called {@code
+ * <p>Say your {@link MessageBundleLoader} implementation is called {@code
  * MyMessageBundle} and is in package {@code com.example.util}, then, in your
  * code, this is as simple as:</p>
  *
@@ -51,22 +51,22 @@ public final class MessageBundles
 {
     private static final InternalBundle BUNDLE = InternalBundle.getInstance();
 
-    private static final Map<Class<? extends MessageBundleProvider>, MessageBundle>
-        BUNDLES = new IdentityHashMap<Class<? extends MessageBundleProvider>, MessageBundle>();
+    private static final Map<Class<? extends MessageBundleLoader>, MessageBundle>
+        BUNDLES = new IdentityHashMap<Class<? extends MessageBundleLoader>, MessageBundle>();
 
     private MessageBundles()
     {
     }
 
     /**
-     * Get a message bundle for a registered {@link MessageBundleProvider}
+     * Get a message bundle for a registered {@link MessageBundleLoader}
      * implementation
      *
      * @param c the class of the implementation
      * @return the matching bundle
      */
     public static synchronized MessageBundle getBundle(
-        final Class<? extends MessageBundleProvider> c)
+        final Class<? extends MessageBundleLoader> c)
     {
         MessageBundle ret = BUNDLES.get(c);
         if (ret == null) {
@@ -77,10 +77,10 @@ public final class MessageBundles
     }
 
     private static MessageBundle doGetBundle(
-        final Class<? extends MessageBundleProvider> c)
+        final Class<? extends MessageBundleLoader> c)
     {
-        final Constructor<? extends MessageBundleProvider> constructor;
-        final MessageBundleProvider provider;
+        final Constructor<? extends MessageBundleLoader> constructor;
+        final MessageBundleLoader provider;
 
         String message;
 

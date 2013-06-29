@@ -18,6 +18,7 @@
 package com.github.fge.msgsimple.serviceloader;
 
 import com.github.fge.msgsimple.bundle.MessageBundle;
+import com.github.fge.msgsimple.load.MessageBundles;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -52,7 +53,10 @@ import java.util.ServiceLoader;
  * </pre>
  *
  * <p>This will automatically load the bundle for you.</p>
+ *
+ * @deprecated use {@link MessageBundles} instead. Will disappear in 1.0.
  */
+@Deprecated
 public final class MessageBundleFactory
 {
     private static final MessageBundleFactory INSTANCE;

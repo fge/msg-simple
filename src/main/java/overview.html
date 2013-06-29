@@ -41,8 +41,7 @@ with the following characteristics:</p>
     exceptions (only null arguments will, with appropriate error messages);</li>
     <li>builtin assertions into message bundles (null checks, condition checks);
     </li>
-    <li>registration of message bundles using the {@link
-    java.util.ServiceLoader} API.</li>
+    <li>on-demand loading and caching of message bundles.</li>
 </ul>
 
 <h2>Quick start</h2>
@@ -105,8 +104,8 @@ com.github.fge.msgsimple.bundle.MessageBundle}:</p>
 <p>This library provides two message source implementations: {@link
 com.github.fge.msgsimple.source.MapMessageSource} is a "quickpatch" source
 backed by a {@link java.util.Map}, and {@link
-com.github.fge.msgsimple.source.PropertiesMessageSource} reads a property file
-using the encoding of your choice.</p>
+com.github.fge.msgsimple.source.PropertiesMessageSource}, which reads a property
+file using the encoding of your choice.</p>
 
 <p>It also provides two implementations of message source providers: {@link
 com.github.fge.msgsimple.provider.StaticMessageSourceProvider} (static,

@@ -1,3 +1,11 @@
+## 0.9
+
+* New autoloading support, not requiring ServiceLoader.
+* Deprecate ServiceLoader support.
+* Update TestNG dependency.
+* Fix javadoc generation.
+* Remove ServiceLoader support from build files.
+
 ## 0.8
 
 * Build file updates, now much easier to use.

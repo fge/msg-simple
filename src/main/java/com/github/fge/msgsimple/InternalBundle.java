@@ -54,6 +54,11 @@ public final class InternalBundle
         messages.put("properties.resource.notFound", "resource \"%s\" not found");
         messages.put("cfg.nullCharset", "charset cannot be null");
         messages.put("cfg.nullBundle", "bundle cannot be null");
+        messages.put("factory.noConstructor", "bundle provider does not have" +
+            " a no-arg constructor");
+        messages.put("factory.cannotInstantiate", "cannot instantiate bundle" +
+            " provider");
+        messages.put("factory.illegalProvider", "bundle provider returns null");
     }
 
     public static InternalBundle getInstance()

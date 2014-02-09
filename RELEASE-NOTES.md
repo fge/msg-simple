@@ -1,3 +1,10 @@
+## 1.0
+
+* Update to gradle 1.10
+* Update TestNG dependency.
+* Update btf dependency.
+* Change to dual licensing LGPL 3.0/ASL 2.0.
+
 ## 0.9
 
 * New autoloading support, not requiring ServiceLoader.

@@ -82,7 +82,7 @@ com.github.fge.msgsimple.bundle.MessageBundle}:</p>
 
 <pre>
     // Checks the reference for null; throws NullPointerException if it is;
-    final MyClass obj = bundle.checkForNull(ref, "err.nullMyClass");
+    final MyClass obj = bundle.checkNotNull(ref, "err.nullMyClass");
     // Checks whether the condition is true; throws IllegalArgumentException
     // otherwise
     bundle.checkArgumentPrintf(something.isOk(), "err.something.notOk", arg1,
@@ -128,93 +128,6 @@ take care of instantiating the loader and provide you with the bundle:</p>
     private static final MessageBundle BUNDLE
         = MessageBundles.getBundle(MyBundleLoader.class);
 </pre>
-
-<h2>Migrating from {@link java.util.ServiceLoader}</h2>
-
-<p>ServiceLoader support is now deprecated and discouraged. Fortunately,
-migrating from ServiceLoader is an easy three-step process:</p>
-
-<h3>Make your {@link
-com.github.fge.msgsimple.serviceloader.MessageBundleProvider} implementations
-also implement {@link com.github.fge.msgsimple.load.MessageBundleLoader}</h3>
-
-<p>That is, turn:</p>
-
-<pre>
-    public final class MyBundle
-        implements MessageBundleProvider
-</pre>
-
-<p>into:</p>
-
-<pre>
-    public final class MyBundle
-        implements MessageBundleLoader, MessageBundleProvider
-</pre>
-
-<p>Those two interfaces are ultimately the same.</p>
-
-<h3>Turn all your calls to {@link
-com.github.fge.msgsimple.serviceloader.MessageBundleFactory} into calls to
-{@link com.github.fge.msgsimple.load.MessageBundles}
-</h3>
-
-<p>That is, turn:</p>
-
-<pre>
-    private static final MessageBundle BUNDLE
-        = MessageBundleFactory.getBundle(MyBundle.class);
-</pre>
-
-<p>into:</p>
-
-<pre>
-    private static final MessageBundle BUNDLE
-        = MessageBundles.getBundle(MyBundle.class);
-</pre>
-
-<h3>Unimplement {@link
-com.github.fge.msgsimple.serviceloader.MessageBundleProvider} on all your
-message bundle loaders</h3>
-
-<p>That is, turn:</p>
-
-<pre>
-    public final class MyBundle
-        implements MessageBundleLoader, MessageBundleProvider
-</pre>
-
-<p>into:</p>
-<pre>
-    public final class MyBundle
-        implements MessageBundleLoader
-</pre>
-
-<p>And you're done!</p>
-
-<h2>Using {@link java.util.ServiceLoader} (OBSOLETE!)</h2>
-
-<p>In order to use the service loader capability of the JDK, you need two
-elements:</p>
-
-<ul>
-    <li>one or more implementation(s) of {@link
-    com.github.fge.msgsimple.serviceloader.MessageBundleProvider};</li>
-    <li>a file in your classpath, named {@code
-    META-INF/services/com.github.fge.msgsimple.serviceloader.MessageBundleProvider}
-    listing your implementations (one per line).</li>
-</ul>
-
-<p>Once this is done, you can get a bundle using:</p>
-
-<pre>
-    final MessageBundle bundle = MessageBundleFactory.getBundle(MyBundle.class);
-</pre>
-
-<h2>More information</h2>
-
-<p>See <a href="https://github.com/fge/msg-simple/wiki/Examples">here</a>
-for more complete usage examples.</p>
 
 </body>
 </html>

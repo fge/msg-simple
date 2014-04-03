@@ -12,8 +12,7 @@ for more details.
 ## What this is
 
 This is a lightweight, extensible message bundle API which you can use as a replacement to Java's
-`ResourceBundle`. It is able to load legacy `ResourceBundle`s. Its only dependency is
-[btf](https://github.com/fge/btf).
+`ResourceBundle`. It is also able to load legacy `ResourceBundle`s.
 
 Among features that this library offers which `ResourceBundle` doesn't are:
 
@@ -56,14 +55,12 @@ For Maven:
 
 This library currently has the following features:
 
-* on-demand, cached message bundle loading;
+* static or load-on-demand message sources, with configurable expiry;
 * property files read using UTF-8, ISO-8859-1 or any other encoding of your choice;
-* `printf()`-like message support, `MessageFormat` support;
+* `printf()`-like message support in addition to `MessageFormat` support;
 * i18n/locale support;
 * stackable message sources;
-* bundles are reusable (using the [freeze/thaw pattern](https://github.com/fge/btf/wiki/The-freeze-thaw-pattern));
 * builtin preconditions in bundles (`checkNotNull()`, `checkArgument()`, plus their `printf()`/`MessageFormat` equivalents);
-* static, or loading-on-demand, message sources.
 
 The roadmap for future versions can be found [here](https://github.com/fge/msg-simple/wiki/Roadmap). Feature requests are of course
 welcome!

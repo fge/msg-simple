@@ -1,3 +1,11 @@
+## 1.1
+
+* Dead code removal (ServiceLoader now completely disabled).
+* Update to gradle 1.11.
+* Work around APK bug with duplicate license files in resources.
+* Re-enable test outputs.
+* Work around Java 8's javadoc tool bug.
+
 ## 1.0
 
 * Update to gradle 1.10
